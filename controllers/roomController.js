@@ -155,11 +155,17 @@ const deleteRoom = (req, res, next) => {
   Room.findByIdAndDelete(req.body.roomId)
     .then(data => {
       console.log(data)
-      res.send("Room data deleted")
+      res.status(200).json({
+        success : true,
+        message : "Room data deleted successfully!"
+      })
     })
     .catch(err => {
       console.log(err)
-      res.send("Error Occured, please check the console")
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
+      })
     })
 }
 
