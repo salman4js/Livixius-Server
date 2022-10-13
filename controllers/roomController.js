@@ -16,10 +16,25 @@ const UserDb = require("../models/UserDb.js");
 
 const createRoom = async (req, res, next) => {
   console.log(req.body)
-  if (req.body.roomno == "" && req.body.bedcount == "" && req.body.suitename == "") {
+  if (req.body.roomno == "") {
     res.status(200).json({
       success: false,
       message: "Check the input"
+    })
+  } else if(req.body.bedcount == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check the input"
+    })
+  } else if(req.body.suitename == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check the input"
+    })
+  } else if(req.body.suitename == "Choose..."){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
     })
   } else {
     try {

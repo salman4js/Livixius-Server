@@ -2,11 +2,29 @@ const Lodge = require("../models/Lodges");
 const Dish = require("../models/Dishes");
 
 const addDishLodge = async (req,res,next) => {
-    if(req.body.dishname == "" && req.body.dishrate == "" && req.body.dishtype == ""){
+  console.log(req.body.dishrate);
+  console.log(req.body.dishrate);
+  console.log(req.body.dishtype);
+    if(req.body.dishname == ""){
         res.status(200).json({
             success : false,
             message : "Check your input, Please"
         })
+    } else if(req.body.dishrate == "") {
+      res.status(200).json({
+        success : false,
+        message : "Check your input, please"
+      })
+    } else if(req.body.dishtype == ""){
+      res.status(200).json({
+        success : false,
+        message : "Check your input, please"
+      })
+    } else if(req.body.dishtype == "Choosee..."){
+      res.status(200).json({
+        success : false,
+        message : "Check your input, please!"
+      })
     } else {
         try{
             const dish = new Dish({
