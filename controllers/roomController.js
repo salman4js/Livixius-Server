@@ -84,6 +84,23 @@ const availability = (req, res, next) => {
     })
 }
 
+const occupiedRooms = (req,res,next) => {
+  Room.find({lodge : req.params.id, isOccupied : "true"})
+    .then(data => {
+      console.log(data);
+      res.status(200).json({
+        success : true,
+        message : data
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
+      })
+    })
+}
+
 const roomOne = async (req, res, next) => {
   Room.find({ roomno: req.body.roomno })
     .then(data => {
@@ -359,6 +376,6 @@ const callAWaiter = async (req, res, next) => {
 
 module.exports = {
   createRoom, allRooms, roomsUpdater, deleteRoom, addDishRooms, updateRoomData, roomOne, addUserRooms,
-  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId
+  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms
 
 }
