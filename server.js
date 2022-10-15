@@ -10,9 +10,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const server = require("../routes/Routes")
+const server = require("./routes/Routes")
 
-const database = "mongodb+srv://salman:pamelia@cluster0.vsziv.mongodb.net/?retryWrites=true&w=majority";
+const database = "mongodb+srv://salman-1:salman@cluster0.vsziv.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose.connect(database,{
     useNewUrlParser : true,
@@ -26,10 +26,10 @@ mongoose.connection.on("error",(err) => {
     console.log("Some stupid error", err);
 })
 
-app.use("/.netlify/functions/server", server);
+app.use("/", server);
 
-// app.listen(3002,() => {
-//     console.log("Server is running at port 3002");
-// })
+app.listen(3002,() => {
+    console.log("Server is running at port 3002");
+})
 
-module.exports.handler = serverless(app);
+//module.exports.handler = serverless(app);
