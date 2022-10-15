@@ -26,7 +26,7 @@ const dishType = async (req,res,next) => {
         lodge : req.params.id
       })
       if(dishType){
-        await Lodge.findByIdAndDelete({_id : dishType.lodge}, {$push : {dishtype : dishType._id}})
+        await Lodge.findByIdAndUpdate({_id : dishType.lodge}, {$push : {dishtype : dishType._id}})
       }
       await dishType.save()
       res.status(200).json({
