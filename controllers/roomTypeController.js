@@ -2,10 +2,20 @@ const Lodge = require("../models/Lodges.js");
 const RoomType = require("../models/RoomType.js");
 
 const createSuite = async (req,res,next) => {
-  if(req.body.suitetype == "" || undefined || null && req.body.price == ""){
+  if(req.body.suitetype == ""){
     res.status(200).json({
       success : false,
       message : "That's the bad input!"
+    })
+  } else if(req.body.suitetype == undefined){
+    res.status(200).json({
+      success :  false,
+      message : "Check your input!"
+    })
+  } else if(req.body.suitetype == null){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
     })
   } else {
     try{
