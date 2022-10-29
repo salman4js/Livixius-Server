@@ -5,6 +5,7 @@ const roomSchema = new mongoose.Schema({
     isOccupied : {type : String, default : "false"},
     bedCount: String,
     suiteName : String,
+    price : String,
     dishes : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "UserDishes"

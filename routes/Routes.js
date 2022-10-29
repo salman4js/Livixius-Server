@@ -148,6 +148,8 @@ router.post("/:id/addroomtype", roomTypeController.createSuite);
 
 router.post("/:id/allroomtype", roomTypeController.allRoomType);
 
+router.post("/:id/getprice", roomTypeController.getPrice);
+
 router.post("/:id/edittypedata", roomTypeController.editTypeData);
 
 router.post("/:id/deleteroomtype", roomTypeController.deleteRoomType);

@@ -90,6 +90,18 @@ const allRoomType = (req,res,next) => {
   }) 
 }
 
+const getPrice = (req,res,next) => {
+  RoomType.find({lodge : req.params.id, suiteType : req.body.suitename})
+  .then(data => {
+    console.log(data);
+    res.send(data);
+  })
+  .catch(err => {
+    console.log(err);
+    res.send(err);
+  })
+}
+
 const deleteRoomType = (req,res,next) => {
   RoomType.deleteMany({lodge : req.params.id})
   .then(data => {
@@ -109,5 +121,5 @@ const deleteRoomType = (req,res,next) => {
 }
 
 module.exports = {
-  createSuite, allRoomType, editTypeData, deleteRoomType
+  createSuite, allRoomType, editTypeData, deleteRoomType, getPrice
 }
