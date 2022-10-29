@@ -36,12 +36,18 @@ const createRoom = async (req, res, next) => {
       success : false,
       message : "Check your input!"
     })
+  } else if(req.body.price == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input"
+    })
   } else {
     try {
       const room = new Room({
         roomno: req.body.roomno,
         bedCount: req.body.bedcount,
         suiteName: req.body.suitename,
+        price : req.body.price,
         lodge: req.params.id
       })
       if (room) {
