@@ -51,6 +51,37 @@ const addDishLodge = async (req,res,next) => {
 }
 
 const dishUpdater = (req,res,next) => {
+  if(req.body.dishrate == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if (req.body.dishrate == ""){
+    res.status(200).json({
+      success :false,
+      message : "Check your input!"
+    }) 
+  } else if(req.body.dishname == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.dishname == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.dishtype == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.dishtype == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else {
     Dish.findByIdAndUpdate(req.body.dishId,{
         dishRate : req.body.dishrate,
         dishName : req.body.dishname,
@@ -71,6 +102,8 @@ const dishUpdater = (req,res,next) => {
             message : "Some Internal Error Occured!"
         })
     })
+  }
+    
 }
 
 const allDishLodge = (req,res,next) => {

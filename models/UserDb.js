@@ -10,7 +10,7 @@ const userdbSchema = new mongoose.Schema({
     password : String,
     aadharcard : String,
     dateofcheckin : String,
-    dateofcheckout : String,
+    dateofcheckout : {type : String, default : ""},
     stayedDays : String,
     roomno : String,
     userid : String,
