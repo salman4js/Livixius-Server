@@ -208,19 +208,26 @@ const deleteRoom = (req, res, next) => {
 }
 
 const getRoomId = (req,res,next) => {
-  Room.find({lodge : req.body.lodgeid, roomno : req.body.roomno})
-  .then(data => {
-    res.status(200).json({
-      success : true,
-      message : data
-    })
-  })
-  .catch(err => {
+  if(req.body.roomno == undefined){
     res.status(200).json({
       success : false,
-      message : "Some internal error occured"
+      message : "Check your input!"
     })
-  })
+  } else {
+    Room.find({lodge : req.body.lodgeid, roomno : req.body.roomno})
+    .then(data => {
+      res.status(200).json({
+        success : true,
+        message : data
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured"
+      })
+    })
+  }
 }
 
 const addDishRooms = async (req, res, next) => {
@@ -233,6 +240,21 @@ const addDishRooms = async (req, res, next) => {
     res.status(200).json({
       success : false,
       message : "That's a bad request!"
+    })
+  } else if(req.body.roomno == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.roomno == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.roomno == "Choose..."){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
     })
   } else {
     try {
