@@ -54,7 +54,7 @@ router.post("/login", userController.loginUser);
 
 router.post("/:id/findlodge", lodgeController.findLodge);
 
-router.post("/checkuser", userController.checkUser);
+router.post("/:id/checkuser", userController.checkUser);
 
 router.post("/adduserfromd2", userController.addUserFromD2);
 
