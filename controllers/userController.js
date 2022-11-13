@@ -61,9 +61,11 @@ const userdb = (req,res,next) => {
 }
 
 const checkUser = (req, res, next) => {
-    phonenumber = req.body.phonenumber
+    phonenumber = req.body.phonenumber,
+    secphonenumber = req.body.secondphonenumber,
+    roomid = req.params.id
 
-    User.findOne({ phonenumber: phonenumber })
+    User.findOne({$or : [{phonenumber : phonenumber}, {secondphonenumber : secphonenumber}], room : roomid})
         .then(user => {
             if (user) {
                 let token = jwt.sign({name : phonenumber}, "secretValue", {expiresIn : '1h'})
