@@ -266,7 +266,7 @@ const addDishRooms = async (req, res, next) => {
         comments: req.body.comments,
         room: req.body.roomid,
         time: req.body.time,
-        lodge : req.body.lodgeid,
+        lodge : req.params.id,
       })
       console.log(userdish.room)
       if (userdish) {
