@@ -15,7 +15,10 @@ const allUserDishes = (req,res,next) => {
   })
   .catch(err => {
     console.log(err)
-    res.send("Error occured, please check the console")
+    res.status(200).json({
+      success : false,
+      message : "Error occured, please check your server console!"
+    })
   })
 }
 
@@ -135,6 +138,24 @@ const checkDelivered = (req,res,next) => {
   })
 }
 
+const checkDeliveredRoom = (req,res,next) => {
+  UserDish.find({delivered : "No", room : req.params.id})
+    .then(data => {
+      console.log(data);
+      res.status(200).json({
+        success : true,
+        message : data 
+      })
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(200).json({
+        success: false,
+        message : "Some internal error occured!"
+      })
+    })
+}
+
 const deleteDish = (req,res,next) => {
   UserDish.findByIdAndDelete(req.body.userDishId)
   .then(data => {
@@ -187,7 +208,7 @@ const dishUserRateLength = (req,res,next) => {
 module.exports = {
   allUserDishes, deleteUserDish, editUserDish, deleteDish,
   deleteRoomDish, dishUserRate,
-  Notifications, sendDelivered, checkDelivered, deleteUserNotifications, dishUserRateLength
+  Notifications, sendDelivered, checkDelivered, checkDeliveredRoom, deleteUserNotifications, dishUserRateLength
 }
 
 // Automation framework setup in eclipse was done, now going through existing regression report and will work

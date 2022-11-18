@@ -138,6 +138,8 @@ router.post("/:id/senddelivered", userDishController.sendDelivered);
 
 router.post("/:id/checkdelivered", userDishController.checkDelivered);
 
+router.post("/:id/checkdeliveredRoom", userDishController.checkDeliveredRoom);
+
 router.post("/:id/deleteroomdish", userDishController.deleteRoomDish);
 
 router.post("/:id/userdb", verifyJWT, userController.userdb);
