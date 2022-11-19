@@ -15,7 +15,6 @@ const User = require("../models/User.js");
 const UserDb = require("../models/UserDb.js");
 
 const createRoom = async (req, res, next) => {
-  console.log(req.body)
   if (req.body.roomno == "") {
     res.status(200).json({
       success: false,
@@ -43,21 +42,29 @@ const createRoom = async (req, res, next) => {
     })
   } else {
     try {
-      const room = new Room({
-        roomno: req.body.roomno,
-        bedCount: req.body.bedcount,
-        suiteName: req.body.suitename,
-        price : req.body.price,
-        lodge: req.params.id
-      })
-      if (room) {
-        await Lodge.findByIdAndUpdate({ _id: room.lodge }, { $push: { rooms: room._id } })
+      console.log("Check duplicate value", await checkDuplicate(req.params.id, req.body.roomno));
+      if(await checkDuplicate(req.params.id, req.body.roomno) === null){
+        const room = new Room({
+         roomno: req.body.roomno,
+         bedCount: req.body.bedcount,
+         suiteName: req.body.suitename,
+         price : req.body.price,
+         lodge: req.params.id
+       })
+       if (room) {
+         await Lodge.findByIdAndUpdate({ _id: room.lodge }, { $push: { rooms: room._id } })
+       }
+       await room.save()
+       res.status(200).json({
+         success: true,
+         message: "Room Added"
+       })
+      } else {
+        res.status(200).json({
+          success : false,
+          message : "Room No already exists!"
+        })
       }
-      await room.save()
-      res.status(200).json({
-        success: true,
-        message: "Room Added"
-      })
     } catch (err) {
       res.status(200).json({
         success: false,
@@ -65,9 +72,13 @@ const createRoom = async (req, res, next) => {
       })
     }
   }
-
 }
 
+const checkDuplicate = async (lodgeid, roomno) => {
+  const value = await Room.findOne({lodge : lodgeid, roomno : roomno});
+  console.log("Check",value)
+  return value;
+}
 
 const allRooms = (req, res, next) => {
   Room.find({ lodge: req.params.id })

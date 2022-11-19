@@ -94,6 +94,8 @@ router.post("/:id/createroom", roomController.createRoom);
 
 router.post("/:id/roomlodge", verifyJWT, roomController.allRooms);
 
+router.post("/:id/roomlodge-duplicate", roomController.allRooms);
+
 router.post("/:id/availability", roomController.availability);
 
 router.post("/:id/occupied", roomController.occupiedRooms);
