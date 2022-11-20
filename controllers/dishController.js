@@ -27,20 +27,27 @@ const addDishLodge = async (req,res,next) => {
       })
     } else {
         try{
-            const dish = new Dish({
-                dishName : req.body.dishname,
-                dishRate : req.body.dishrate,
-                dishType : req.body.dishtype,
-                lodge : req.params.id
-            })
-            if(dish){
-                await Lodge.findByIdAndUpdate({_id : dish.lodge}, {$push : {dishes : dish._id}})
+            if(await checkDuplicate(req.params.id, req.body.dishname) == null){
+              const dish = new Dish({
+                  dishName : req.body.dishname,
+                  dishRate : req.body.dishrate,
+                  dishType : req.body.dishtype,
+                  lodge : req.params.id
+              })
+              if(dish){
+                  await Lodge.findByIdAndUpdate({_id : dish.lodge}, {$push : {dishes : dish._id}})
+              }
+              await dish.save()
+              res.status(200).json({
+                  success : true,
+                  message : "Dish data added"
+              })
+            } else {
+              res.status(200).json({
+                success : false,
+                message : "Dish already exists in the menu!"
+              })
             }
-            res.status(200).json({
-                success : true,
-                message : "Dish data added"
-            })
-            await dish.save()
         } catch(err){
             res.status(200).json({
                 success : false,
@@ -48,6 +55,12 @@ const addDishLodge = async (req,res,next) => {
             })
         }
     }
+}
+
+const checkDuplicate = async (lodgeid, dishName) => {
+  const value = await Dish.findOne({lodge : lodgeid, dishName : dishName})
+  console.log("Check", value);
+  return value;
 }
 
 const dishUpdater = (req,res,next) => {
