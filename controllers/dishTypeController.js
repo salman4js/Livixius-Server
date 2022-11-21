@@ -21,18 +21,25 @@ const dishType = async (req,res,next) => {
     })
   } else {
     try{
-      const dishType = new DishType({
-        dishType : req.body.dishtype,
-        lodge : req.params.id
-      })
-      if(dishType){
-        await Lodge.findByIdAndUpdate({_id : dishType.lodge}, {$push : {dishtype : dishType._id}})
+      if(await checkDish(req.params.id, req.body.dishtype) === null){
+        const dishType = new DishType({
+          dishType : req.body.dishtype,
+          lodge : req.params.id
+        })
+        if(dishType){
+          await Lodge.findByIdAndUpdate({_id : dishType.lodge}, {$push : {dishtype : dishType._id}})
+        }
+        await dishType.save()
+        res.status(200).json({
+          success : true,
+          message : "Dish Type added!"
+        })
+      } else {
+        res.status(200).json({
+          success : false,
+          message : "Dish type already exists."
+        })
       }
-      await dishType.save()
-      res.status(200).json({
-        success : true,
-        message : "Dish Type added!"
-      })
     } catch(err){
       res.status(200).json({
         success : false,
@@ -40,6 +47,11 @@ const dishType = async (req,res,next) => {
       })
     }
   }
+}
+
+const checkDish = async (lodgeID, dishname) => {
+  const value = await DishType.findOne({lodge : lodgeID, dishType : dishname})
+  return value;
 }
 
 const allDishType = (req,res,next) => {
