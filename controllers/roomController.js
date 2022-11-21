@@ -170,35 +170,80 @@ const dishByRoom = (req, res, next) => {
 }
 
 
-const roomsUpdater = (req, res, next) => {
+const roomsUpdater = async (req, res, next) => {
 
-  if (req.body.roomno == "" && req.body.bedcount == "" && req.body.suitename == "") {
+  if(req.body.roomno == ""){
     res.status(200).json({
-      success: false,
-      message: "Data is inaccurate"
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.bedcount == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.suitename == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.roomno == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.bedcount == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.suitename == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
     })
   } else {
-    Room.findByIdAndUpdate(req.body.roomId, {
-      roomno: req.body.roomno,
-      suiteName: req.body.suitename,
-      bedCount: req.body.bedcount
-    })
-      .then(data => {
-        console.log(data)
-        res.status(200).json({
-          success : true,
-          message : "Room Data Updated"
-        })
-      })
-      .catch(err => {
-        console.log(err)
+    try{
+      if(await checkOccupiedData(req.body.roomId) === "true"){
         res.status(200).json({
           success : false,
-          message : "Some internal error occured"
+          message : "Room already occupied, You can't modify occupied room's data!"
         })
+      } else {
+        Room.findByIdAndUpdate(req.body.roomId, {
+          roomno: req.body.roomno,
+          suiteName: req.body.suitename,
+          bedCount: req.body.bedcount
+        })
+          .then(data => {
+            console.log(data)
+            res.status(200).json({
+              success : true,
+              message : "Room Data Updated"
+            })
+          })
+          .catch(err => {
+            console.log(err)
+            res.status(200).json({
+              success : false,
+              message : "Some internal error occured"
+            })
+          })
+      }
+    } catch(err) {
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
       })
+    }
   }
 }
+
+const checkOccupiedData = async (roomId) => {
+  const value = await Room.findOne({ _id : roomId});
+  console.log(typeof(value.isOccupied));
+  return value.isOccupied;
+};
 
 const deleteRoom = (req, res, next) => {
   Room.findByIdAndDelete(req.body.roomId)

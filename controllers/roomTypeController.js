@@ -19,19 +19,26 @@ const createSuite = async (req,res,next) => {
     })
   } else {
     try{
-      const roomType = new RoomType({
-        suiteType : req.body.suitetype,
-        price : req.body.price,
-        lodge : req.params.id
-      })
-      if(roomType){
-        await Lodge.findByIdAndUpdate({_id : roomType.lodge}, {$push : {types : roomType._id}})
+      if(await checkSuite(req.params.id, req.body.suitetype) === null){
+        const roomType = new RoomType({
+          suiteType : req.body.suitetype,
+          price : req.body.price,
+          lodge : req.params.id
+        })
+        if(roomType){
+          await Lodge.findByIdAndUpdate({_id : roomType.lodge}, {$push : {types : roomType._id}})
+        }
+        await roomType.save()
+        res.status(200).json({
+          success : true,
+          message : "Room Type Added Successfully!"
+        })
+      } else {
+        res.status(200).json({
+          success : false,
+          message : "Room Type already exists."
+        })
       }
-      await roomType.save()
-      res.status(200).json({
-        success : true,
-        message : "Room Type Added Successfully!"
-      })
     } catch(err){
       res.status(200).json({
         success : false,
@@ -39,6 +46,11 @@ const createSuite = async (req,res,next) => {
       })
     }
   }
+}
+
+const checkSuite = async (lodgeId, suitetype) => {
+  const value = await RoomType.findOne({lodge : lodgeId, suiteType : suitetype})
+  return value;
 }
 
 const editTypeData = (req,res,next) => {
