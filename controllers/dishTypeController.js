@@ -19,11 +19,16 @@ const dishType = async (req,res,next) => {
       success : false,
       message : "That's the bad input!"
     })
+  } else if((/^[0-9]+$/).test(req.body.dishtype)){
+    res.status(200).json({
+      success : false,
+      message : "Dish type should be in String format!"
+    })
   } else {
     try{
       if(await checkDish(req.params.id, req.body.dishtype) === null){
         const dishType = new DishType({
-          dishType : req.body.dishtype,
+          dishType : req.body.dishtype.toUpperCase(),
           lodge : req.params.id
         })
         if(dishType){

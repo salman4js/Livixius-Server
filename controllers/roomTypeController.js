@@ -2,6 +2,7 @@ const Lodge = require("../models/Lodges.js");
 const RoomType = require("../models/RoomType.js");
 
 const createSuite = async (req,res,next) => {
+  
   if(req.body.suitetype == ""){
     res.status(200).json({
       success : false,
@@ -17,11 +18,31 @@ const createSuite = async (req,res,next) => {
       success : false,
       message : "Check your input!"
     })
+  } else if(req.body.price == ""){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  }  else if(req.body.price == undefined){
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(req.body.price == null) {
+    res.status(200).json({
+      success : false,
+      message : "Check your input!"
+    })
+  } else if(!(/^[0-9]+$/.test(req.body.price))){
+    res.status(200).json({
+      success : false,
+      message : "Price should be in number format!"
+    })
   } else {
     try{
       if(await checkSuite(req.params.id, req.body.suitetype) === null){
         const roomType = new RoomType({
-          suiteType : req.body.suitetype,
+          suiteType : req.body.suitetype.toUpperCase(),
           price : req.body.price,
           lodge : req.params.id
         })
