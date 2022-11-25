@@ -29,7 +29,7 @@ const addDishLodge = async (req,res,next) => {
         try{
             if(await checkDuplicate(req.params.id, req.body.dishname) == null){
               const dish = new Dish({
-                  dishName : req.body.dishname,
+                  dishName : req.body.dishname.toUpperCase(),
                   dishRate : req.body.dishrate,
                   dishType : req.body.dishtype,
                   lodge : req.params.id
