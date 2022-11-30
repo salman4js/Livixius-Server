@@ -7,6 +7,7 @@ const lodgeController = require("../controllers/lodgeController");
 const dishController = require("../controllers/dishController");
 const serviceController = require("../controllers/serviceController");
 const roomController = require("../controllers/roomController");
+const prebookController = require("../controllers/prebookController");
 const userDishController = require("../controllers/userdishesController");
 const userServiceController = require("../controllers/userserviceController");
 const roomTypeController = require("../controllers/roomTypeController.js");
@@ -106,7 +107,6 @@ router.post("/:id/dishbyroom", roomController.dishByRoom);
 
 router.post("/:id/roombyid", roomController.roomById);
 
-
 router.post("/:id/roomupdater", roomController.roomsUpdater);
 
 router.post("/deleteroom", roomController.deleteRoom);
@@ -117,8 +117,15 @@ router.post("/:id/getroomid", roomController.getRoomId);
 
 router.post("/:id/adduserrooms", roomController.addUserRooms);
 
-router.post("/updateroomdata", roomController.updateRoomData);
+router.post("/:id/addprebookuserrooms", prebookController.preBookUserRooms);
 
+router.post("/:id/showallprebookuser", prebookController.ShowAllPrebookedUser);
+
+router.post("/:id/deleteprebookuserrooms", prebookController.deletePrebookUserRooms);
+
+router.post("/:id/showallprebookedrooms", prebookController.ShowAllPrebookedRooms);
+
+router.post("/updateroomdata", roomController.updateRoomData);
 
 router.post("/:id/userdishes", userDishController.allUserDishes);
 

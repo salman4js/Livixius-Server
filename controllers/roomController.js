@@ -344,7 +344,7 @@ const addDishRooms = async (req, res, next) => {
 }
 
 const addUserRooms = async (req, res, next) => {
-  console.log(req.body)
+  console.log(req.body);
   console.log(req.body.customerphonenumber)
   if(req.body.aadhar ==  undefined || req.body.aadhar == ""){
     res.status(200).json({
