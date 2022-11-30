@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const roomSchema = new mongoose.Schema({
     roomno : String,
     isOccupied : {type : String, default : "false"},
+    preBooked : {type : Boolean, default : false},
     bedCount: String,
     suiteName : String,
     price : String,
@@ -29,7 +30,11 @@ const roomSchema = new mongoose.Schema({
     dishrate : {
       type : mongoose.Schema.Types.ObjectId,
       ref : "DishRate"
-    }
+    },
+    prebookuser : [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Prebooks"
+    }]
 })
 
 
