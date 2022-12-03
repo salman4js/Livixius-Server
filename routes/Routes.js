@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
+// Auth JWT verification
+const authVerify = require("../controllers/Verifier/authVerifier.js");
 const userController = require("../controllers/userController");
 const lodgeController = require("../controllers/lodgeController");
 const dishController = require("../controllers/dishController");
@@ -14,6 +16,7 @@ const roomTypeController = require("../controllers/roomTypeController.js");
 const qrcodegenerator = require("../controllers/qrcode_generator.js");
 const dishTypeController = require("../controllers/dishTypeController.js");
 
+// JWT token verification
 const verifyJWT = (req, res, next) => {
     console.log("accessing token verification");
     const token = req.body.headers["x-access-token"];    
@@ -29,8 +32,9 @@ const verifyJWT = (req, res, next) => {
                   message : "Token has expired!"
                 })
             } else {
+                console.log(decoded.name);
                 req.userId = decoded.id;
-                console.log("Token verification done!")
+                console.log("Token verification done!");
                 next();
             }
         });

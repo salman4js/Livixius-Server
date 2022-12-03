@@ -382,6 +382,7 @@ const addUserRooms = async (req, res, next) => {
         aadharcard : req.body.aadhar,
         room : req.body.roomid,
         dateofcheckin : req.body.checkin,
+        dateofcheckout : req.body.checkout,
         lodge : req.params.id
       })
       const userdatabase = new UserDb({

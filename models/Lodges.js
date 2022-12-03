@@ -6,6 +6,7 @@ const lodgeSchema = new mongoose.Schema({
     emailId : String,
     area : String,
     branch : String,
+    token : String,
     rooms : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"
