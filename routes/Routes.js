@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const Lodge = require("../models/Lodges.js")
 
 // Auth JWT verification
 const authVerify = require("../controllers/Verifier/authVerifier.js");
@@ -17,14 +18,14 @@ const qrcodegenerator = require("../controllers/qrcode_generator.js");
 const dishTypeController = require("../controllers/dishTypeController.js");
 
 // JWT token verification
-const verifyJWT = (req, res, next) => {
+const verifyJWT = async (req, res, next) => {
     console.log("accessing token verification");
     const token = req.body.headers["x-access-token"];    
     if (!token) {
         console.log("Token verification not done!")
         res.send("We need a token, please give it to us next time");
     } else {
-        jwt.verify(token, "secretValue", (err, decoded) => {
+        jwt.verify(token, "secretValue", async (err, decoded) => {
             if (err) {
                 console.log(err);
                 res.status(200).json({
@@ -32,17 +33,29 @@ const verifyJWT = (req, res, next) => {
                   message : "Token has expired!"
                 })
             } else {
-                console.log(decoded.name);
+                // JWT Payload contains username from the database!
+                const authVerification = await checkUsername(req.params.id);
                 req.userId = decoded.id;
-                console.log("Token verification done!");
-                next();
+                if(decoded.name === authVerification){
+                  console.log("Token verification done!");
+                  next();
+                } else {
+                  console.log("Invalid auth access!");
+                  res.status(200).json({
+                    success : false,
+                    message : "You are not authorized to access this data!"
+                  })
+                }
             }
         });
     }
   };
-  
-//  Verifying token
 
+// Check the username with JWT payload value
+const checkUsername = async (req_userId) => {
+  const username = await Lodge.findOne({_id : req_userId}).exec();
+  return username.username;
+}
 
 // All GET Methods
 
