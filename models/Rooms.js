@@ -4,6 +4,7 @@ const roomSchema = new mongoose.Schema({
     roomno : String,
     isOccupied : {type : String, default : "false"},
     preBooked : {type : Boolean, default : false},
+    preValid : {type : Boolean, default : true},
     bedCount: String,
     suiteName : String,
     price : String,
