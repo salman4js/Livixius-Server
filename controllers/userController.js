@@ -134,12 +134,13 @@ const userRoom = (req, res, next) => {
 const deleteUser = async (req, res, next) => {
     console.log(req.body.stayeddays);
     console.log(req.body.checkoutdate);
+    console.log(req.body.prebook);
     try {
         const room = req.body.roomid
-        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false" } })
+        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", preBooked : false, preValid : true } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
-        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate}})
+        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, prebooked : req.body.prebook}})
         res.status(200).json({
             success : true,
             message : "Customer has been checked out properly!"

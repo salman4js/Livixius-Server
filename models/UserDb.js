@@ -16,6 +16,7 @@ const userdbSchema = new mongoose.Schema({
     userid : String,
     bill : String,
     paid : Boolean,
+    prebooked : {type : Boolean, default : false},
     room : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"

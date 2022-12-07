@@ -398,14 +398,21 @@ const addUserRooms = async (req, res, next) => {
         userid : checkin._id,
         lodge : req.params.id
       })
-      console.log(checkin.dateofcheckin);
+      //console.log(checkin.dateofcheckout);
       if(userdatabase){
         userdatabase.save()
       }
       if(checkin){
-        await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", $push : {user : checkin._id}} )
+        if(checkin.dateofcheckout != undefined){
+          await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", $push : {user : checkin._id}} )
+        } else {
+          await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", preValid : false, $push : {user : checkin._id}} )
+        }
       }
       await checkin.save();
+      if(req.body.prebook == true){
+        await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook});
+      }
       res.status(200).json({
         success : true,
         message : "Customer has been checked in successfully!"
