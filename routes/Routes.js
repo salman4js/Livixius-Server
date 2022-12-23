@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const Lodge = require("../models/Lodges.js")
+const Lodge = require("../models/Lodges.js");
+const User = require("../models/User.js");
 
 // Auth JWT verification
 const authVerify = require("../controllers/Verifier/authVerifier.js");
@@ -22,8 +23,10 @@ const verifyJWT = async (req, res, next) => {
     console.log("accessing token verification");
     const token = req.body.headers["x-access-token"];    
     if (!token) {
-        console.log("Token verification not done!")
-        res.send("We need a token, please give it to us next time");
+        res.status(200).json({
+          success : false,
+          message : "Please provide token!"
+        })
     } else {
         jwt.verify(token, "secretValue", async (err, decoded) => {
             if (err) {
@@ -33,9 +36,12 @@ const verifyJWT = async (req, res, next) => {
                   message : "Token has expired!"
                 })
             } else {
+              console.log(req.params.id);
                 // JWT Payload contains username from the database!
                 const authVerification = await checkUsername(req.params.id);
                 req.userId = decoded.id;
+                console.log(decoded.name);
+                console.log(authVerification);
                 if(decoded.name === authVerification){
                   console.log("Token verification done!");
                   next();
@@ -50,11 +56,55 @@ const verifyJWT = async (req, res, next) => {
         });
     }
   };
+  
+  const verifyJWTClassic = async (req, res, next) => {
+      console.log("accessing token verification");
+      const token = req.body.headers    
+      if (!token) {
+          res.status(200).json({
+            success : false,
+            message : "Please provide token!"
+          })
+      } else {
+          jwt.verify(token, "secretValue", async (err, decoded) => {
+              if (err) {
+                  console.log(err);
+                  res.status(200).json({
+                    success : false,
+                    message : "Token has expired!"
+                  })
+              } else {
+                  // JWT Payload contains username from the database!
+                  const authVerification = await checkUserName(req.params.id);
+                  req.userId = decoded.id;
+                  console.log("decoded_Name" ,decoded.name);
+                  console.log("Name" ,authVerification);
+                  if(decoded.name === authVerification){
+                    console.log("Token verification done!");
+                    next();
+                  } else {
+                    console.log("Invalid auth access!");
+                    res.status(200).json({
+                      success : false,
+                      message : "You are not authorized to access this data!"
+                    })
+                  }
+              }
+          });
+      }
+    };
+  
 
 // Check the username with JWT payload value
 const checkUsername = async (req_userId) => {
   const username = await Lodge.findOne({_id : req_userId}).exec();
   return username.username;
+}
+
+// Check username for classic!
+const checkUserName = async (req_userId) => {
+  const username = await User.findOne({room : req_userId}).exec();
+  return username.phonenumber;
 }
 
 // All GET Methods
@@ -122,7 +172,7 @@ router.post("/:id/roomone", roomController.roomOne);
 
 router.post("/:id/dishbyroom", roomController.dishByRoom);
 
-router.post("/:id/roombyid", roomController.roomById);
+router.post("/:id/roombyid", verifyJWTClassic, roomController.roomById);
 
 router.post("/:id/roomupdater", roomController.roomsUpdater);
 

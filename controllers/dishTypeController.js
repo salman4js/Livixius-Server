@@ -60,6 +60,7 @@ const checkDish = async (lodgeID, dishname) => {
 }
 
 const allDishType = (req,res,next) => {
+  console.log("Dishtype" ,req.params.id)
   DishType.find({lodge : req.params.id})
   .then(data => {
     console.log(data);
