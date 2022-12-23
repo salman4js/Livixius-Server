@@ -191,6 +191,32 @@ const dishUserRate = (req,res,next) => {
   })
 }
 
+const calculateDishUserRate = (req,res,next) => {
+  var totalRate = 0;
+  UserDish.find({room : req.body.roomid})
+  .then(async data =>{
+    const totalRate = await calculateFunction(data);
+    res.status(200).json({
+      success : true,
+      message : totalRate
+    })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success : false,
+      message : "Some internal error occured!"
+    })
+  })
+}
+
+const calculateFunction = async (data) => {
+  var totalRate = 0;
+  await data.map((item,key) => {
+    totalRate += Number(item.dishRate) * Number(item.quantity);
+  })
+  return totalRate;
+}
+
 const dishUserRateLength = (req,res,next) => {
   UserDish.find({room : req.params.id})
   .then(data => {
@@ -208,7 +234,8 @@ const dishUserRateLength = (req,res,next) => {
 module.exports = {
   allUserDishes, deleteUserDish, editUserDish, deleteDish,
   deleteRoomDish, dishUserRate,
-  Notifications, sendDelivered, checkDelivered, checkDeliveredRoom, deleteUserNotifications, dishUserRateLength
+  Notifications, sendDelivered, checkDelivered, checkDeliveredRoom, deleteUserNotifications, dishUserRateLength,
+  calculateDishUserRate
 }
 
 // Automation framework setup in eclipse was done, now going through existing regression report and will work

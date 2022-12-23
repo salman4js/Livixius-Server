@@ -186,6 +186,8 @@ router.post("/:id/generatebill", userController.generateBill);
 
 router.post("/:id/dishuserrate", userDishController.dishUserRate);
 
+router.post("/:id/calcdishuserrate", userDishController.calculateDishUserRate);
+
 router.post("/:id/dishuserratelength", userDishController.dishUserRateLength);
 
 router.post("/:id/alldishtype", dishTypeController.allDishType);
