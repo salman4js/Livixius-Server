@@ -146,14 +146,19 @@ const roomOne = async (req, res, next) => {
 }
 
 const roomById = async (req, res, next) => {
+  console.log(req.body.roomid)
   Room.findById({ _id: req.body.roomid })
     .then(data => {
-      console.log(data.roomno);
-      res.send(data.roomno)
+        res.status(200).json({
+          success : true,
+          message : data.roomno
+        })
     })
     .catch(err => {
-      console.log(err)
-      res.send("Error occured, please check the console!")
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
+      })
     })
 }
 
@@ -411,7 +416,7 @@ const addUserRooms = async (req, res, next) => {
       }
       await checkin.save();
       if(req.body.prebook == true){
-        await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook});
+        await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook})
       }
       res.status(200).json({
         success : true,
