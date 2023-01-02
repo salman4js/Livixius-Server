@@ -26,6 +26,14 @@ const lodgeSchema = new mongoose.Schema({
     dishtype : [{
       type : mongoose.Schema.Types.ObjectId,
       ref : "DishType"
+    }],
+    tMode : [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "tMode"
+    }],
+    tVehicle : [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "tVehicle"
     }]
 })
 
