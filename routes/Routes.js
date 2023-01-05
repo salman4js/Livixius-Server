@@ -262,4 +262,8 @@ router.post("/:id/add_tvehicle", tVehicleController.create_transport);
 
 router.get("/:id/getAllVehicle", tVehicleController.getAllVehicle);
 
+router.put("/:id/ontoggle", tVehicleController.onToggle);
+
+router.post("/:id/deleteentry", tVehicleController.deleteEntry);
+
 module.exports = router;
