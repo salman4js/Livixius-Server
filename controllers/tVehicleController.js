@@ -57,6 +57,23 @@ const create_transport = async (req,res,next) => {
   }
 }
 
+const deleteEntry = (req,res,next) => {
+  T_Vehicle.findByIdAndDelete({_id : req.body.id})
+    .then(data => {
+      res.status(200).json({
+        success : true,
+        message : "Entry deleted successfully!"
+      })
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
+      })
+    })
+}
+
 const getAllVehicle = (req,res,next) => {
   T_Vehicle.find({lodge : req.params.id})
     .then(data => {
@@ -73,6 +90,28 @@ const getAllVehicle = (req,res,next) => {
     })
 }
 
+const onToggle = async (req,res,next) => {
+  // Getting the duty of the selected transport mode
+  const value = await T_Vehicle.findOne({_id : req.body.id});
+  // Setting it to the opposite value!
+  T_Vehicle.findByIdAndUpdate(req.body.id, {
+    duty : !value.duty
+  })
+  .then(data => {
+    res.status(200).json({
+      success : true,
+      message : `Vehicle state changed`,
+      response : data
+    })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success : false,
+      message : "Some internal error occured!"
+    })
+  })
+}
+
 module.exports = {
-  create_transport, getAllVehicle
+  create_transport, getAllVehicle, onToggle, deleteEntry
 }
