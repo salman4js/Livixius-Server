@@ -57,21 +57,34 @@ const create_transport = async (req,res,next) => {
   }
 }
 
-const deleteEntry = (req,res,next) => {
-  T_Vehicle.findByIdAndDelete({_id : req.body.id})
-    .then(data => {
-      res.status(200).json({
-        success : true,
-        message : "Entry deleted successfully!"
+const deleteEntry = async (req,res,next) => {
+  if(await checkDuty(req.body.id) === false){
+    T_Vehicle.findByIdAndDelete({_id : req.body.id})
+      .then(data => {
+        res.status(200).json({
+          success : true,
+          message : "Entry deleted successfully!"
+        })
       })
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(200).json({
-        success : false,
-        message : "Some internal error occured!"
+      .catch(err => {
+        console.log(err);
+        res.status(200).json({
+          success : false,
+          message : "Some internal error occured!"
+        })
       })
+  } else {
+    res.status(200).json({
+      success : false,
+      message : "Cannot delete already booked vehicle!"
     })
+  }
+}
+
+const checkDuty = async (id) => {
+  const value = await T_Vehicle.findOne({_id : id});
+  console.log(value.duty);
+  return value.duty;
 }
 
 const getAllVehicle = (req,res,next) => {
