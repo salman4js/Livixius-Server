@@ -1,7 +1,7 @@
 const Lodge = require("../models/Lodges");
 const jwt = require("jsonwebtoken");
 
-const addLodge = (req,res,next) => {
+const addLodge = async (req,res,next) => {
     const lodge = new Lodge({
         username : req.body.username,
         password : req.body.password,
@@ -9,14 +9,18 @@ const addLodge = (req,res,next) => {
         area : req.body.area,
         branch : req.body.branch
     })
-    lodge.save()
+    await lodge.save()
     .then(lodge => {
-        console.log("Lodge added successfully")
-        res.send("Lodge added succssfully")
+        res.status(200).json({
+          success : true,
+          message : "Lodge has been added!"
+        })
     })
     .catch(err => {
-        console.log(err)
-        res.send("Check in the console")
+        res.status(200).json({
+          succss : false,
+          message : err
+        })
     })
 }
 
