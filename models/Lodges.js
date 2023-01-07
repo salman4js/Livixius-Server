@@ -34,6 +34,10 @@ const lodgeSchema = new mongoose.Schema({
     tVehicle : [{
       type : mongoose.Schema.Types.ObjectId,
       ref : "tVehicle"
+    }],
+    config : [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Config"
     }]
 })
 
