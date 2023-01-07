@@ -19,6 +19,7 @@ const qrcodegenerator = require("../controllers/qrcode_generator.js");
 const dishTypeController = require("../controllers/dishTypeController.js");
 const tModeController = require("../controllers/tModeController.js");
 const tVehicleController = require("../controllers/tVehicleController.js");
+const clientController = require("../controllers/Config/clientController.js");
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -265,5 +266,15 @@ router.get("/:id/getAllVehicle", tVehicleController.getAllVehicle);
 router.put("/:id/ontoggle", tVehicleController.onToggle);
 
 router.post("/:id/deleteentry", tVehicleController.deleteEntry);
+
+// Config
+
+router.get("/:id/config-checking", clientController.checkConfig);
+
+router.get("/:id/config-get", clientController.showConfig);
+
+router.post("/:id/create-config", clientController.create_config);
+
+router.post("/:id/delete-config", clientController.deleteConfig);
 
 module.exports = router;
