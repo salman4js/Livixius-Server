@@ -179,7 +179,7 @@ router.post("/:id/roombyid", verifyJWTClassic, roomController.roomById);
 
 router.post("/:id/roomupdater", roomController.roomsUpdater);
 
-router.post("/deleteroom", roomController.deleteRoom);
+router.post("/:id/deleteroom", roomController.deleteRoom);
 
 router.post("/:id/adddishroom", roomController.addDishRooms);
 

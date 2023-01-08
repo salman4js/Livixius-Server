@@ -1,5 +1,6 @@
 const Lodge = require("../models/Lodges.js");
 const RoomType = require("../models/RoomType.js");
+const Room = require("../models/Rooms.js");
 
 const createSuite = async (req,res,next) => {
   
@@ -74,7 +75,7 @@ const checkSuite = async (lodgeId, suitetype) => {
   return value;
 }
 
-const editTypeData = (req,res,next) => {
+const editTypeData = async (req,res,next) => {
   if(req.body.price == ""){
     res.status(200).json({
       success : false,
@@ -91,7 +92,7 @@ const editTypeData = (req,res,next) => {
       message : "Check your input"
     })
   } else {
-    RoomType.findOneAndUpdate({lodge : req.body.lodgeid, suiteType : req.body.suitetype},{
+    await RoomType.findOneAndUpdate({lodge : req.body.lodgeid, suiteType : req.body.suitetype},{
       suiteType : req.body.suitetype,
       price : req.body.price
     })
@@ -107,8 +108,12 @@ const editTypeData = (req,res,next) => {
           message : "Some Internal Error Occured!"
         })
     })
+    try{
+      await Room.updateMany({lodge: req.body.lodgeid, isOccupied : false, suiteName : req.body.suitetype}, {$set : {price : req.body.price}})
+    } catch(err){
+      console.error("Some internal error occured when updating the unreserved rooms!");
+    }
   }
-  
 }
 
 const allRoomType = (req,res,next) => {

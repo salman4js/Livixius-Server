@@ -250,7 +250,7 @@ const checkOccupiedData = async (roomId) => {
   return value.isOccupied;
 };
 
-const deleteRoom = (req, res, next) => {
+const deleteRoom = async (req, res, next) => {
   Room.findByIdAndDelete(req.body.roomId)
     .then(data => {
       console.log(data)
