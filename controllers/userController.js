@@ -141,6 +141,10 @@ const deleteUser = async (req, res, next) => {
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
         await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, prebooked : req.body.prebook}})
+        const updateRate = await RoomType.findOne({suiteType : req.body.roomtype})
+        //console.log("Room type", updateRate.price);
+        await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
+        // Sending the response back to brew!
         res.status(200).json({
             success : true,
             message : "Customer has been checked out properly!"
@@ -156,12 +160,11 @@ const deleteUser = async (req, res, next) => {
 const generateBill = async (req,res,next) => {
   try{
     const noofstays = req.body.stayeddays
-    
-    await RoomType.findOne({lodge : req.body.lodgeid, suiteType : req.body.roomtype})
+    await Room.findById({lodge : req.body.lodgeid, _id : req.body.roomid})
     .then(data => {
       res.status(200).json({
         success : true,
-        message : (data.price * noofstays).toString()
+        message : +data.price * noofstays
       })
     })
     
@@ -170,7 +173,6 @@ const generateBill = async (req,res,next) => {
       success : false,
       message : "Some internal error has occured"
     })
-    console.log(err);
   }
 }
 
