@@ -5,6 +5,10 @@ const tVehicle = new mongoose.Schema({
   charge : String,
   duty : {type : Boolean, default : false},
   mode : String,
+  tMode : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref: "tMode"
+  },
   lodge : {
     type : mongoose.Schema.Types.ObjectId,
     ref : "Lodges"

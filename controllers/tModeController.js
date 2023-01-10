@@ -69,21 +69,31 @@ const all_t_Mode = (req,res,next) => {
     })
 }
 
-const delete_tMode = (req,res,next) => {
-  T_Mode.findByIdAndDelete(req.body.tMode_id)
-    .then(data => {
-      res.status(200).json({
-        success : true,
-        message : "Transport Mode deleted successfully!"
-      })
+const delete_tMode = async (req,res,next) => {
+  const value = await T_Mode.findById(req.body.tMode_id);
+  console.log(value.tVehicle.length);
+  if(value.tVehicle.length > 0){
+    res.status(200).json({
+      success : false,
+      message : "Vehicle type is in use!"
     })
-    .catch(err => {
-      res.status(200).json({
-        success : false,
-        message : "Some internal error occured!"
+  } else {
+    T_Mode.findByIdAndDelete(req.body.tMode_id)
+      .then(data => {
+        res.status(200).json({
+          success : true,
+          message : "Transport Mode deleted successfully!"
+        })
       })
-    })
+      .catch(err => {
+        res.status(200).json({
+          success : false,
+          message : "Some internal error occured!"
+        })
+      })  
+  }
 }
+
 
 module.exports = {
   create_tMode, all_t_Mode, delete_tMode
