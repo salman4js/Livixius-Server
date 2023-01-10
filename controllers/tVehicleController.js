@@ -1,5 +1,6 @@
 const Lodge = require("../models/Lodges.js");
 const T_Vehicle = require("../models/Tvehicle.js");
+const T_Mode = require("../models/Tmode.js");
 
 const create_transport = async (req,res,next) => {
   if(req.body.vehicle === ""){
@@ -30,7 +31,7 @@ const create_transport = async (req,res,next) => {
   } else if(req.body.mode === undefined){
     res.status(200).json({
       success : false,
-      message : "Pleas choose the transport mode!"
+      message : "Please choose the transport mode!"
     })
   } else {
     try{
@@ -41,6 +42,8 @@ const create_transport = async (req,res,next) => {
         lodge : req.params.id
       })
       if(tVehicle){
+        const mode_id = await T_Mode.findOne({tMode : tVehicle.mode});
+        await T_Mode.findByIdAndUpdate({_id : mode_id.id}, {$push : {tVehicle : tVehicle._id}});
         await Lodge.findByIdAndUpdate({_id : tVehicle.lodge}, {$push : {tVehicle : tVehicle._id}});
       }
       await tVehicle.save();
@@ -49,6 +52,7 @@ const create_transport = async (req,res,next) => {
         message : "Vehicle has been saved successfully!"
       })
     } catch(err) {
+      console.log(err);
       res.status(200).json({
         success :  false,
         message : "Some internal error occured!"
