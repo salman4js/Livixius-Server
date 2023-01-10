@@ -15,6 +15,7 @@ const preBookUserRooms = async (req, res,next) => {
       prebookAadharCard : req.body.prebookaadhar,
       prebookDateofCheckin : req.body.prebookdateofcheckin,
       prebookDateofCheckout : req.body.prebookdateofcheckout,
+      prebookprice : req.body.prebookprice,
       room : req.body.roomid,
       lodge : req.params.id,
       roomno : roomno
