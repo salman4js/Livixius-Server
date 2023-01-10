@@ -349,8 +349,6 @@ const addDishRooms = async (req, res, next) => {
 }
 
 const addUserRooms = async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.body.customerphonenumber)
   if(req.body.aadhar ==  undefined || req.body.aadhar == ""){
     res.status(200).json({
       success : false,
@@ -388,6 +386,7 @@ const addUserRooms = async (req, res, next) => {
         room : req.body.roomid,
         dateofcheckin : req.body.checkin,
         dateofcheckout : req.body.checkout,
+        prebookroomprice : req.body.prebookprice,
         lodge : req.params.id
       })
       const userdatabase = new UserDb({
@@ -403,7 +402,6 @@ const addUserRooms = async (req, res, next) => {
         userid : checkin._id,
         lodge : req.params.id
       })
-      //console.log(checkin.dateofcheckout);
       if(userdatabase){
         userdatabase.save()
       }
@@ -415,8 +413,9 @@ const addUserRooms = async (req, res, next) => {
         }
       }
       await checkin.save();
+      // Setting the prebook user room price as the price when they booked the room!
       if(req.body.prebook == true){
-        await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook})
+        await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, price : checkin.prebookroomprice})
       }
       res.status(200).json({
         success : true,
