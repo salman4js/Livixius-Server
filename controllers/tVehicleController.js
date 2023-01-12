@@ -1,6 +1,8 @@
 const Lodge = require("../models/Lodges.js");
+const Room = require("../models/Rooms.js");
 const T_Vehicle = require("../models/Tvehicle.js");
 const T_Mode = require("../models/Tmode.js");
+const T_User = require("../models/UserTransport.js");
 
 const create_transport = async (req,res,next) => {
   if(req.body.vehicle === ""){
@@ -127,6 +129,31 @@ const onToggle = async (req,res,next) => {
       message : "Some internal error occured!"
     })
   })
+}
+
+const orderTransport = async(req,res,next) => {
+  try{
+    const tUser = new T_User({
+      roomno : req.body.roomno,
+      name : req.body.name,
+      charge : req.body.charge,
+      room : req.body.roomid,
+      lodge : req.params.id
+    })
+    if(tUser){
+      await Room.findByIdAndUpdate({_id : tUser.room}, {$set : {transport : true}});
+    }
+    await tUser.save();
+    res.status(200).json({
+      success : true,
+      message : "Getting the driver ready, please wait"
+    })
+  } catch(err){
+    res.status(200).json({
+      success : false,
+      message : "Some internal error occured!"
+    })
+  }
 }
 
 module.exports = {
