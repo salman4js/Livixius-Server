@@ -375,58 +375,67 @@ const addUserRooms = async (req, res, next) => {
       message : "Check Customer Data, All Mandatory has to be filled! - Check-In Date."
     })
   } else {
-    try{
-      const checkin = new User({
-        username: req.body.customername,
-        phonenumber : req.body.phonenumber,
-        secondphonenumber : req.body.secondphonenumber,
-        adults : req.body.adults,
-        childrens : req.body.childrens,
-        aadharcard : req.body.aadhar,
-        room : req.body.roomid,
-        dateofcheckin : req.body.checkin,
-        dateofcheckout : req.body.checkout,
-        prebookroomprice : req.body.prebookprice,
-        lodge : req.params.id
-      })
-      const userdatabase = new UserDb({
-        username: req.body.customername,
-        phonenumber : req.body.phonenumber,
-        secondphonenumber : req.body.secondphonenumber,
-        adults : req.body.adults,
-        childrens : req.body.childrens,
-        aadharcard : req.body.aadhar,
-        room : req.body.roomid,
-        dateofcheckin : req.body.checkin,
-        roomno : req.body.roomno,
-        userid : checkin._id,
-        lodge : req.params.id
-      })
-      if(userdatabase){
-        userdatabase.save()
-      }
-      if(checkin){
-        if(checkin.dateofcheckout != undefined){
-          await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", $push : {user : checkin._id}} )
-        } else {
-          await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", preValid : false, $push : {user : checkin._id}} )
-        }
-      }
-      await checkin.save();
-      // Setting the prebook user room price as the price when they booked the room!
-      if(req.body.prebook == true){
-        await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, price : checkin.prebookroomprice})
-      }
-      res.status(200).json({
-        success : true,
-        message : "Customer has been checked in successfully!"
-      })
-    } catch(err){
-      console.log(err);
+    // Check if the room is already booked or not.
+    const checkValue = await Room.findById({_id: req.body.roomid});
+    if(checkvalue.isOccupied == "true"){
       res.status(200).json({
         success : false,
-        message : "Some internal error occured"
+        message : "This room is already occupied!"
       })
+    } else {
+      try{
+        const checkin = new User({
+          username: req.body.customername,
+          phonenumber : req.body.phonenumber,
+          secondphonenumber : req.body.secondphonenumber,
+          adults : req.body.adults,
+          childrens : req.body.childrens,
+          aadharcard : req.body.aadhar,
+          room : req.body.roomid,
+          dateofcheckin : req.body.checkin,
+          dateofcheckout : req.body.checkout,
+          prebookroomprice : req.body.prebookprice,
+          lodge : req.params.id
+        })
+        const userdatabase = new UserDb({
+          username: req.body.customername,
+          phonenumber : req.body.phonenumber,
+          secondphonenumber : req.body.secondphonenumber,
+          adults : req.body.adults,
+          childrens : req.body.childrens,
+          aadharcard : req.body.aadhar,
+          room : req.body.roomid,
+          dateofcheckin : req.body.checkin,
+          roomno : req.body.roomno,
+          userid : checkin._id,
+          lodge : req.params.id
+        })
+        if(userdatabase){
+          userdatabase.save()
+        }
+        if(checkin){
+          if(checkin.dateofcheckout != undefined){
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", $push : {user : checkin._id}} )
+          } else {
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", preValid : false, $push : {user : checkin._id}} )
+          }
+        }
+        await checkin.save();
+        // Setting the prebook user room price as the price when they booked the room!
+        if(req.body.prebook == true){
+          await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, price : checkin.prebookroomprice})
+        }
+        res.status(200).json({
+          success : true,
+          message : "Customer has been checked in successfully!"
+        })
+      } catch(err){
+        console.log(err);
+        res.status(200).json({
+          success : false,
+          message : "Some internal error occured"
+        })
+      }
     }
   }
 }
