@@ -377,7 +377,7 @@ const addUserRooms = async (req, res, next) => {
   } else {
     // Check if the room is already booked or not.
     const checkValue = await Room.findById({_id: req.body.roomid});
-    if(checkvalue.isOccupied == "true"){
+    if(checkValue.isOccupied == "true"){
       res.status(200).json({
         success : false,
         message : "This room is already occupied!"
