@@ -161,7 +161,6 @@ const generateBill = async (req,res,next) => {
   try{
     const noofstays = req.body.stayeddays
     const test = await Room.findById({_id: req.body.roomid})
-    
     await Room.findById({lodge : req.body.lodgeid, _id : req.body.roomid})
     .then(data => {
       res.status(200).json({
