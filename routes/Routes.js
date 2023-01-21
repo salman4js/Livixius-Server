@@ -187,6 +187,8 @@ router.post("/:id/getroomid", roomController.getRoomId);
 
 router.post("/:id/adduserrooms", roomController.addUserRooms);
 
+// Prebook routes!
+
 router.post("/:id/addprebookuserrooms", prebookController.preBookUserRooms);
 
 router.post("/:id/showallprebookuser", prebookController.ShowAllPrebookedUser);
@@ -194,6 +196,8 @@ router.post("/:id/showallprebookuser", prebookController.ShowAllPrebookedUser);
 router.post("/:id/deleteprebookuserrooms", prebookController.deletePrebookUserRooms);
 
 router.post("/:id/showallprebookedrooms", prebookController.ShowAllPrebookedRooms);
+
+router.get('/:id/excludedates', prebookController.excludeDates);
 
 router.post("/updateroomdata", roomController.updateRoomData);
 

@@ -1,9 +1,10 @@
 const Prebook = require("../models/PreBookUser.js");
 const Room = require("../models/Rooms.js");
+// Import brew-date package
+const brewDate = require('brew-date');
 
 const preBookUserRooms = async (req, res,next) => {
   const roomno = await roomById(req.body.roomid);
-  console.log("Roomno",roomno);
   try{
     const preBooking = new Prebook({
       prebookAdvance : req.body.prebookadvance,
@@ -43,10 +44,26 @@ const roomById = async (roomid) => {
   return value.roomno;
 }
 
+// Exclude dates controller!
+const excludeDates = async (req,res,next) => {
+  const dates = [];
+  const datesBetween = await Prebook.find({room: req.params.id});
+  const dateofCheckin = datesBetween.map(obj => obj.prebookDateofCheckin);
+  const dateofCheckout = datesBetween.map(obj => obj.prebookDateofCheckout);
+  console.log(dateofCheckin);
+  console.log(dateofCheckout);
+  for(i=0; i <= dateofCheckin.length -1; i++){
+    dates.push(brewDate.getBetween(dateofCheckin[i], dateofCheckout[i]));
+  }
+  res.status(200).json({
+    success : true,
+    message : dates
+  })
+}
+
 const ShowAllPrebookedUser = (req,res,next) => {
   Prebook.find({room : req.params.id})
   .then(data => {
-    console.log(data)
     res.status(200).json({
       success : true,
       message : data
@@ -98,5 +115,5 @@ const deletePrebookUserRooms = (req,res,next) => {
 
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
-  deletePrebookUserRooms
+  deletePrebookUserRooms, excludeDates
 }
