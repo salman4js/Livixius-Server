@@ -26,7 +26,7 @@ const dishType = async (req,res,next) => {
     })
   } else {
     try{
-      if(await checkDish(req.params.id, req.body.dishtype) === null){
+      if(await checkDish(req.params.id, req.body.dishtype.toUpperCase()) === null){
         const dishType = new DishType({
           dishType : req.body.dishtype.toUpperCase(),
           lodge : req.params.id

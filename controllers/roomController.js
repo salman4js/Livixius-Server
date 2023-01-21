@@ -14,6 +14,8 @@ const User = require("../models/User.js");
 
 const UserDb = require("../models/UserDb.js");
 
+const RoomType = require("../models/RoomType.js");
+
 const createRoom = async (req, res, next) => {
   if (req.body.roomno == "") {
     res.status(200).json({
@@ -215,10 +217,13 @@ const roomsUpdater = async (req, res, next) => {
           message : "Room already occupied, You can't modify occupied room's data!"
         })
       } else {
+        // Update room price everytime the suite type gets updated!
+        const roomPrice = await RoomType.findOne({lodge : req.params.id, suiteType: req.body.suitename});
         Room.findByIdAndUpdate(req.body.roomId, {
           roomno: req.body.roomno,
           suiteName: req.body.suitename,
-          bedCount: req.body.bedcount
+          bedCount: req.body.bedcount,
+          price : roomPrice.price
         })
           .then(data => {
             console.log(data)
@@ -423,7 +428,7 @@ const addUserRooms = async (req, res, next) => {
         await checkin.save();
         // Setting the prebook user room price as the price when they booked the room!
         if(req.body.prebook == true){
-          await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, price : checkin.prebookroomprice})
+          await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice})
         }
         res.status(200).json({
           success : true,
