@@ -1,5 +1,6 @@
 const Prebook = require("../models/PreBookUser.js");
 const Room = require("../models/Rooms.js");
+const User = require('../models/User.js');
 // Import brew-date package
 const brewDate = require('brew-date');
 
@@ -50,15 +51,39 @@ const excludeDates = async (req,res,next) => {
   const datesBetween = await Prebook.find({room: req.params.id});
   const dateofCheckin = datesBetween.map(obj => obj.prebookDateofCheckin);
   const dateofCheckout = datesBetween.map(obj => obj.prebookDateofCheckout);
-  console.log(dateofCheckin);
-  console.log(dateofCheckout);
+  
   for(i=0; i <= dateofCheckin.length -1; i++){
     dates.push(brewDate.getBetween(dateofCheckin[i], dateofCheckout[i]));
   }
+  console.log(dates);
   res.status(200).json({
     success : true,
     message : dates
   })
+}
+
+// Excludes date for checkin user dates!
+const excludeDateCheckin = async (req,res,next) => {
+  const dates = [];
+  try{
+    const datesBetween = await User.find({room : req.params.id});
+    const checkin = datesBetween.map(obj => obj.dateofcheckin);
+    const checkout = datesBetween.map(obj => obj.dateofcheckout);
+    //await dates.push(brewDate.getBetween(checkin[0], checkout[0]));
+    for(i=0; i <= checkin.length -1; i++){
+      dates.push(brewDate.getBetween(checkin[i], checkout[i]));
+    }
+    console.log(dates);
+    res.status(200).json({
+      success : true,
+      message : dates
+    })
+  } catch(err){
+    res.status(200).json({
+      success : false,
+      message : "Some internal error occured"
+    })
+  }
 }
 
 const ShowAllPrebookedUser = (req,res,next) => {
@@ -115,5 +140,5 @@ const deletePrebookUserRooms = (req,res,next) => {
 
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
-  deletePrebookUserRooms, excludeDates
+  deletePrebookUserRooms, excludeDates, excludeDateCheckin
 }

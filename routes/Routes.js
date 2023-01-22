@@ -255,6 +255,10 @@ router.post("/:id/createdishtype", dishTypeController.dishType);
 
 router.post("/:id/generator",qrcodegenerator.generator);
 
+// Exclude dates
+
+router.get("/:id/excludeDatescheckin", prebookController.excludeDateCheckin);
+
 // Transport Mode
 
 router.post("/:id/add-tMode", tModeController.create_tMode);
