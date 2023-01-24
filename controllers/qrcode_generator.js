@@ -14,7 +14,8 @@ const options = {
 
 const generator = (req,res,next) => {
   const option = JSON.stringify(`https://brew-classic.vercel.app/${req.body.room_spec_id}/static`);
-  qrcode.toDataURL(option, {type : 'terminal'},
+  const optionWithoutQuotes = option.replace(/['"]/g, '');
+  qrcode.toDataURL(optionWithoutQuotes, {type : 'terminal'},
     function(err, qrcode){
       if(err){
         console.log(err);
