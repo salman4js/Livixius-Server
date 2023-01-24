@@ -140,7 +140,7 @@ const deleteUser = async (req, res, next) => {
         await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", preBooked : false, preValid : true } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
-        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, prebooked : req.body.prebook}})
+        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, prebooked : req.body.prebook, bill: req.body.amount}})
         const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
         //console.log("Room type", updateRate.price);
         await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
