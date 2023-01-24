@@ -25,9 +25,8 @@ const generator = async (req,res,next) => {
   // With image qr code
   var image_qr = await canvas_generator();
   const option = JSON.stringify(`https://brew-classic.vercel.app/${req.body.room_spec_id}/static`);
-  const withoutQuotes = option.replace(/['"]/g, '');
-  // Non-Image QR code
-  qrcode.toDataURL(withoutQuotes, {type : 'terminal'},
+  const optionWithoutQuotes = option.replace(/['"]/g, '');
+  qrcode.toDataURL(optionWithoutQuotes, {type : 'terminal'},
     function(err, qrcode){
       if(err){
         console.log(err);
