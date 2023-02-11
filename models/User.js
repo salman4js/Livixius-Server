@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
     dateofcheckin : String,
     dateofcheckout : String,
     prebookroomprice : String,
+    discount:  String,
+    advance: String,
     room : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"

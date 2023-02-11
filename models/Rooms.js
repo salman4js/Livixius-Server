@@ -10,6 +10,10 @@ const roomSchema = new mongoose.Schema({
     price : String,
     advancePrebookPrice: String,
     transport : {type :Boolean, default: false},
+    discount: {type: Boolean, default: false},
+    discountPrice : String,
+    advance: {type:  Boolean, default: false},
+    advancePrice: String,
     dishes : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "UserDishes"

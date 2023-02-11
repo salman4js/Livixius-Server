@@ -400,7 +400,9 @@ const addUserRooms = async (req, res, next) => {
           dateofcheckin : req.body.checkin,
           dateofcheckout : req.body.checkout,
           prebookroomprice : req.body.prebookprice,
-          lodge : req.params.id
+          lodge : req.params.id,
+          discount: req.body.discount,
+          advance : req.body.advance
         })
         const userdatabase = new UserDb({
           username: req.body.customername,
@@ -413,7 +415,9 @@ const addUserRooms = async (req, res, next) => {
           dateofcheckin : req.body.checkin,
           roomno : req.body.roomno,
           userid : checkin._id,
-          lodge : req.params.id
+          lodge : req.params.id,
+          discount: req.body.discount,
+          advance: req.body.advance
         })
         if(userdatabase){
           userdatabase.save()
@@ -423,6 +427,16 @@ const addUserRooms = async (req, res, next) => {
             await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", $push : {user : checkin._id}} )
           } else {
             await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", preValid : false, $push : {user : checkin._id}} )
+          }
+          
+          // Check the response for the discount!
+          if(checkin.discount !== undefined && checkin.discount !== ""){
+            await Room.findByIdAndUpdate({_id: checkin.room}, {isOccupied: "true", discount: true, discountPrice: checkin.discount, $push: {user: checkin._id}})
+          }
+          
+          // Check the response for the advance!
+          if(checkin.advance !== undefined && checkin.advance !== ""){
+            await Room.findByIdAndUpdate({_id: checkin.room}, {isOccupied: "true", advance: true, advancePrice: checkin.advance, $push:{user: checkin._id}})
           }
         }
         await checkin.save();
