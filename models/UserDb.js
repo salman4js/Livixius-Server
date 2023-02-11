@@ -15,6 +15,7 @@ const userdbSchema = new mongoose.Schema({
     roomno : String,
     userid : String,
     bill : String,
+    dishbill: String,
     paid : Boolean,
     discount: String,
     advance: String,

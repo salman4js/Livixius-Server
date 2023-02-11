@@ -417,7 +417,7 @@ const addUserRooms = async (req, res, next) => {
           userid : checkin._id,
           lodge : req.params.id,
           discount: req.body.discount,
-          advance: req.body.advance
+          advance : req.body.advance
         })
         if(userdatabase){
           userdatabase.save()
@@ -430,20 +430,32 @@ const addUserRooms = async (req, res, next) => {
           }
           
           // Check the response for the discount!
-          if(checkin.discount !== undefined && checkin.discount !== ""){
-            await Room.findByIdAndUpdate({_id: checkin.room}, {isOccupied: "true", discount: true, discountPrice: checkin.discount, $push: {user: checkin._id}})
+          if(req.body.discount !== undefined && req.body.discount !== ""){
+            await Room.findByIdAndUpdate({_id: checkin.room}, {isOccupied: "true", discount: true, discountPrice: req.body.discount, $push: {user: checkin._id}})
           }
           
           // Check the response for the advance!
-          if(checkin.advance !== undefined && checkin.advance !== ""){
-            await Room.findByIdAndUpdate({_id: checkin.room}, {isOccupied: "true", advance: true, advancePrice: checkin.advance, $push:{user: checkin._id}})
+          if(req.body.advance !== undefined && req.body.advance !== ""){
+            await Room.findByIdAndUpdate({_id: checkin.room}, {isOccupied: "true", advance: true, advancePrice: req.body.advance, $push:{user: checkin._id}})
           }
         }
-        await checkin.save();
+        
         // Setting the prebook user room price as the price when they booked the room!
         if(req.body.prebook === true){
-          await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice})
+          console.log("Prebook", req.body.prebook)
+          if(req.body.advanceDiscount !== undefined && req.body.advanceDiscount !== ""){
+            console.log("Program coming to the if condition");
+            console.log(req.body.advancePrebookPrice)
+            await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, 
+              price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice, advanceDiscountPrice: req.body.advanceDiscount, discount: true})
+          } else {
+            console.log("Program coming to the else condition")
+            await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, 
+              price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice})
+          }
         }
+        
+        await checkin.save();
         res.status(200).json({
           success : true,
           message : "Customer has been checked in successfully!"

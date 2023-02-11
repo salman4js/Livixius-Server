@@ -9,6 +9,7 @@ const preBookUserRooms = async (req, res,next) => {
   try{
     const preBooking = new Prebook({
       prebookAdvance : req.body.prebookadvance,
+      prebookdiscount: req.body.prebookdiscount,
       prebookUsername : req.body.prebookusername,
       prebookPhoneNumber : req.body.prebookphonenumber,
       prebookSecondNumber : req.body.prebooksecondnumber,

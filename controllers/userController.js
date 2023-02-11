@@ -139,10 +139,10 @@ const deleteUser = async (req, res, next) => {
         const room = req.body.roomid
         // Reverting the changes caused by the discount and advance in the schema!
         await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", 
-        preBooked : false, preValid : true, advance: false, discount: false, discountPrice: String, advancePrice: String} })
+        preBooked : false, preValid : true, advance: false, discount: false, discountPrice: String, advancePrice: String, advanceDiscountPrice: String, advancePrebookPrice: String } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
-        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, prebooked : req.body.prebook, bill: req.body.amount}})
+        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount}})
         const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
         //console.log("Room type", updateRate.price);
         await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
@@ -174,6 +174,7 @@ const generateBill = async (req,res,next) => {
         advanceCheckin : +test.advancePrice,
         isAdvanced: test.advance,
         discountPrice : +discountPrice,
+        advanceDiscountPrice: +test.advanceDiscountPrice,
         discount: test.discount
       })
     })
