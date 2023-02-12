@@ -82,13 +82,15 @@ const checkDuplicate = async (lodgeid, roomno) => {
   return value;
 }
 
-const allRooms = (req, res, next) => {
+const allRooms = async (req, res, next) => {
+  const availabilityCount = await countAvailability(req.params.id, req.params.state);
   Room.find({ lodge: req.params.id })
     .then(data => {
       console.log(data)
       res.status(200).json({
         success : true,
-        message : data
+        message : data,
+        countAvailability: availabilityCount
       })
     })
     .catch(err => {
@@ -98,6 +100,11 @@ const allRooms = (req, res, next) => {
         message : "Some internal error has occured!"
       })
     })
+}
+
+const countAvailability = async(lodgeid, state) => {
+  const result = await Room.find({lodge: lodgeid, isOccupied: state});
+  return result.length;
 }
 
 const availability = (req, res, next) => {
