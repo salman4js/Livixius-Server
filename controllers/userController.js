@@ -60,6 +60,22 @@ const userdb = (req,res,next) => {
     })
 }
 
+const userdbRoom = (req,res,next) => {
+  UserDb.find({lodge : req.params.id, room: req.body.roomid})
+  .then(data => {
+      res.status(200).json({
+          success : true,
+          message : data
+      })
+  })
+  .catch(err => {
+      res.status(200).json({
+          success : false,
+          message : "Some internal error occured!"
+      })
+  })
+}
+
 const checkUser = (req, res, next) => {
     phonenumber = req.body.phonenumber,
     secphonenumber = req.body.secondphonenumber,
@@ -188,5 +204,5 @@ const generateBill = async (req,res,next) => {
 }
 
 module.exports = {
-    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2
+    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom
 }
