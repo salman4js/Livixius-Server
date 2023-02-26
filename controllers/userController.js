@@ -49,7 +49,7 @@ const userdb = (req,res,next) => {
     .then(data => {
         res.status(200).json({
             success : true,
-            message : data
+            message : data,
         })
     })
     .catch(err => {
@@ -58,6 +58,36 @@ const userdb = (req,res,next) => {
             message : "Some internal error occured!"
         })
     })
+}
+
+
+const totalDateCalculator = (req,res,next) => {
+  UserDb.find({lodge: req.params.id, date: req.body.date})
+    .then(async data => {
+      const totalRate = await totalAmount(data, req.body.date)
+      res.status(200).json({
+        success: true,
+        message: data,
+        totalAmount: totalRate
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured!"
+      })
+    })
+}
+
+// Generating total revenue for the brew-mobile!
+const totalAmount = async (data, date) => {
+  var totalRate = 0;
+  await data.map((item,key) => {
+    if(item.bill !== undefined && item.dateofcheckout === date){
+      totalRate += Number(item.bill);
+    } 
+  });
+  return totalRate;
 }
 
 const userdbRoom = (req,res,next) => {
@@ -204,5 +234,5 @@ const generateBill = async (req,res,next) => {
 }
 
 module.exports = {
-    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom
+    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator
 }
