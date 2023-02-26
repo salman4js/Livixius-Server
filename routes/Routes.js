@@ -227,7 +227,7 @@ router.post("/:id/deleteroomdish", userDishController.deleteRoomDish);
 
 router.post("/:id/userdb", verifyJWT, userController.userdb);
 
-router.post("/:iduserdbroom", userController.userdbRoom);
+router.post("/:id/userdbroom", userController.userdbRoom);
 
 router.post("/:id/userdb1", userController.userdb);
 
