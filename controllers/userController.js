@@ -5,6 +5,9 @@ const UserDb = require("../models/UserDb.js");
 const RoomType = require("../models/RoomType.js");
 const jwt = require("jsonwebtoken");
 
+// Importing brew date package to do the date handling!
+const bwt = require('brew-date');
+
 const addUser = (req, res, next) => {
     const user = new User({
         username: req.body.username,
@@ -62,9 +65,10 @@ const userdb = (req,res,next) => {
 
 
 const totalDateCalculator = (req,res,next) => {
-  UserDb.find({lodge: req.params.id, date: req.body.date})
+  console.log(req.body.date1, req.body.date2);
+  UserDb.find({lodge: req.params.id, date1: req.body.date1, date2: req.body.date2})
     .then(async data => {
-      const totalRate = await totalAmount(data, req.body.date)
+      const totalRate = await totalAmount(data, req.body.date1, req.body.date2)
       res.status(200).json({
         success: true,
         message: data,
@@ -80,10 +84,11 @@ const totalDateCalculator = (req,res,next) => {
 }
 
 // Generating total revenue for the brew-mobile!
-const totalAmount = async (data, date) => {
+const totalAmount = async (data, date1, date2) => {
+  const datesBetween = bwt.getBetween(date1, date2);
   var totalRate = 0;
   await data.map((item,key) => {
-    if(item.bill !== undefined && item.dateofcheckout === date){
+    if(item.bill !== undefined && datesBetween.includes(item.dateofcheckout)){
       totalRate += Number(item.bill);
     } 
   });
