@@ -65,14 +65,17 @@ const userdb = (req,res,next) => {
 
 
 const totalDateCalculator = (req,res,next) => {
-  console.log(req.body.date1, req.body.date2);
-  UserDb.find({lodge: req.params.id, date1: req.body.date1, date2: req.body.date2})
+  const datesBetween = bwt.getBetween(req.body.date1, req.body.date2);
+  UserDb.find({lodge: req.params.id})
     .then(async data => {
-      const totalRate = await totalAmount(data, req.body.date1, req.body.date2)
+      const filteredData = data.filter((item) => {
+        return datesBetween.includes(item.dateofcheckout);
+      })
+      const totalRate = await totalAmount(data, datesBetween);
       res.status(200).json({
         success: true,
-        message: data,
-        totalAmount: totalRate
+        message: filteredData,
+        totalAmount: totalRate,
       })
     })
     .catch(err => {
@@ -84,8 +87,7 @@ const totalDateCalculator = (req,res,next) => {
 }
 
 // Generating total revenue for the brew-mobile!
-const totalAmount = async (data, date1, date2) => {
-  const datesBetween = bwt.getBetween(date1, date2);
+const totalAmount = async (data, datesBetween) => {
   var totalRate = 0;
   await data.map((item,key) => {
     if(item.bill !== undefined && datesBetween.includes(item.dateofcheckout)){
