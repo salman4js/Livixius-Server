@@ -19,6 +19,9 @@ const userdbSchema = new mongoose.Schema({
     paid : Boolean,
     discount: String,
     advance: String,
+    foodGst: String,
+    stayGst: String,
+    totalAmount: String,
     prebooked : {type : Boolean, default : false},
     room : {
         type : mongoose.Schema.Types.ObjectId,
