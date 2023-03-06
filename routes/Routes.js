@@ -171,6 +171,8 @@ router.post("/:id/availability", roomController.availability);
 
 router.post("/:id/occupied", roomController.occupiedRooms);
 
+router.post('/:id/upcomingcheckout', roomController.upcomingCheckOut);
+
 router.post("/:id/roomone", roomController.roomOne);
 
 router.post("/:id/dishbyroom", roomController.dishByRoom);

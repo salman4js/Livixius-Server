@@ -16,6 +16,9 @@ const UserDb = require("../models/UserDb.js");
 
 const RoomType = require("../models/RoomType.js");
 
+// Importing Brew-Date package
+const bd = require('brew-date');
+
 const createRoom = async (req, res, next) => {
   if (req.body.roomno == "") {
     res.status(200).json({
@@ -409,7 +412,7 @@ const addUserRooms = async (req, res, next) => {
           prebookroomprice : req.body.prebookprice,
           lodge : req.params.id,
           discount: req.body.discount,
-          advance : req.body.advance
+          advance : req.body.advance,
         })
         const userdatabase = new UserDb({
           username: req.body.customername,
@@ -530,10 +533,42 @@ const callAWaiter = async (req, res, next) => {
   }
 }
 
+// Upcoming check out based on the provided date by the customer 
+async function upcomingCheckOut(req,res,next){
+  const getDate = bd.addDates(bd.getFullDate('yyyy/mm/dd'), req.body.days);
+  const d_date = bd.format(getDate, 'yyyy/mm/dd');
+  const result = await Room.find({lodge: req.params.id});
+  const dateBetween = bd.getBetween(bd.getFullDate('yyyy/mm/dd'), d_date);
+  User.find({lodge: req.params.id})
+    .then(async data => {
+      const endResult = await checkUpcoming(data, dateBetween);
+      res.status(200).json({
+        success: true,
+        message: endResult
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured!"
+      })
+    })
+}
+
+// Upcoming checkout function template helper!
+async function checkUpcoming(data, date){
+    var endResult = [];
+    await data.map((options,key) => {
+      if(options.dateofcheckout !== undefined && date.includes(options.dateofcheckout)){
+        endResult.push(options);
+      }
+    });
+    return endResult;
+}
 
 
 module.exports = {
   createRoom, allRooms, roomsUpdater, deleteRoom, addDishRooms, updateRoomData, roomOne, addUserRooms,
-  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms
+  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut
 
 }

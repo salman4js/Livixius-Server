@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
     room : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"
-    }
+    },
+    lodge: String
 })
 
 module.exports = mongoose.model("Users", userSchema);
