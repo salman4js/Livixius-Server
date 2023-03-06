@@ -544,7 +544,7 @@ async function upcomingCheckOut(req,res,next){
       const endResult = await checkUpcoming(data, dateBetween);
       res.status(200).json({
         success: true,
-        message: endResult
+        message: endResult.endResult
       })
     })
     .catch(err => {
@@ -558,12 +558,20 @@ async function upcomingCheckOut(req,res,next){
 // Upcoming checkout function template helper!
 async function checkUpcoming(data, date){
     var endResult = [];
-    await data.map((options,key) => {
-      if(options.dateofcheckout !== undefined && date.includes(options.dateofcheckout)){
-        endResult.push(options);
-      }
-    });
-    return endResult;
+    var roomno = [];
+    for (const options of data) {
+    if (options.dateofcheckout !== undefined && date.includes(options.dateofcheckout)){
+      endResult.push(options);
+      const room = await getRoomNo(options.room);
+      roomno.push(room);
+    }
+  }
+    return {endResult: endResult, roomno: roomno}
+}
+
+async function getRoomNo(data){
+  const result = await Room.findById({_id: data});
+  return result.roomno;
 }
 
 
