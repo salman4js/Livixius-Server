@@ -201,6 +201,8 @@ router.post("/:id/showallprebookedrooms", prebookController.ShowAllPrebookedRoom
 
 router.get('/:id/excludedates', prebookController.excludeDates);
 
+router.post('/:id/prebookupcoming', prebookController.upcomingPrebook);
+
 router.post("/updateroomdata", roomController.updateRoomData);
 
 router.post("/:id/userdishes", userDishController.allUserDishes);

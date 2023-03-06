@@ -139,7 +139,37 @@ const deletePrebookUserRooms = (req,res,next) => {
   })
 }
 
+// Prebook Cabinet for upcoming bookings!
+const upcomingPrebook = async (req,res,next) => {
+  Prebook.find({lodge: req.params.id})
+  .then(async data => {
+      const getDateBetween = brewDate.getBetween(brewDate.getFullDate('yyyy/mm/dd'), brewDate.addDates(brewDate.getFullDate('yyyy/mm/dd'), req.body.days));
+      const endResult = await checkValues(data, getDateBetween);
+      res.status(200).json({
+        success: true,
+        message: endResult
+      })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  })
+}
+
+// Prebook cabinet helper function 
+async function checkValues(data, date){
+  var value = [];
+  await data.map((options,key) => {
+    if(options.prebookDateofCheckin !== undefined && date.includes(options.prebookDateofCheckin)){
+      value.push(options);
+    }
+  });
+  return value;
+}
+
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
-  deletePrebookUserRooms, excludeDates, excludeDateCheckin
+  deletePrebookUserRooms, excludeDates, excludeDateCheckin, upcomingPrebook
 }
