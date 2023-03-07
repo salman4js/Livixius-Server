@@ -189,6 +189,8 @@ router.post("/:id/getroomid", roomController.getRoomId);
 
 router.post("/:id/adduserrooms", roomController.addUserRooms);
 
+router.post("/:id/getroomno", roomController.getRoomNo)
+
 // Prebook routes!
 
 router.post("/:id/addprebookuserrooms", prebookController.preBookUserRooms);

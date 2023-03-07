@@ -567,14 +567,25 @@ async function checkUpcoming(data, date){
     return endResult;
 }
 
-async function getRoomNo(data){
-  const result = await Room.findById({_id: data});
-  return result.roomno;
+async function getRoomNo(req,res,next){
+  try{
+    const result = await Room.findById({_id: req.params.id});
+    res.status(200).json({
+      success: true,
+      message: result.roomno
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  }
 }
+
 
 
 module.exports = {
   createRoom, allRooms, roomsUpdater, deleteRoom, addDishRooms, updateRoomData, roomOne, addUserRooms,
-  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut
+  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut, getRoomNo
 
 }
