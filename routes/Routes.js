@@ -237,6 +237,8 @@ router.post("/:id/userdbroom", userController.userdbRoom);
 
 router.post("/:id/userdb1", userController.userdb);
 
+router.post("/:id/favcustomer", userController.favCustomer);
+
 router.post("/:id/totalratecalculator", userController.totalDateCalculator);
 
 router.post("/:id/addroomtype", roomTypeController.createSuite);

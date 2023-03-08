@@ -237,6 +237,43 @@ const generateBill = async (req,res,next) => {
   }
 }
 
+// Favourite customer handler
+async function favCustomer(req, res, next){
+  try{
+    await UserDb.find({lodge: req.params.id})
+      .then(async data => {
+        const endResult = await checkFrequent(data);
+        if(endResult !== undefined){
+          res.status(200).json({
+            success: true,
+            message: endResult
+          })
+        } else {
+          res.status(200).json({
+            success: true,
+            message: []
+          })
+        }
+      }) 
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: `Some internal error occured!, ${err}`,
+    })
+  }
+}
+
+async function checkFrequent(users){
+  const phoneNumbers = users.map(user => user.phonenumber);
+  const count = phoneNumbers.reduce((acc, phoneNumber) => {
+    acc[phoneNumber] = (acc[phoneNumber] || 0) + 1;
+    return acc;
+  }, {});
+  const frequentUsers = users.filter(user => user.dateofcheckout !== '' && count[user.phonenumber] >= 5);
+  return frequentUsers;
+}
+
+
 module.exports = {
-    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator
+    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, favCustomer
 }
