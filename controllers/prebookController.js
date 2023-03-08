@@ -143,8 +143,7 @@ const deletePrebookUserRooms = (req,res,next) => {
 const upcomingPrebook = async (req,res,next) => {
   Prebook.find({lodge: req.params.id})
   .then(async data => {
-      const getDateBetween = brewDate.getBetween(brewDate.getFullDate('yyyy/mm/dd'), brewDate.addDates(brewDate.getFullDate('yyyy/mm/dd'), req.body.days));
-      const endResult = await checkValues(data, getDateBetween);
+      const endResult = await checkValues(data, req.body.datesBetween);
       res.status(200).json({
         success: true,
         message: endResult

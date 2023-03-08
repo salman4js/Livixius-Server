@@ -536,13 +536,9 @@ const callAWaiter = async (req, res, next) => {
 
 // Upcoming check out based on the provided date by the customer 
 async function upcomingCheckOut(req,res,next){
-  const getDate = bd.addDates(bd.getFullDate('yyyy/mm/dd'), req.body.days);
-  const d_date = bd.format(getDate, 'yyyy/mm/dd');
-  const result = await Room.find({lodge: req.params.id});
-  const dateBetween = bd.getBetween(bd.getFullDate('yyyy/mm/dd'), d_date);
   User.find({lodge: req.params.id})
     .then(async data => {
-      const endResult = await checkUpcoming(data, dateBetween);
+      const endResult = await checkUpcoming(data, req.body.datesBetween);
       res.status(200).json({
         success: true,
         message: endResult
