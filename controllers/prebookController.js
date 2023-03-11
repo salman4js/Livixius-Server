@@ -6,37 +6,54 @@ const brewDate = require('brew-date');
 
 const preBookUserRooms = async (req, res,next) => {
   const roomno = await roomById(req.body.roomid);
-  try{
-    const preBooking = new Prebook({
-      prebookAdvance : req.body.prebookadvance,
-      prebookdiscount: req.body.prebookdiscount,
-      prebookUsername : req.body.prebookusername,
-      prebookPhoneNumber : req.body.prebookphonenumber,
-      prebookSecondNumber : req.body.prebooksecondnumber,
-      prebookAdults : req.body.prebookadults,
-      prebookChildren : req.body.prebookchildren,
-      prebookAadharCard : req.body.prebookaadhar,
-      prebookDateofCheckin : req.body.prebookdateofcheckin,
-      prebookDateofCheckout : req.body.prebookdateofcheckout,
-      prebookprice : req.body.prebookprice,
-      room : req.body.roomid,
-      lodge : req.params.id,
-      roomno : roomno
+  if(req.body.prebookphonenumber === undefined){
+    res.status(200).json({
+      success: false,
+      message: "Phone Number is mandatory!"
     })
-    if(preBooking){
-      await Room.findByIdAndUpdate({_id : preBooking.room}, {preBooked : true, $push : {prebookuser : preBooking._id}});
+  } else if(req.body.prebookphonenumber === null){
+    res.status(200).json({
+      success: false,
+      message: "Phone Number is mandatory!"
+    })
+  } else if(req.body.prebookphonenumber === ""){
+    res.status(200).json({
+      success: false,
+      message: "Phone Number is mandatory!"
+    })
+  } else {
+    try{
+      const preBooking = new Prebook({
+        prebookAdvance : req.body.prebookadvance,
+        prebookdiscount: req.body.prebookdiscount,
+        prebookUsername : req.body.prebookusername,
+        prebookPhoneNumber : req.body.prebookphonenumber,
+        prebookSecondNumber : req.body.prebooksecondnumber,
+        prebookAdults : req.body.prebookadults,
+        prebookChildren : req.body.prebookchildren,
+        prebookAadharCard : req.body.prebookaadhar,
+        prebookDateofCheckin : req.body.prebookdateofcheckin,
+        prebookDateofCheckout : req.body.prebookdateofcheckout,
+        prebookprice : req.body.prebookprice,
+        room : req.body.roomid,
+        lodge : req.params.id,
+        roomno : roomno
+      })
+      if(preBooking){
+        await Room.findByIdAndUpdate({_id : preBooking.room}, {preBooked : true, $push : {prebookuser : preBooking._id}});
+      }
+      await preBooking.save();
+      res.status(200).json({
+        success : true,
+        message : "Customer has been pre-booked successfully!"
+      })
+    } catch (err){
+      console.log(err);
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
+      })
     }
-    await preBooking.save();
-    res.status(200).json({
-      success : true,
-      message : "Customer has been pre-booked successfully!"
-    })
-  } catch (err){
-    console.log(err);
-    res.status(200).json({
-      success : false,
-      message : "Some internal error occured!"
-    })
   }
 }
 
