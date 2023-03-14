@@ -105,9 +105,32 @@ const deleteLodge = (req,res,next) => {
     })
 }
 
+const updateLodge = (req,res,next) => {
+  Lodge.findByIdAndUpdate(req.params.id, {
+    username : req.body.username,
+    password : req.body.password,
+    emailId : req.body.emailId,
+    area : req.body.area,
+    branch : req.body.branch,
+    isLocked: req.body.isLocked
+  })
+    .then(data => {
+      res.status(200).json({
+        success:  true,
+        message: "Lodge has been updated!"
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured!"
+      })
+    })
+}
+
 
 
 
 module.exports = {
-    addLodge,loginLodge, allLodges, deleteLodge, findLodge
+    addLodge,loginLodge, allLodges, deleteLodge, findLodge, updateLodge
 }
