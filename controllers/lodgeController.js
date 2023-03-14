@@ -55,6 +55,8 @@ const loginLodge = (req,res,next) => {
                     message : "User Logged In",
                     hostId : lodge._id,
                     lodgename : lodge.username,
+                    isLocked: lodge.isLocked,
+                    isLockedMessage: "Your account has been locked, Please contact the Help Desk!",
                     token
                   })
                   updateAuth(username, token);
