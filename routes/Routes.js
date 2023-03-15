@@ -243,6 +243,10 @@ router.post("/:id/favcustomer", userController.favCustomer);
 
 router.post("/:id/totalratecalculator", userController.totalDateCalculator);
 
+router.post("/:id/datesestimate", userController.datesEstimate);
+
+router.post("/:id/weeklyestimate", userController.weeklyEstimate);
+
 router.post("/:id/addroomtype", roomTypeController.createSuite);
 
 router.post("/:id/allroomtype", roomTypeController.allRoomType);

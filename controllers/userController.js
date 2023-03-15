@@ -63,15 +63,58 @@ const userdb = (req,res,next) => {
     })
 }
 
+// Weekly Estimate
+
+async function weeklyEstimate(req,res,next){
+  const datesBetween = req.body.dates;
+  UserDb.find({lodge: req.params.id})
+  .then(data => {
+    const valueDatesBetween = data.filter((option) => {
+      return datesBetween.includes(option.dateofcheckout);
+    })
+    const totalRate = weekEstimate(valueDatesBetween, datesBetween); 
+      res.status(200).json({
+      success: true,
+      message: totalRate,
+      dates: datesBetween
+    })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success: false,
+      message: `Some internal error occured!, ${err} `
+    })
+  })
+}
+
+// Helper Function for the above implementation!
+function weekEstimate(data, datesBetween){
+  const result = [];
+  let dayResult = 0;
+  for(i = 0; i <= datesBetween.length -1; i++){
+    data.map((option,key) => {
+      if(option.bill !== undefined && option.dateofcheckout !== undefined){
+        if(option.dateofcheckout === datesBetween[i]){
+          dayResult += Number(option.bill);
+        }
+      }
+    })
+    result.push(dayResult);
+    dayResult = 0;
+  }
+  return result;
+}
+
 
 const totalDateCalculator = (req,res,next) => {
+  
   const datesBetween = bwt.getBetween(req.body.date1, req.body.date2);
   UserDb.find({lodge: req.params.id})
     .then(async data => {
       const filteredData = data.filter((item) => {
         return datesBetween.includes(item.dateofcheckout);
       })
-      const totalRate = await totalAmount(data, datesBetween);
+      const totalRate = totalAmount(data, datesBetween);
       res.status(200).json({
         success: true,
         message: filteredData,
@@ -87,11 +130,12 @@ const totalDateCalculator = (req,res,next) => {
 }
 
 // Generating total revenue for the brew-mobile!
-const totalAmount = async (data, datesBetween) => {
+const totalAmount =  (data, datesBetween) => {
   var totalRate = 0;
-  await data.map((item,key) => {
+   data.map((item,key) => {
     if(item.bill !== undefined && datesBetween.includes(item.dateofcheckout)){
       totalRate += Number(item.bill);
+      
     } 
   });
   return totalRate;
@@ -284,7 +328,37 @@ async function checkFrequent(users){
   return [...filteredUsers.values()];
 }
 
+// Chart Dashboard Calculation Controllers!
+async function datesEstimate(req,res,next){
+  const dateArr = req.body.dates;
+  UserDb.find({lodge: req.params.id})
+    .then(data => {
+      const weeklyTotal = weeklyHelperEstimate(data, dateArr);
+      res.status(200).json({
+        success: true,
+        message: weeklyTotal
+      }) 
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured."
+      })
+    })
+}
+
+function datesHelperEstimate(data, dates){
+  // Performs filtering out for the specific dates!
+  var weeklyTotal = 0;
+  data.map((options,key) => {
+    if(dates.includes(options.dateofcheckout)){
+      weeklyTotal += Number(options.bill);
+    }
+  });
+  return weeklyTotal;
+}
 
 module.exports = {
-    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, favCustomer
+    allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, 
+    favCustomer, datesEstimate, weeklyEstimate
 }
