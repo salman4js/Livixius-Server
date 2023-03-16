@@ -105,6 +105,39 @@ function weekEstimate(data, datesBetween){
   return result;
 }
 
+const totalDailyCalculator = (req,res,next) => {
+  const result = [];
+  UserDb.find({lodge: req.params.id})
+    .then(async data => {
+      for (i = 0; i <= req.body.datesBetween.length -1; i++){
+        const totalRate = await totalDailyAmount(data, req.body.datesBetween[i]);
+        result.push(totalRate);
+      }
+      res.status(200).json({
+        success: true,
+        dailyCollection: result,
+        label: req.body.datesBetween
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured!"
+      })
+    })
+}
+
+// Total amount calculator for the Line monthly chart!
+async function totalDailyAmount(data, date){
+  let rate = 0;
+  await data.map((options,key) => {
+    if(options.bill !== undefined && date === options.dateofcheckout){
+      rate += Number(options.bill)
+    }
+  })
+  return rate;
+}
+
 
 const totalDateCalculator = (req,res,next) => {
   
@@ -360,5 +393,5 @@ function datesHelperEstimate(data, dates){
 
 module.exports = {
     allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, 
-    favCustomer, datesEstimate, weeklyEstimate
+    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator
 }
