@@ -391,7 +391,47 @@ function datesHelperEstimate(data, dates){
   return weeklyTotal;
 }
 
+// Room type revenue estimator!
+async function roomTypeRev(req,res,next){
+  UserDb.find({lodge: req.params.id})
+  .then(async data => {
+    // Get Room Type by roomid and lodgeid!
+    const roomType = await getType(req.params.id, data);
+    res.status(200).json({
+      success: true,
+      roomTypeRev: roomType.result,
+      total: roomType.total
+    })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success: false,
+      message: `Some internal error occured!, ${err}`
+    })
+  })
+}
+
+// Room Type Helper Function!
+async function getType(lodgeid, data){
+  const resultObj = {};
+  let total = 0;
+  await Promise.all(data.map(async (options) => {
+    if(options.bill !== undefined){
+      const room = await Room.findById(options.room);
+      if (resultObj[room.suiteName] !== undefined) {
+        resultObj[room.suiteName] += Number(options.bill);
+        total += Number(options.bill);
+      } else {
+        resultObj[room.suiteName] = Number(options.bill);
+        total += Number(options.bill);
+      }
+    }
+  }));
+  return {result : resultObj, total: total};
+}
+
+
 module.exports = {
     allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, 
-    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator
+    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev
 }

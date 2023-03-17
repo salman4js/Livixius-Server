@@ -249,6 +249,8 @@ router.post("/:id/datesestimate", userController.datesEstimate);
 
 router.post("/:id/weeklyestimate", userController.weeklyEstimate);
 
+router.post("/:id/roomtyperev", userController.roomTypeRev);
+
 router.post("/:id/addroomtype", roomTypeController.createSuite);
 
 router.post("/:id/allroomtype", roomTypeController.allRoomType);
