@@ -396,7 +396,7 @@ async function roomTypeRev(req,res,next){
   UserDb.find({lodge: req.params.id})
   .then(async data => {
     // Get Room Type by roomid and lodgeid!
-    const roomType = await getType(req.params.id, data);
+    const roomType = await getType(req.params.id, data, req.body.date);
     res.status(200).json({
       success: true,
       roomTypeRev: roomType.result,
@@ -412,18 +412,31 @@ async function roomTypeRev(req,res,next){
 }
 
 // Room Type Helper Function!
-async function getType(lodgeid, data){
+async function getType(lodgeid, data, date){
   const resultObj = {};
   let total = 0;
   await Promise.all(data.map(async (options) => {
-    if(options.bill !== undefined){
-      const room = await Room.findById(options.room);
-      if (resultObj[room.suiteName] !== undefined) {
-        resultObj[room.suiteName] += Number(options.bill);
-        total += Number(options.bill);
-      } else {
-        resultObj[room.suiteName] = Number(options.bill);
-        total += Number(options.bill);
+    if(date === undefined){
+      if(options.bill !== undefined){
+        const room = await Room.findById(options.room);
+        if (resultObj[room.suiteName] !== undefined) {
+          resultObj[room.suiteName] += Number(options.bill);
+          total += Number(options.bill);
+        } else {
+          resultObj[room.suiteName] = Number(options.bill);
+          total += Number(options.bill);
+        }
+      }
+    } else {
+      if(options.bill !== undefined && options.dateofcheckout === date){
+        const room = await Room.findById(options.room);
+        if (resultObj[room.suiteName] !== undefined) {
+          resultObj[room.suiteName] += Number(options.bill);
+          total += Number(options.bill);
+        } else {
+          resultObj[room.suiteName] = Number(options.bill);
+          total += Number(options.bill);
+        }
       }
     }
   }));
