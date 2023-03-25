@@ -19,6 +19,7 @@ const userdbSchema = new mongoose.Schema({
     paid : Boolean,
     discount: String,
     advance: String,
+    isGst: {type: Boolean, default: false},
     foodGst: String,
     stayGst: String,
     totalAmount: String,
