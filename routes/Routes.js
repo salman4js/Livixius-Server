@@ -303,6 +303,8 @@ router.get("/:id/config-checking", clientController.checkConfig);
 
 router.get("/:id/config-get", clientController.showConfig);
 
+router.post("/:id/config-gstenabler", clientController.gstEnabler);
+
 router.post("/:id/create-config", clientController.create_config);
 
 router.post("/:id/delete-config", clientController.deleteConfig);

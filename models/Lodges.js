@@ -39,7 +39,8 @@ const lodgeSchema = new mongoose.Schema({
     config : [{
       type : mongoose.Schema.Types.ObjectId,
       ref : "Config"
-    }]
+    }],
+    isGst: {type: Boolean, default: false}
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);

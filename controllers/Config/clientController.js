@@ -2,12 +2,17 @@ const Config = require("../../models/Config.js");
 const Lodge = require('../../models/Lodges.js');
 var data = ['Dish', 'Transport', 'PreBook'];
 
-const checkConfig = (req,res,next) => {
+const checkConfig = async (req,res,next) => {
+  
+  // Check if GST has been enabled!
+  const isGstEnabled = await Lodge.findById(req.params.id);
+  
   Config.find({lodge : req.params.id})
     .then(data => {
       res.status(200).json({
         success : true,
-        message : data
+        message : data,
+        isGstEnabled: isGstEnabled.isGst
       })
     })
     .catch(err => {
@@ -72,6 +77,26 @@ const checkDuplicate = async (lodgeId, config) => {
   return value.length;
 }
 
+// GST enable/ disable controller!
+const gstEnabler = (req,res,next) => {
+  console.log("Function coming here!")
+  Lodge.findByIdAndUpdate(req.params.id, {
+    isGst: req.body.isGst
+  })
+  .then(data => {
+    res.status(200).json({
+      success: true,
+      message: "GST status has been changed successfully!"
+    })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success: false,
+      message: "Some internal  error occured!", err
+    })
+  })
+}
+
 const deleteConfig = (req,res,next) => {
   Config.findByIdAndDelete({_id : req.body.id})
     .then(data => {
@@ -89,5 +114,5 @@ const deleteConfig = (req,res,next) => {
 }
 
 module.exports = {
-  checkConfig, create_config, deleteConfig, showConfig
+  checkConfig, create_config, deleteConfig, showConfig, gstEnabler
 }
