@@ -4,15 +4,11 @@ var data = ['Dish', 'Transport', 'PreBook'];
 
 const checkConfig = async (req,res,next) => {
   
-  // Check if GST has been enabled!
-  const isGstEnabled = await Lodge.findById(req.params.id);
-  
   Config.find({lodge : req.params.id})
     .then(data => {
       res.status(200).json({
         success : true,
         message : data,
-        isGstEnabled: isGstEnabled.isGst
       })
     })
     .catch(err => {
@@ -22,6 +18,25 @@ const checkConfig = async (req,res,next) => {
         message : err
       })
     })
+}
+
+const checkMatrix = async (req,res,next) => {
+  
+  // Check all the required config!
+  const config = await Lodge.findById(req.params.id);
+  
+  try{
+    res.status(200).json({
+      success: true,
+      isGstEnabled: config.isGst,
+      isHourly: config.isHourly 
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Config not allowing client side to enter!"
+    })
+  }
 }
 
 const showConfig = (req,res,next) => {
@@ -78,15 +93,16 @@ const checkDuplicate = async (lodgeId, config) => {
 }
 
 // GST enable/ disable controller!
-const gstEnabler = (req,res,next) => {
-  console.log("Function coming here!")
+const updateMatrix = (req,res,next) => {
+  
   Lodge.findByIdAndUpdate(req.params.id, {
-    isGst: req.body.isGst
+    isGst: req.body.isGst,
+    isHourly: req.body.isHourly
   })
   .then(data => {
     res.status(200).json({
       success: true,
-      message: "GST status has been changed successfully!"
+      message: "Matrix has been updated!"
     })
   })
   .catch(err => {
@@ -114,5 +130,5 @@ const deleteConfig = (req,res,next) => {
 }
 
 module.exports = {
-  checkConfig, create_config, deleteConfig, showConfig, gstEnabler
+  checkConfig, create_config, deleteConfig, showConfig, checkMatrix, updateMatrix
 }

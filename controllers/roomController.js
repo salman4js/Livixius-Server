@@ -364,6 +364,7 @@ const addDishRooms = async (req, res, next) => {
 }
 
 const addUserRooms = async (req, res, next) => {
+
   if(req.body.aadhar ==  undefined || req.body.aadhar == ""){
     res.status(200).json({
       success : false,
@@ -408,6 +409,7 @@ const addUserRooms = async (req, res, next) => {
           aadharcard : req.body.aadhar,
           room : req.body.roomid,
           dateofcheckin : req.body.checkin,
+          checkinTime: req.body.checkinTime,
           dateofcheckout : req.body.checkout,
           prebookroomprice : req.body.prebookprice,
           lodge : req.params.id,
@@ -424,6 +426,7 @@ const addUserRooms = async (req, res, next) => {
           aadharcard : req.body.aadhar,
           room : req.body.roomid,
           dateofcheckin : req.body.checkin,
+          checkinTime: req.body.checkinTime,
           roomno : req.body.roomno,
           userid : checkin._id,
           lodge : req.params.id,

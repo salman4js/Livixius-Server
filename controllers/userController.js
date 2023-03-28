@@ -293,9 +293,10 @@ const generateBill = async (req,res,next) => {
     const discountPrice = test.discountPrice;
     await Room.findById({lodge : req.body.lodgeid, _id : req.body.roomid})
     .then(data => {
+      const price = calculatePrice(+data.price, noofstays[0], req.body.isHourly);
       res.status(200).json({
         success : true,
-        message : +data.price * noofstays[0],
+        message : price,
         prebook : test.preBooked,
         advance: +test.advancePrebookPrice,
         advanceCheckin : +test.advancePrice,
@@ -311,6 +312,16 @@ const generateBill = async (req,res,next) => {
       success : false,
       message : "Some internal error has occured"
     })
+  }
+}
+
+// Calculate price based on the config for hourly or daily!
+function calculatePrice(price, days, isHourly){
+  if(isHourly){
+    const pricePerHour = price / 24; // 24 being the number of hours per day!
+    return Math.round(pricePerHour * days); // Days being the hours in the context!
+  } else {
+    return price * days;
   }
 }
 

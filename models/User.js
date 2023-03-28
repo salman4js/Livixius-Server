@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     password : String,
     aadharcard : String,
     dateofcheckin : String,
+    checkinTime: String,
     dateofcheckout : String,
     prebookroomprice : String,
     discount:  String,

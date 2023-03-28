@@ -301,9 +301,11 @@ router.post("/:id/deleteentry", tVehicleController.deleteEntry);
 
 router.get("/:id/config-checking", clientController.checkConfig);
 
+router.get("/:id/check-matrix", clientController.checkMatrix);
+
 router.get("/:id/config-get", clientController.showConfig);
 
-router.post("/:id/config-gstenabler", clientController.gstEnabler);
+router.post("/:id/config-update-matrix", clientController.updateMatrix);
 
 router.post("/:id/create-config", clientController.create_config);
 
