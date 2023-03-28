@@ -130,7 +130,6 @@ const updateLodge = (req,res,next) => {
 
 
 
-
 module.exports = {
     addLodge,loginLodge, allLodges, deleteLodge, findLodge, updateLodge
 }
