@@ -42,7 +42,8 @@ const roomSchema = new mongoose.Schema({
     prebookuser : [{
       type : mongoose.Schema.Types.ObjectId,
       ref : "Prebooks"
-    }]
+    }],
+    channel : String
 })
 
 

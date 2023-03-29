@@ -265,7 +265,7 @@ const deleteUser = async (req, res, next) => {
     try {
         const room = req.body.roomid
         // Reverting the changes caused by the discount and advance in the schema!
-        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", 
+        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", channel : undefined,
         preBooked : false, preValid : true, advance: false, discount: false, discountPrice: String, advancePrice: String, advanceDiscountPrice: String, advancePrebookPrice: String } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})

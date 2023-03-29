@@ -16,6 +16,9 @@ const UserDb = require("../models/UserDb.js");
 
 const RoomType = require("../models/RoomType.js");
 
+// Importing Channel Manager!
+const channel = require("./startup.data/startup.data.js");
+
 // Importing Brew-Date package
 const bd = require('brew-date');
 
@@ -93,7 +96,8 @@ const allRooms = async (req, res, next) => {
       res.status(200).json({
         success : true,
         message : data,
-        countAvailability: availabilityCount
+        countAvailability: availabilityCount,
+        channels: channel.channelManager.channelManager
       })
     })
     .catch(err => {
@@ -399,6 +403,10 @@ const addUserRooms = async (req, res, next) => {
         message : "This room is already occupied!"
       })
     } else {
+      
+      const isChannel = req.body.isChannel;
+      const updatePrice = req.body.updatePrice;
+      
       try{
         const checkin = new User({
           username: req.body.customername,
@@ -415,7 +423,8 @@ const addUserRooms = async (req, res, next) => {
           lodge : req.params.id,
           discount: req.body.discount,
           advance : req.body.advance,
-          roomno: req.body.roomno
+          roomno: req.body.roomno,
+          channel: req.body.channel
         })
         const userdatabase = new UserDb({
           username: req.body.customername,
@@ -431,16 +440,18 @@ const addUserRooms = async (req, res, next) => {
           userid : checkin._id,
           lodge : req.params.id,
           discount: req.body.discount,
-          advance : req.body.advance
+          advance : req.body.advance,
+          channel: req.body.channel
         })
         if(userdatabase){
           userdatabase.save()
         }
+        // Check for the date of checkout!
         if(checkin){
           if(checkin.dateofcheckout != undefined){
-            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", $push : {user : checkin._id}} )
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, $push : {user : checkin._id}} )
           } else {
-            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", preValid : false, $push : {user : checkin._id}} )
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, preValid : false, $push : {user : checkin._id}} )
           }
           
           // Check the response for the discount!
@@ -454,16 +465,18 @@ const addUserRooms = async (req, res, next) => {
           }
         }
         
+        // Check for the channel manager!
+        if(isChannel && updatePrice !== undefined){
+          await Room.findByIdAndUpdate({_id: checkin.room}, {price: updatePrice})
+        }
+        
         // Setting the prebook user room price as the price when they booked the room!
         if(req.body.prebook === true){
-          console.log("Prebook", req.body.prebook)
           if(req.body.advanceDiscount !== undefined && req.body.advanceDiscount !== ""){
-            console.log("Program coming to the if condition");
             console.log(req.body.advancePrebookPrice)
             await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, 
               price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice, advanceDiscountPrice: req.body.advanceDiscount, discount: true})
           } else {
-            console.log("Program coming to the else condition")
             await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, 
               price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice})
           }

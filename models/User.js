@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"
     },
-    lodge: String
+    lodge: String,
+    channel: {type: String, default: "Walk-In"}
 })
 
 module.exports = mongoose.model("Users", userSchema);
