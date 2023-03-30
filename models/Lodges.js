@@ -41,7 +41,8 @@ const lodgeSchema = new mongoose.Schema({
       ref : "Config"
     }],
     isGst: {type: Boolean, default: false},
-    isHourly: {type: Boolean, default: false}
+    isHourly: {type: Boolean, default: false},
+    isChannel: {type: Boolean, default: false}
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);
