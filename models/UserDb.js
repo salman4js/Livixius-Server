@@ -12,6 +12,7 @@ const userdbSchema = new mongoose.Schema({
     dateofcheckin : String,
     checkinTime: String,
     dateofcheckout : {type : String, default : ""},
+    checkoutTime: String,
     stayedDays : String,
     roomno : String,
     userid : String,
