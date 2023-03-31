@@ -498,6 +498,22 @@ const addUserRooms = async (req, res, next) => {
   }
 }
 
+// Update Room Price data
+async function updateRoomPrice(req,res,next){
+  try{
+    await Room.findByIdAndUpdate({_id: req.body.roomid}, {price: req.body.updatePrice});
+    res.status(200).json({
+      success: true,
+      message: "Room Price has been changed successfully!"
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  }
+}
+
 const addServiceRooms = async (req, res, next) => {
   try {
     const userservice = new UserServices({
@@ -598,6 +614,6 @@ async function getRoomNo(req,res,next){
 
 module.exports = {
   createRoom, allRooms, roomsUpdater, deleteRoom, addDishRooms, updateRoomData, roomOne, addUserRooms,
-  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut, getRoomNo
+  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut, getRoomNo, updateRoomPrice
 
 }

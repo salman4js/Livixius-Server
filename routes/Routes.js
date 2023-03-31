@@ -193,6 +193,8 @@ router.post("/:id/adduserrooms", roomController.addUserRooms);
 
 router.post("/:id/getroomno", roomController.getRoomNo)
 
+router.post("/:id/update-room-price", roomController.updateRoomPrice);
+
 // Prebook routes!
 
 router.post("/:id/addprebookuserrooms", prebookController.preBookUserRooms);

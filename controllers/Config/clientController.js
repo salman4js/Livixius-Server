@@ -30,7 +30,8 @@ const checkMatrix = async (req,res,next) => {
       success: true,
       isGstEnabled: config.isGst,
       isHourly: config.isHourly,
-      isChannel: config.isChannel 
+      isChannel: config.isChannel,
+      updatePrice: config.updatePrice 
     })
   } catch(err){
     res.status(200).json({
@@ -99,7 +100,8 @@ const updateMatrix = (req,res,next) => {
   Lodge.findByIdAndUpdate(req.params.id, {
     isGst: req.body.isGst,
     isHourly: req.body.isHourly,
-    isChannel: req.body.isChannel
+    isChannel: req.body.isChannel,
+    updatePrice: req.body.updatePrice
   })
   .then(data => {
     res.status(200).json({
