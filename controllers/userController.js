@@ -265,7 +265,7 @@ const deleteUser = async (req, res, next) => {
     try {
         const room = req.body.roomid
         // Reverting the changes caused by the discount and advance in the schema!
-        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", channel : undefined,
+        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", channel : undefined, extraCount : 0,
         preBooked : false, preValid : true, advance: false, discount: false, discountPrice: String, advancePrice: String, advanceDiscountPrice: String, advancePrebookPrice: String } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
@@ -293,7 +293,8 @@ const generateBill = async (req,res,next) => {
     const discountPrice = test.discountPrice;
     await Room.findById({lodge : req.body.lodgeid, _id : req.body.roomid})
     .then(data => {
-      const price = calculatePrice(+data.price, noofstays[0], req.body.isHourly);
+      const price = calculatePrice(+data.price, noofstays[0], req.body.isHourly, data.extraCount, data.extraBedPrice);
+      console.log(price);
       res.status(200).json({
         success : true,
         message : price,
@@ -302,6 +303,9 @@ const generateBill = async (req,res,next) => {
         advanceCheckin : +test.advancePrice,
         isAdvanced: test.advance,
         discountPrice : +discountPrice,
+        extraBedCount: data.extraCount,
+        extraBedPrice: data.extraBedPrice,
+        extraBedCollection: data.extraCount * data.extraBedPrice,
         advanceDiscountPrice: +test.advanceDiscountPrice,
         discount: test.discount
       })
@@ -316,12 +320,13 @@ const generateBill = async (req,res,next) => {
 }
 
 // Calculate price based on the config for hourly or daily!
-function calculatePrice(price, days, isHourly){
+function calculatePrice(price, days, isHourly, extraCount, extraBedPrice){
+  
   if(isHourly){
     const pricePerHour = price / 24; // 24 being the number of hours per day!
-    return Math.round(pricePerHour * days); // Days being the hours in the context!
+    return Math.round((pricePerHour * days)); // Days being the hours in the context along with it calculate extra bed price
   } else {
-    return price * days;
+    return ((price * days));
   }
 }
 

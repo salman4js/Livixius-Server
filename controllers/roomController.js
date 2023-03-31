@@ -57,6 +57,7 @@ const createRoom = async (req, res, next) => {
          bedCount: req.body.bedcount,
          suiteName: req.body.suitename,
          price : req.body.price,
+         extraBedPrice: req.body.extraBedPrice,
          lodge: req.params.id
        })
        if (room) {
@@ -424,7 +425,9 @@ const addUserRooms = async (req, res, next) => {
           discount: req.body.discount,
           advance : req.body.advance,
           roomno: req.body.roomno,
-          channel: req.body.channel
+          channel: req.body.channel,
+          extraBeds: req.body.extraBeds,
+          extraBedPrice: req.body.extraBedPrice
         })
         const userdatabase = new UserDb({
           username: req.body.customername,
@@ -441,7 +444,9 @@ const addUserRooms = async (req, res, next) => {
           lodge : req.params.id,
           discount: req.body.discount,
           advance : req.body.advance,
-          channel: req.body.channel
+          channel: req.body.channel,
+          extraBeds: req.body.extraBeds,
+          extraBedPrice: req.body.extraBedPrice
         })
         if(userdatabase){
           userdatabase.save()
@@ -449,9 +454,9 @@ const addUserRooms = async (req, res, next) => {
         // Check for the date of checkout!
         if(checkin){
           if(checkin.dateofcheckout != undefined){
-            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, $push : {user : checkin._id}} )
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, extraCount: req.body.extraBeds, $push : {user : checkin._id}} )
           } else {
-            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, preValid : false, $push : {user : checkin._id}} )
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, extraCount: req.body.extraBeds, preValid : false, $push : {user : checkin._id}} )
           }
           
           // Check the response for the discount!

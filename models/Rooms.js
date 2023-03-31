@@ -8,6 +8,8 @@ const roomSchema = new mongoose.Schema({
     bedCount: String,
     suiteName : String,
     price : String,
+    extraCount: {type: String, default: 0},
+    extraBedPrice: {type: String, default: 0},
     advancePrebookPrice: String,
     advanceDiscountPrice: String,
     transport : {type :Boolean, default: false},

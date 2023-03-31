@@ -31,7 +31,9 @@ const checkMatrix = async (req,res,next) => {
       isGstEnabled: config.isGst,
       isHourly: config.isHourly,
       isChannel: config.isChannel,
-      updatePrice: config.updatePrice 
+      updatePrice: config.updatePrice,
+      isExtra: config.isExtra,
+      extraPrice: config.extraPrice 
     })
   } catch(err){
     res.status(200).json({
@@ -101,7 +103,8 @@ const updateMatrix = (req,res,next) => {
     isGst: req.body.isGst,
     isHourly: req.body.isHourly,
     isChannel: req.body.isChannel,
-    updatePrice: req.body.updatePrice
+    updatePrice: req.body.updatePrice,
+    isExtra: req.body.isExtra,
   })
   .then(data => {
     res.status(200).json({

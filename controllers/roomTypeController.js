@@ -45,6 +45,7 @@ const createSuite = async (req,res,next) => {
         const roomType = new RoomType({
           suiteType : req.body.suitetype.toUpperCase(),
           price : req.body.price,
+          extraBedPrice: req.body.extraPrice,
           lodge : req.params.id
         })
         if(roomType){
@@ -62,6 +63,7 @@ const createSuite = async (req,res,next) => {
         })
       }
     } catch(err){
+      console.log(err);
       res.status(200).json({
         success : false,
         message : "Some Internal Error Occured!"
