@@ -420,6 +420,7 @@ const addUserRooms = async (req, res, next) => {
           dateofcheckin : req.body.checkin,
           checkinTime: req.body.checkinTime,
           dateofcheckout : req.body.checkout,
+          checkoutTime: req.body.checkoutTime,
           prebookroomprice : req.body.prebookprice,
           lodge : req.params.id,
           discount: req.body.discount,

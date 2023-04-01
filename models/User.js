@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     dateofcheckin : String,
     checkinTime: String,
     dateofcheckout : String,
+    checkoutTime: String,
     prebookroomprice : String,
     discount:  String,
     advance: String,
