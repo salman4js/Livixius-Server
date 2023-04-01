@@ -3,7 +3,6 @@ const RoomType = require("../models/RoomType.js");
 const Room = require("../models/Rooms.js");
 
 const createSuite = async (req,res,next) => {
-  
   if(req.body.suitetype == ""){
     res.status(200).json({
       success : false,
@@ -133,8 +132,10 @@ const allRoomType = (req,res,next) => {
 const getPrice = (req,res,next) => {
   RoomType.find({lodge : req.params.id, suiteType : req.body.suitename})
   .then(data => {
-    console.log(data);
-    res.send(data);
+    res.status(200).json({
+      success: true,
+      message: data
+    })
   })
   .catch(err => {
     console.log(err);
