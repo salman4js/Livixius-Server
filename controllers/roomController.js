@@ -369,6 +369,8 @@ const addDishRooms = async (req, res, next) => {
 }
 
 const addUserRooms = async (req, res, next) => {
+  
+  var uniqueId = Date.now(); // Unique ID for receipt!
 
   if(req.body.aadhar ==  undefined || req.body.aadhar == ""){
     res.status(200).json({
@@ -428,7 +430,8 @@ const addUserRooms = async (req, res, next) => {
           roomno: req.body.roomno,
           channel: req.body.channel,
           extraBeds: req.body.extraBeds,
-          extraBedPrice: req.body.extraBedPrice
+          extraBedPrice: req.body.extraBedPrice,
+          receiptId: uniqueId
         })
         const userdatabase = new UserDb({
           username: req.body.customername,
@@ -447,7 +450,8 @@ const addUserRooms = async (req, res, next) => {
           advance : req.body.advance,
           channel: req.body.channel,
           extraBeds: req.body.extraBeds,
-          extraBedPrice: req.body.extraBedPrice
+          extraBedPrice: req.body.extraBedPrice,
+          receiptId: uniqueId
         })
         if(userdatabase){
           userdatabase.save()

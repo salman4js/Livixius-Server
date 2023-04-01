@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     discount:  String,
     advance: String,
     roomno: String,
+    receiptId: {type: String, default: Date.now()},
     room : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"

@@ -269,7 +269,12 @@ const deleteUser = async (req, res, next) => {
         preBooked : false, preValid : true, advance: false, discount: false, discountPrice: String, advancePrice: String, advanceDiscountPrice: String, advancePrebookPrice: String } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
-        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, foodGst: req.body.foodGst, stayGst: req.body.stayGst, totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, isGst: req.body.isGst}})
+        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
+          dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
+          prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, 
+          foodGst: req.body.foodGst, stayGst: req.body.stayGst, 
+          totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, 
+          isGst: req.body.isGst}})
         const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
         //console.log("Room type", updateRate.price);
         await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
