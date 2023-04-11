@@ -7,7 +7,11 @@ const addLodge = async (req,res,next) => {
         password : req.body.password,
         emailId : req.body.emailId,
         area : req.body.area,
-        branch : req.body.branch
+        branch : req.body.branch,
+        gstin : req.body.gstin,
+        pan: req.body.pan,
+        name: req.body.name,
+        number: req.body.number
     })
     await lodge.save()
     .then(lodge => {
@@ -57,6 +61,10 @@ const loginLodge = (req,res,next) => {
                     lodgename : lodge.username,
                     isLocked: lodge.isLocked,
                     isLockedMessage: "Your account has been locked, Please contact the Help Desk!",
+                    gstin: lodge.gstin,
+                    pan: lodge.pan,
+                    name: lodge.name,
+                    number: lodge.number,
                     token
                   })
                   updateAuth(username, token);
@@ -112,7 +120,11 @@ const updateLodge = (req,res,next) => {
     emailId : req.body.emailId,
     area : req.body.area,
     branch : req.body.branch,
-    isLocked: req.body.isLocked
+    isLocked: req.body.isLocked,
+    gstin: req.body.gstin,
+    pan: req.body.pan,
+    name: req.body.name,
+    number: req.body.number
   })
     .then(data => {
       res.status(200).json({

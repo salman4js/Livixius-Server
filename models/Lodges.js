@@ -7,6 +7,10 @@ const lodgeSchema = new mongoose.Schema({
     area : String,
     branch : String,
     token : String,
+    gstin: String,
+    pan: String,
+    name: String,
+    number: String,
     isLocked: {type: Boolean, default: 'true'},
     rooms : [{
         type : mongoose.Schema.Types.ObjectId,
