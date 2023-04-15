@@ -120,12 +120,16 @@ const editTypeData = async (req,res,next) => {
 const allRoomType = (req,res,next) => {
   RoomType.find({lodge : req.params.id})
   .then(data => {
-    console.log(data)
-    res.send(data);
+    res.status(200).json({
+      success: true,
+      message: data
+    })
   })
   .catch(err => {
-    console.log(err)
-    res.send(err)
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
   }) 
 }
 
