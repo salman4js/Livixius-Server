@@ -299,7 +299,6 @@ const generateBill = async (req,res,next) => {
     await Room.findById({lodge : req.body.lodgeid, _id : req.body.roomid})
     .then(data => {
       const price = calculatePrice(+data.price, noofstays[0], req.body.isHourly, data.extraCount, data.extraBedPrice);
-      console.log(price);
       res.status(200).json({
         success : true,
         message : price,
