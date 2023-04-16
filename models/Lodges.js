@@ -49,6 +49,7 @@ const lodgeSchema = new mongoose.Schema({
     isChannel: {type: Boolean, default: false},
     updatePrice: {type: Boolean, default: false},
     isExtra: {type: Boolean, default: false},
+    isExclusive: {type: Boolean, default: false}
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);

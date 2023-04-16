@@ -33,6 +33,7 @@ const checkMatrix = async (req,res,next) => {
       isChannel: config.isChannel,
       updatePrice: config.updatePrice,
       isExtra: config.isExtra,
+      isExclusive: config.isExclusive,
       extraPrice: config.extraPrice,
       address: config.area,
       emailId: config.emailId 
@@ -107,6 +108,7 @@ const updateMatrix = (req,res,next) => {
     isChannel: req.body.isChannel,
     updatePrice: req.body.updatePrice,
     isExtra: req.body.isExtra,
+    isExclusive: req.body.isExclusive
   })
   .then(data => {
     res.status(200).json({
