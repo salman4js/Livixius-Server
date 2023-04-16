@@ -387,7 +387,7 @@ const addUserRooms = async (req, res, next) => {
       success : false,
       message : "Check Customer Data, All Mandatory has to be filled! - Phone Number Field."
     })
-  } else if(req.body.adults == undefined || req.body.adults == ""){
+  } else if(req.body.adults === undefined || req.body.adults === ""){
     res.status(200).json({
       success : false,
       message : "Check Customer Data, All Mandatory has to be filled! - Adults Field."
