@@ -1,7 +1,7 @@
 const channelManager = {
   "channelManager": [
     "Make My Trip",
-    "Oyo",
+    "Booking.com",
     "Walk-In"
   ] 
 }
