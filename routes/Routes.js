@@ -243,6 +243,8 @@ router.post("/:id/userdb1", userController.userdb);
 
 router.post("/:id/favcustomer", userController.favCustomer);
 
+router.post("/:id/updateoccupieddata", userController.updateOccupiedData);
+
 router.post("/:id/totalratecalculator", userController.totalDateCalculator);
 
 router.post("/:id/totaldailycalculator", userController.totalDailyCalculator);

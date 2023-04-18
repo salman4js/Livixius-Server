@@ -463,8 +463,45 @@ async function getType(lodgeid, data, date){
   return {result : resultObj, total: total};
 }
 
+// Update checkedin room data!
+const updateOccupiedData = async (req, res, next) => {
+  try{
+    const userId = req.body.userId
+    if(userId === undefined){
+      res.status(200).json({
+        success: false,
+        message: "Missing User Id"
+      })
+    } else {
+      await User.findByIdAndUpdate(userId, {
+        username: req.body.username,
+        phonenumber: req.body.phonenumber,
+        secondphonenumber: req.body.secondphonenumber,
+        adults: req.body.adults,
+        childrens: req.body.childrens,
+        extraBeds: req.body.extraBeds,
+        aadharcard: req.body.aadharcard,
+        dateofcheckout: req.body.dateofcheckout,
+        advance: req.body.advance,
+        discount: req.body.discount
+      })
+      
+      // Sending Response!
+      res.status(200).json({
+        success: true,
+        message: "Customer Details has been updated!"
+      })
+    }
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured..."
+    })
+  }
+}
+
 
 module.exports = {
     allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, 
-    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev
+    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev, updateOccupiedData
 }
