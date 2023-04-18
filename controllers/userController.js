@@ -483,7 +483,8 @@ const updateOccupiedData = async (req, res, next) => {
         aadharcard: req.body.aadharcard,
         dateofcheckout: req.body.dateofcheckout,
         advance: req.body.advance,
-        discount: req.body.discount
+        discount: req.body.discount,
+        checkoutTime: req.body.checkOutTime
       })
       
       // Sending Response!
