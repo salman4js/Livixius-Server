@@ -476,7 +476,7 @@ const addUserRooms = async (req, res, next) => {
         }
         
         // Check for the channel manager!
-        if(isChannel && updatePrice !== undefined){
+        if(isChannel || updatePrice !== undefined){
           await Room.findByIdAndUpdate({_id: checkin.room}, {price: updatePrice})
         }
         

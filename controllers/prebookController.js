@@ -91,7 +91,6 @@ const excludeDateCheckin = async (req,res,next) => {
     for(i=0; i <= checkin.length -1; i++){
       dates.push(brewDate.getBetween(checkin[i], checkout[i]));
     }
-    console.log(dates);
     res.status(200).json({
       success : true,
       message : dates
