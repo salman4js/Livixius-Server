@@ -375,7 +375,7 @@ const addUserRooms = async (req, res, next) => {
   if(req.body.aadhar ==  undefined || req.body.aadhar == ""){
     res.status(200).json({
       success : false,
-      message : "Check Customer Data, all data has to be filled in! - Aadhar Field."
+      message : "Check Customer Data, all data has to be filled in! - ID Number Field."
     })
   } else if((req.body.customername == undefined || req.body.customername == "")){
     res.status(200).json({
