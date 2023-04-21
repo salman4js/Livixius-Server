@@ -476,8 +476,12 @@ const addUserRooms = async (req, res, next) => {
         }
         
         // Check for the channel manager!
-        if(isChannel || updatePrice !== undefined){
-          await Room.findByIdAndUpdate({_id: checkin.room}, {price: updatePrice})
+        if(isChannel && updatePrice !== undefined){
+          await Room.findByIdAndUpdate({_id: checkin.room}, {totalAmount: updatePrice})
+        } else {
+          if(updatePrice !== undefined){
+            await Room.findByIdAndUpdate({_id: checkin.room}, {price: updatePrice})
+          } 
         }
         
         // Setting the prebook user room price as the price when they booked the room!

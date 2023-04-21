@@ -313,7 +313,9 @@ const generateBill = async (req,res,next) => {
         extraBedPrice: data.extraBedPrice,
         extraBedCollection: data.extraCount * data.extraBedPrice,
         advanceDiscountPrice: +test.advanceDiscountPrice,
-        discount: test.discount
+        discount: test.discount,
+        totalAmount: +data.totalAmount,
+        isChannel: data.channel !== "Walk-In" ? true : false
       })
     })
     

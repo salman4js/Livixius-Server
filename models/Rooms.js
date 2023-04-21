@@ -17,6 +17,7 @@ const roomSchema = new mongoose.Schema({
     discountPrice : String,
     advance: {type:  Boolean, default: false},
     advancePrice: String,
+    totalAmount: String,
     dishes : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "UserDishes"
