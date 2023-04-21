@@ -255,6 +255,8 @@ router.post("/:id/weeklyestimate", userController.weeklyEstimate);
 
 router.post("/:id/roomtyperev", userController.roomTypeRev);
 
+router.post("/:id/roomtypeanalysis", userController.roomTypeAnalysis);
+
 router.post("/:id/addroomtype", roomTypeController.createSuite);
 
 router.post("/:id/allroomtype", roomTypeController.allRoomType);

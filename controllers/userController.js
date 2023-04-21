@@ -266,7 +266,9 @@ const deleteUser = async (req, res, next) => {
         const room = req.body.roomid
         // Reverting the changes caused by the discount and advance in the schema!
         await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], isOccupied : "false", channel : undefined, extraCount : 0,
-        preBooked : false, preValid : true, advance: false, discount: false, discountPrice: String, advancePrice: String, advanceDiscountPrice: String, advancePrebookPrice: String } })
+        preBooked : false, preValid : true, advance: false, discount: false, 
+        discountPrice: String, advancePrice: String, advanceDiscountPrice: String, 
+        advancePrebookPrice: String } })
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
         await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
@@ -274,7 +276,7 @@ const deleteUser = async (req, res, next) => {
           prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, 
           foodGst: req.body.foodGst, stayGst: req.body.stayGst, 
           totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, 
-          isGst: req.body.isGst}})
+          isGst: req.body.isGst, roomType: req.body.roomtype}})
         const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
         //console.log("Room type", updateRate.price);
         await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
@@ -411,6 +413,33 @@ function datesHelperEstimate(data, dates){
   return weeklyTotal;
 }
 
+async function roomTypeAnalysis(req,res,next){
+  const result = await UserDb.find({lodge: req.params.id});
+  const roomType = await getRoomType(result, req.body.date);
+  res.status(200).json({
+    success: true,
+    result: roomType.result,
+    total: roomType.total
+  })
+}
+
+async function getRoomType(data, date){
+  let total = 0;
+  const resultObj = {};
+  data.map((options, key) => {
+    if(options.dateofcheckout === date){
+      if(resultObj[options.roomType] !== undefined){
+        resultObj[options.roomType] += Number(options.bill);
+        total += Number(options.bill)
+      } else {
+        resultObj[options.roomType] = Number(options.bill);
+        total += Number(options.bill)
+      }
+    }
+  })
+  return {result: resultObj, total: total};
+} 
+
 // Room type revenue estimator!
 async function roomTypeRev(req,res,next){
   UserDb.find({lodge: req.params.id})
@@ -504,5 +533,5 @@ const updateOccupiedData = async (req, res, next) => {
 
 module.exports = {
     allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, 
-    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev, updateOccupiedData
+    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev, updateOccupiedData, roomTypeAnalysis
 }
