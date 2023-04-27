@@ -37,7 +37,9 @@ const preBookUserRooms = async (req, res,next) => {
         prebookprice : req.body.prebookprice,
         room : req.body.roomid,
         lodge : req.params.id,
-        roomno : roomno
+        roomno : roomno,
+        prebookcheckinTime: req.body.checkinTime,
+        prebookcheckoutTime: req.body.checkoutTime
       })
       if(preBooking){
         await Room.findByIdAndUpdate({_id : preBooking.room}, {preBooked : true, $push : {prebookuser : preBooking._id}});
