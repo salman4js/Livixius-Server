@@ -61,7 +61,6 @@ const preBookUserRooms = async (req, res,next) => {
 
 const roomById = async (roomid) => {
   const value = await Room.findById({ _id: roomid});
-  console.log("Room Number", value.roomno);
   return value.roomno;
 }
 
@@ -186,7 +185,62 @@ async function checkValues(data, date){
   return value;
 }
 
+// Get available prebook rooms!
+function availablePrebook(datesBetween, prebookedData){
+  var nonAvailableRoomIds = [];
+  
+  prebookedData.map((options,key) => {
+      options.dates.forEach(( k, i ) => {
+        if(datesBetween.includes(k)){
+          nonAvailableRoomIds.push(options.id);
+        }
+      })
+  })
+  
+  return [...new Set(nonAvailableRoomIds)]; // Removing duplicate room id's
+
+}
+
+// Get available rooms based on date, time and room type!
+async function getPrebook(req, res, next){
+    
+  const availableRooms = await Room.find({lodge: req.params.id, isOccupied: "false"});
+  const prebookRooms = await Prebook.find({lodge: req.params.id});
+  const datesBetween = brewDate.getBetween(req.body.dateofCheckin, req.body.dateofCheckout);
+  const findPrebook = findNonPrebooked(prebookRooms, req.body.checkinTime, req.body.checkoutTime, datesBetween);
+  const getNonAvailableRoom = availablePrebook(datesBetween, findPrebook);
+  
+  res.status(200).json({
+    success: true,
+    betweenInput: datesBetween,
+    betweenOutput: findPrebook,
+    nonAvailableRoomId: getNonAvailableRoom
+  })
+
+}
+
+// Helper Function - getPrebook
+function findNonPrebooked(rooms, checkinTime, checkoutTime, checkinDate, checkoutDate){
+  
+  var prebookedDetails = [];
+  
+  rooms.map((options, key) => {
+    var getBetween = {};
+    var dates = [];
+    getBetween['id'] = options._id;
+    const betweenDates = brewDate.getBetween(options.prebookDateofCheckin, options.prebookDateofCheckout);
+    betweenDates.forEach((key, index) => {
+      dates.push(key);
+    })
+    getBetween['dates'] = dates;
+    prebookedDetails.push(getBetween);
+  })
+
+  return prebookedDetails;
+}
+
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
-  deletePrebookUserRooms, excludeDates, excludeDateCheckin, upcomingPrebook
+  deletePrebookUserRooms, excludeDates, excludeDateCheckin, upcomingPrebook,
+  getPrebook
 }
