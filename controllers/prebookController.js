@@ -3,6 +3,7 @@ const Room = require("../models/Rooms.js");
 const User = require('../models/User.js');
 // Import brew-date package
 const brewDate = require('brew-date');
+const commonFunction = require("../common.functions/common.functions");
 
 const preBookUserRooms = async (req, res,next) => {
   const roomno = await roomById(req.body.roomid);
@@ -50,7 +51,6 @@ const preBookUserRooms = async (req, res,next) => {
         message : "Customer has been pre-booked successfully!"
       })
     } catch (err){
-      console.log(err);
       res.status(200).json({
         success : false,
         message : "Some internal error occured!"
@@ -74,7 +74,6 @@ const excludeDates = async (req,res,next) => {
   for(i=0; i <= dateofCheckin.length -1; i++){
     dates.push(brewDate.getBetween(dateofCheckin[i], dateofCheckout[i]));
   }
-  console.log(dates);
   res.status(200).json({
     success : true,
     message : dates
@@ -113,7 +112,6 @@ const ShowAllPrebookedUser = (req,res,next) => {
     })
   })
   .catch(err => {
-    console.log(err);
     res.status(200).json({
       success : false,
       message : "Some internal error occured!"
@@ -124,14 +122,12 @@ const ShowAllPrebookedUser = (req,res,next) => {
 const ShowAllPrebookedRooms = (req,res,next) => {
   Prebook.find({lodge: req.params.id})
   .then(data => {
-    console.log("Data retrieved");
     res.status(200).json({
       success : true,
       message : data
     })
   })
   .catch(err => {
-    console.log(err);
     res.status(200).json({
       success : false,
       message : "Some internal error occured"
@@ -142,7 +138,6 @@ const ShowAllPrebookedRooms = (req,res,next) => {
 const deletePrebookUserRooms = (req,res,next) => {
   Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
   .then(data => {
-    console.log("Pre book user got deleted");
     res.status(200).json({
       success : true,
       message : "Pre Book user got deleted!"
@@ -187,8 +182,9 @@ async function checkValues(data, date){
 
 // Get available prebook rooms!
 function availablePrebook(datesBetween, prebookedData){
-  var nonAvailableRoomIds = [];
   
+  var nonAvailableRoomIds = [];
+    
   prebookedData.map((options,key) => {
       options.dates.forEach(( k, i ) => {
         if(datesBetween.includes(k)){
@@ -203,44 +199,88 @@ function availablePrebook(datesBetween, prebookedData){
 
 // Get available rooms based on date, time and room type!
 async function getPrebook(req, res, next){
+  try{
+    var betweenDate = [];
     
-  const availableRooms = await Room.find({lodge: req.params.id, isOccupied: "false"});
-  const prebookRooms = await Prebook.find({lodge: req.params.id});
-  const datesBetween = brewDate.getBetween(req.body.dateofCheckin, req.body.dateofCheckout);
-  const findPrebook = findNonPrebooked(prebookRooms, req.body.checkinTime, req.body.checkoutTime, datesBetween);
-  const getNonAvailableRoom = availablePrebook(datesBetween, findPrebook);
-  
-  res.status(200).json({
-    success: true,
-    betweenInput: datesBetween,
-    betweenOutput: findPrebook,
-    nonAvailableRoomId: getNonAvailableRoom
-  })
-
+    // Put together date and time to get time between by brew-date!
+    const checkin = req.body.dateofCheckin + " " + req.body.checkinTime;
+    const checkout = req.body.dateofCheckout + " " + req.body.checkoutTime;
+    
+    const dateTime = [checkin, checkout];
+          
+    const availableRooms = await Room.find({lodge: req.params.id, isOccupied: "false"});
+    const prebookRooms = await Prebook.find({lodge: req.params.id});
+    const datesBetween = brewDate.getBetween(req.body.dateofCheckin, req.body.dateofCheckout);
+    
+    const getDateTime = commonFunction.getTimeBetweenWithDate(datesBetween, dateTime);
+    
+    const findPrebook = findNonPrebooked(prebookRooms);
+    
+    const getNonAvailableRoom = availablePrebook(getDateTime, findPrebook);
+    
+    res.status(200).json({
+      success: true,
+      nonAvailableRoomId: getNonAvailableRoom
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Unable to fetch available room at this moment!"
+    })
+  }
 }
 
 // Helper Function - getPrebook
-function findNonPrebooked(rooms, checkinTime, checkoutTime, checkinDate, checkoutDate){
+function findNonPrebooked(rooms){
   
   var prebookedDetails = [];
   
   rooms.map((options, key) => {
     var getBetween = {};
     var dates = [];
+    var time = [];
     getBetween['id'] = options._id;
+    
+    // Put together date and time to get time between by brew-date!
+    const checkin = options.prebookDateofCheckin + " " + options.prebookcheckinTime;
+    const checkout = options.prebookDateofCheckout + " " + options.prebookcheckoutTime;
     const betweenDates = brewDate.getBetween(options.prebookDateofCheckin, options.prebookDateofCheckout);
-    betweenDates.forEach((key, index) => {
-      dates.push(key);
-    })
-    getBetween['dates'] = dates;
+    
+    const dateTime = [checkin, checkout];
+    
+    const getDateTime = commonFunction.getTimeBetweenWithDate(betweenDates, dateTime);
+    
+    
+    getBetween['dates'] = [...new Set(getDateTime)];
     prebookedDetails.push(getBetween);
   })
 
   return prebookedDetails;
 }
 
+// Helper function -- getPrebook!
+function convert12to24(time){
+  return brewDate.convert12to24(time);
+}
+
+// Get only rooms which are available for prebooking based on search data!
+function getAvailablePrebook(req,res,next){
+  
+  const checkinDate = req.body.checkinDate;
+  const checkinTime = req.body.checkinTime;
+  const checkoutDate = req.body.checkoutDate;
+  const checkoutTime = req.body.checkoutTime;
+  
+  const checkin = checkinDate + " " + checkinTime;
+  const checkout = checkoutDate + " " + checkoutTime;
+  
+  // Form a date
+  
+  
+}
+
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
   deletePrebookUserRooms, excludeDates, excludeDateCheckin, upcomingPrebook,
-  getPrebook
+  getPrebook, getAvailablePrebook
 }
