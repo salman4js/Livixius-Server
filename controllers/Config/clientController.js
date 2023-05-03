@@ -38,7 +38,8 @@ const checkMatrix = async (req,res,next) => {
       isSpecific: config.isSpecific,
       extraPrice: config.extraPrice,
       address: config.area,
-      emailId: config.emailId 
+      emailId: config.emailId,
+      canDelete: config.canDelete 
     })
   } catch(err){
     res.status(200).json({
@@ -112,7 +113,8 @@ const updateMatrix = (req,res,next) => {
     isExtra: req.body.isExtra,
     isExclusive: req.body.isExclusive,
     isInsights: req.body.isInsights,
-    isSpecific: req.body.isSpecific
+    isSpecific: req.body.isSpecific,
+    canDelete: req.body.canDeleteRooms
   })
   .then(data => {
     res.status(200).json({
