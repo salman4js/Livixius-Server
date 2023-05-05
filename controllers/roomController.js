@@ -85,7 +85,6 @@ const createRoom = async (req, res, next) => {
 
 const checkDuplicate = async (lodgeid, roomno) => {
   const value = await Room.findOne({lodge : lodgeid, roomno : roomno});
-  console.log("Check",value)
   return value;
 }
 
@@ -121,7 +120,8 @@ const availability = (req, res, next) => {
       console.log(data)
       res.status(200).json({
         success : true,
-        message : data
+        message : data,
+        channels: channel.channelManager.channelManager
       })
     })
     .catch(err => {

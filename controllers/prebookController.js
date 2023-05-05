@@ -184,11 +184,11 @@ async function checkValues(data, date){
 function availablePrebook(datesBetween, prebookedData){
   
   var nonAvailableRoomIds = [];
-    
+  
   prebookedData.map((options,key) => {
       options.dates.forEach(( k, i ) => {
         if(datesBetween.includes(k)){
-          nonAvailableRoomIds.push(options.id);
+          nonAvailableRoomIds.push(options.roomno);
         }
       })
   })
@@ -207,20 +207,24 @@ async function getPrebook(req, res, next){
     const checkout = req.body.dateofCheckout + " " + req.body.checkoutTime;
     
     const dateTime = [checkin, checkout];
-          
+              
     const availableRooms = await Room.find({lodge: req.params.id, isOccupied: "false"});
     const prebookRooms = await Prebook.find({lodge: req.params.id});
     const datesBetween = brewDate.getBetween(req.body.dateofCheckin, req.body.dateofCheckout);
     
     const getDateTime = commonFunction.getTimeBetweenWithDate(datesBetween, dateTime);
-    
+        
     const findPrebook = findNonPrebooked(prebookRooms);
     
     const getNonAvailableRoom = availablePrebook(getDateTime, findPrebook);
     
     res.status(200).json({
       success: true,
-      nonAvailableRoomId: getNonAvailableRoom
+      nonAvailableRoomId: getNonAvailableRoom,
+      checkinDate: req.body.dateofCheckin,
+      checkoutDate: req.body.dateofCheckout,
+      checkinTime: req.body.checkinTime,
+      checkoutTime: req.body.checkoutTime   
     })
   } catch(err){
     res.status(200).json({
@@ -239,7 +243,7 @@ function findNonPrebooked(rooms){
     var getBetween = {};
     var dates = [];
     var time = [];
-    getBetween['id'] = options._id;
+    getBetween['roomno'] = options.roomno;
     
     // Put together date and time to get time between by brew-date!
     const checkin = options.prebookDateofCheckin + " " + options.prebookcheckinTime;
@@ -250,9 +254,10 @@ function findNonPrebooked(rooms){
     
     const getDateTime = commonFunction.getTimeBetweenWithDate(betweenDates, dateTime);
     
-    
     getBetween['dates'] = [...new Set(getDateTime)];
+    
     prebookedDetails.push(getBetween);
+    
   })
 
   return prebookedDetails;
