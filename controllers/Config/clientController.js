@@ -40,7 +40,7 @@ const checkMatrix = async (req,res,next) => {
       address: config.area,
       emailId: config.emailId,
       canDelete: config.canDelete,
-      extraCalc: config.extraCalc 
+      extraCalc: config.extraCalc
     })
   } catch(err){
     res.status(200).json({
