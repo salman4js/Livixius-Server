@@ -296,11 +296,14 @@ const deleteUser = async (req, res, next) => {
 const generateBill = async (req,res,next) => {
   try{
     const noofstays = req.body.stayeddays.match(/\d+/);
+    const isExtraCalc = req.body.extraCalc;
     const test = await Room.findById({_id: req.body.roomid})
     const discountPrice = test.discountPrice;
     await Room.findById({lodge : req.body.lodgeid, _id : req.body.roomid})
     .then(data => {
-      const price = calculatePrice(+data.price, noofstays[0], req.body.isHourly, data.extraCount, data.extraBedPrice);
+      const price = calculatePrice(+data.price, noofstays[0], req.body.isHourly);
+      const extraBedCollection = +data.extraBedPrice * +data.extraCount;
+      const extraBedPrice = calculatePrice(extraBedCollection, noofstays[0], req.body.isHourly);
       res.status(200).json({
         success : true,
         message : price,
@@ -311,7 +314,7 @@ const generateBill = async (req,res,next) => {
         discountPrice : +discountPrice,
         extraBedCount: data.extraCount,
         extraBedPrice: data.extraBedPrice,
-        extraBedCollection: data.extraCount * data.extraBedPrice,
+        extraBedCollection: isExtraCalc ? extraBedPrice : extraBedCollection,
         advanceDiscountPrice: +test.advanceDiscountPrice,
         discount: test.discount,
         totalAmount: +data.totalAmount,
