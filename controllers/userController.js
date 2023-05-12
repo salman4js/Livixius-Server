@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 
 // Importing brew date package to do the date handling!
 const bwt = require('brew-date');
+// Importing invoice memory generator implementation function!
+const invoiceMemory = require("./Invoice.controller/Invoice.controller");
 
 const addUser = (req, res, next) => {
     const user = new User({
@@ -262,6 +264,23 @@ const userRoom = (req, res, next) => {
 }
 
 const deleteUser = async (req, res, next) => {
+  
+    // Check for the date, if its the first date of the month, reset the invoice
+    // Count to zero.
+    const date = new Date();
+    const currentDate = new Date(req.body.checkoutdate); // Current Date 
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).toString(); // First day of the month!
+    if(currentDate == firstDayOfMonth){
+      await invoiceMemory.updateInitialState(req.params.id);
+    }
+    
+  
+    var isGstEnabled = req.body.isGst;
+    if(isGstEnabled){
+      // Create invoice memory for the particular user only when GST is disabled!
+      await createInvoiceMemory(req.params.id, req.body.userid, req.body.checkoutTime, req.body.checkoutdate);
+    }
+  
     try {
         const room = req.body.roomid
         // Reverting the changes caused by the discount and advance in the schema!
@@ -273,7 +292,7 @@ const deleteUser = async (req, res, next) => {
         await UserDish.deleteMany({room : req.body.roomid})
         await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
           dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
-          prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, 
+          prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, refund: req.body.refund,
           foodGst: req.body.foodGst, stayGst: req.body.stayGst, 
           totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, 
           isGst: req.body.isGst, roomType: req.body.roomtype}})
@@ -291,6 +310,29 @@ const deleteUser = async (req, res, next) => {
             message : err
         })
     }
+}
+
+// Helper Function -- deleteuser!
+async function createInvoiceMemory(lodgeId, userid, checkoutTime, checkoutDate){
+  const userdata = await UserDb.find({userid: userid});
+  
+  // Form data for invoice generator!
+  const invoiceData = {
+    receiptId: userdata.receiptId,
+    invoiceDate: checkoutDate,
+    paymentDate: checkoutDate,
+    dateofCheckin: userdata[0].dateofcheckin,
+    dateofCheckout: checkoutDate,
+    customerName: userdata[0].username,
+    customerPhoneNumber: userdata[0].phonenumber,
+    aadharCard: userdata[0].aadharcard,
+    timeofCheckin: userdata[0].checkinTime,
+    timeofCheckout: checkoutTime,
+    lodgeId: lodgeId
+  }
+  
+  const result = await invoiceMemory.addInvoiceData(invoiceData);
+  return result;
 }
 
 const generateBill = async (req,res,next) => {

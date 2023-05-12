@@ -20,6 +20,8 @@ const dishTypeController = require("../controllers/dishTypeController.js");
 const tModeController = require("../controllers/tModeController.js");
 const tVehicleController = require("../controllers/tVehicleController.js");
 const clientController = require("../controllers/Config/clientController.js");
+const invoiceController = require("../controllers/Invoice.controller/Invoice.controller.js");
+
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -320,5 +322,15 @@ router.post("/:id/config-update-matrix", clientController.updateMatrix);
 router.post("/:id/create-config", clientController.create_config);
 
 router.post("/:id/delete-config", clientController.deleteConfig);
+
+// Invoice Memory!
+
+router.get("/:id/getinvoicememory", invoiceController.getAllInvoiceMemory);
+
+router.post("/:id/addinvoice", invoiceController.addInvoice);
+
+router.post("/:id/deleteinvoicememory", invoiceController.deleteInvoiceMemory);
+
+router.post("/:id/initialstateofinvoicecount", invoiceController.getInitialStateOfInvoiceCount);
 
 module.exports = router;

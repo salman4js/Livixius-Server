@@ -92,7 +92,6 @@ const allRooms = async (req, res, next) => {
   const availabilityCount = await countAvailability(req.params.id, req.params.state);
   Room.find({ lodge: req.params.id })
     .then(data => {
-      console.log(data)
       res.status(200).json({
         success : true,
         message : data,
@@ -101,7 +100,6 @@ const allRooms = async (req, res, next) => {
       })
     })
     .catch(err => {
-      console.log(err)
       res.status(200).json({
         success : false,
         message : "Some internal error has occured!"

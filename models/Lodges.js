@@ -44,6 +44,11 @@ const lodgeSchema = new mongoose.Schema({
       type : mongoose.Schema.Types.ObjectId,
       ref : "Config"
     }],
+    invoice: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Invoice"
+    }],
+    invoiceCount: {type: Number, default: 0},
     isGst: {type: Boolean, default: false},
     isHourly: {type: Boolean, default: false},
     isChannel: {type: Boolean, default: false},
