@@ -560,8 +560,16 @@ const updateOccupiedData = async (req, res, next) => {
         dateofcheckout: req.body.dateofcheckout,
         advance: req.body.advance,
         discount: req.body.discount,
-        checkoutTime: req.body.checkOutTime
+        checkoutTime: req.body.checkOutTime,
       })
+      
+      // Updating room prevalid to true as we got date of checkout!
+      if(req.body.dateofcheckout !== undefined){
+        // Change prevalid boolean value!
+        await Room.findByIdAndUpdate(req.body.roomId, {
+          preValid: true
+        })
+      }
       
       // Sending Response!
       res.status(200).json({

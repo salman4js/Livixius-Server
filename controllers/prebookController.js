@@ -238,7 +238,6 @@ async function getPrebook(req, res, next){
       checkoutTime: req.body.checkoutTime   
     })
   } catch(err){
-    console.log(err);
     res.status(200).json({
       success: false,
       message: "Unable to fetch available room at this moment!"
@@ -248,7 +247,7 @@ async function getPrebook(req, res, next){
 
 // Get Booked Rooms user data!
 async function getBookedRooms(lodgeId){
-  const userCheckedIn = await User.find({lodge: lodgeId});
+  const userCheckedIn = await User.find({lodge: lodgeId, dateofcheckout: { $ne: undefined }});
   return userCheckedIn;
 }
 
