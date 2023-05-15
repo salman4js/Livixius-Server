@@ -200,7 +200,7 @@ async function availablePrebook(datesBetween, prebookedData, userCheckedIn){
       }
     })
   })
-  
+    
   return [...new Set(nonAvailableRoomIds)]; // Removing duplicate room id's
 
 }
@@ -222,9 +222,9 @@ async function getPrebook(req, res, next){
     const getDateTime = commonFunction.getTimeBetweenWithDate(datesBetween, dateTime);
     
     const userCheckedIn = await getBookedRooms(req.params.id);
-    
+        
     const findBookedRooms = findNonPrebooked(userCheckedIn, "checkin");
-            
+                
     const findPrebook = findNonPrebooked(prebookRooms, "prebook");
         
     const getNonAvailableRoom = await availablePrebook(getDateTime, findPrebook, findBookedRooms);
