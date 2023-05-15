@@ -485,7 +485,6 @@ const addUserRooms = async (req, res, next) => {
         // Setting the prebook user room price as the price when they booked the room!
         if(req.body.prebook === true){
           if(req.body.advanceDiscount !== undefined && req.body.advanceDiscount !== ""){
-            console.log(req.body.advancePrebookPrice)
             await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, 
               price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice, advanceDiscountPrice: req.body.advanceDiscount, discount: true})
           } else {
