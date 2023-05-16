@@ -72,8 +72,12 @@ const excludeDates = async (req,res,next) => {
   const dateofCheckout = datesBetween.map(obj => obj.prebookDateofCheckout);
   
   for(i=0; i <= dateofCheckin.length -1; i++){
-    dates.push(brewDate.getBetween(dateofCheckin[i], dateofCheckout[i]));
+    const result = brewDate.getBetween(dateofCheckin[i], dateofCheckout[i])
+    for ( j = 0; j <= result.length - 1; j ++){
+      dates.push(new Date(result[j]))
+    }
   }
+  
   res.status(200).json({
     success : true,
     message : dates
