@@ -13,6 +13,8 @@ const userdbSchema = new mongoose.Schema({
     aadharcard : String,
     dateofcheckin : String,
     checkinTime: String,
+    expCheckinTime: String,
+    actualCheckinTime: String,
     dateofcheckout : {type : String, default : ""},
     checkoutTime: String,
     stayedDays : String,

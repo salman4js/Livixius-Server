@@ -15,6 +15,8 @@ const preBookSchema = new mongoose.Schema({
   prebookprice : String,
   prebookcheckinTime: String,
   prebookcheckoutTime: String,
+  prebookChannelManager: String,
+  prebookChannel: String,
   room : {
     type : mongoose.Schema.Types.ObjectId,
     ref : "Rooms"

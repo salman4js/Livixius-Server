@@ -441,6 +441,8 @@ const addUserRooms = async (req, res, next) => {
           room : req.body.roomid,
           dateofcheckin : req.body.checkin,
           checkinTime: req.body.checkinTime,
+          expCheckinTime: req.body.expCheckinTime,
+          actualCheckinTime: req.body.actualCheckinTime,
           roomno : req.body.roomno,
           userid : checkin._id,
           lodge : req.params.id,
