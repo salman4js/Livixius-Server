@@ -125,6 +125,34 @@ const ShowAllPrebookedUser = (req,res,next) => {
   })
 }
 
+// Edit prebooked customer details!
+async function editPrebookedRooms(req,res,next){
+
+  Prebook.findByIdAndUpdate(req.body.prebookId, {
+    prebookUsername : req.body.prebookUsername,
+    prebookPhoneNumber : req.body.prebookPhoneNumber,
+    prebookSecondNumber : req.body.prebookSecondPhoneNumber,
+    prebookAdults : req.body.prebookAdults,
+    prebookChildren : req.body.prebookChildrens,
+    prebookAadharCard : req.body.prebookAadhar,
+    prebookDateofCheckin : req.body.prebookDateofCheckin,
+    prebookAdvance : req.body.prebookAdvance,
+    prebookdiscount : req.body.prebookDiscount,
+  })
+  .then(data => {
+    res.status(200).json({
+      success: true,
+      message: "Customer details  has been updated!"
+    })
+  })
+  .catch(err => {
+    res.status(500).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  })
+}
+
 const ShowAllPrebookedRooms = (req,res,next) => {
   Prebook.find({lodge: req.params.id})
   .then(data => {
@@ -254,7 +282,7 @@ async function getPrebook(req, res, next){
 // Get Booked Rooms user data!
 async function getBookedRooms(lodgeId){
   const userCheckedIn = await User.find({lodge: lodgeId, dateofcheckout: { $ne: undefined }});
-  return userCheckedIn;
+    return userCheckedIn;
 }
 
 // Helper Function - getPrebook
@@ -316,8 +344,9 @@ function getAvailablePrebook(req,res,next){
   
 }
 
+
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
   deletePrebookUserRooms, excludeDates, excludeDateCheckin, upcomingPrebook,
-  getPrebook, getAvailablePrebook
+  getPrebook, getAvailablePrebook, editPrebookedRooms
 }

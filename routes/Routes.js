@@ -201,6 +201,8 @@ router.post("/:id/update-room-price", roomController.updateRoomPrice);
 
 router.post("/:id/getnonprebook", prebookController.getPrebook);
 
+router.post("/:id/editprebookedrooms", prebookController.editPrebookedRooms);
+
 router.post("/:id/getavailableprebook", prebookController.getAvailablePrebook);
 
 router.post("/:id/addprebookuserrooms", prebookController.preBookUserRooms);
