@@ -85,7 +85,6 @@ const loginLodge = (req,res,next) => {
 }
 
 const updateAuth = async(username, token) => {
-  console.log("Function getting called!")
   await Lodge.updateOne({username : username}, {$set : {token : token}})
 }
 

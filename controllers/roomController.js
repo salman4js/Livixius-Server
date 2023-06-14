@@ -50,7 +50,6 @@ const createRoom = async (req, res, next) => {
     })
   } else {
     try {
-      console.log("Check duplicate value", await checkDuplicate(req.params.id, req.body.roomno));
       if(await checkDuplicate(req.params.id, req.body.roomno) === null){
         const room = new Room({
          roomno: req.body.roomno,

@@ -21,7 +21,7 @@ const tModeController = require("../controllers/tModeController.js");
 const tVehicleController = require("../controllers/tVehicleController.js");
 const clientController = require("../controllers/Config/clientController.js");
 const invoiceController = require("../controllers/Invoice.controller/Invoice.controller.js");
-
+const voucherController = require("../controllers/voucherController/voucher.controller");
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -334,5 +334,11 @@ router.post("/:id/addinvoice", invoiceController.addInvoice);
 router.post("/:id/deleteinvoicememory", invoiceController.deleteInvoiceMemory);
 
 router.post("/:id/initialstateofinvoicecount", invoiceController.getInitialStateOfInvoiceCount);
+
+// Vouchers Routes!
+router.post("/:id/addvouchers", voucherController.addVouchers);
+
+router.get("/:id/getvouchers", voucherController.getVouchers);
+
 
 module.exports = router;
