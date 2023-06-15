@@ -340,5 +340,8 @@ router.post("/:id/addvouchers", voucherController.addVouchers);
 
 router.get("/:id/getvouchers", voucherController.getVouchers);
 
+router.post('/:id/getvouchermodel', voucherController.getVoucherModel);
+
+router.post("/:id/addvouchermodel", voucherController.addVoucherModel)
 
 module.exports = router;

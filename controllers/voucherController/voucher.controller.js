@@ -1,4 +1,5 @@
 const Voucher = require("../../models/Vouchers/voucher.model.js");
+const VoucherModel = require("../../models/Vouchers/voucher.model.details");
 const Lodge = require("../../models/Lodges");
 
 // Add parent vouchers!
@@ -40,6 +41,46 @@ function getVouchers(req,res,next){
     })
 }
 
+// Add voucher model to the respective vouchers1
+async function addVoucherModel(req,res,next){
+  try{
+    const voucherModel = new VoucherModel(req.body);
+    
+    if(voucherModel){
+      await Voucher.findByIdAndUpdate({_id: req.body.voucherId}, {$push: {voucherDetails: voucherModel._id}})
+    }
+    
+    await voucherModel.save();
+    res.status(200).json({
+      success: true,
+      message: "New voucher model added"
+    })
+    
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Couldn't create a new voucher model!"
+    })
+  }
+}
+
+// Send voucher model to the client!
+function getVoucherModel(req,res,next){
+  VoucherModel.find({voucherId: req.body.voucherId})
+    .then(data => {
+      res.status(200).json({
+        success: true,
+        message: data
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Internal error occured!"
+      })
+    })
+}
+
 module.exports = {
-  addVouchers, getVouchers
+  addVouchers, getVouchers, getVoucherModel, addVoucherModel
 }

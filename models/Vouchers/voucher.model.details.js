@@ -7,7 +7,7 @@ const voucherDetails = new mongoose.Schema({
   cashMode: String,
   receipt: String,
   payment: String,
-  vouchers: {
+  voucherId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vouchers"
   }
