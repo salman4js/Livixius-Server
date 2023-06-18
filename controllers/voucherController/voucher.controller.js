@@ -70,7 +70,9 @@ function getVoucherModel(req,res,next){
     .then(data => {
       res.status(200).json({
         success: true,
-        message: data
+        message: data,
+        tableHeaders: ['Voucher No', 'Date', 'Particulars', 'Cash Mode', 'Receipt', 'Payment'],
+        infoMessage: "No vouchers has been added in this list..."
       })
     })
     .catch(err => {
