@@ -1,6 +1,7 @@
 const Voucher = require("../../models/Vouchers/voucher.model.js");
 const VoucherModel = require("../../models/Vouchers/voucher.model.details");
 const Lodge = require("../../models/Lodges");
+const Queries = require("../../query.optimization/queryAnalyser");
 
 // Add parent vouchers!
 async function addVouchers(req,res,next){
@@ -83,6 +84,53 @@ function getVoucherModel(req,res,next){
     })
 }
 
+// Function to filter the voucher model result through cheat code!
+async function cheatCodeFiltering(req,res,next){
+  const queryAction = Queries.analyseQuery(req.body);
+  queryAction['voucherId'] = req.body.voucherId;
+  const result = await voucherModelFiltering(queryAction);
+  console.log(result);
+  res.send(result);
+}
+
+
+// Filtering of voucher model details!
+function voucherModelFiltering(queryResult){
+  
+  // Forming filter query!
+  const filterQuery = {
+    voucherId: queryResult.voucherId,
+  };
+  
+  if(queryResult.attribute === "Particulars"){
+    filterQuery.particulars = queryResult.retrieveValue
+  }
+  
+  if(queryResult.attribute === "Receipt"){
+    filterQuery.receipt = queryResult.retrieveValue
+  }
+  
+  if(queryResult.attribute === "Date"){
+    filterQuery.dateTime = queryResult.retrieveValue
+  }
+
+  if (queryResult.attribute === "CashMode") {
+    filterQuery.cashMode = queryResult.retrieveValue
+  }
+  
+  return VoucherModel.find(filterQuery)
+    .then(data => {
+      const result = {
+        success: true,
+        message: data,
+        tableHeaders: ['Voucher No', 'Date', 'Particulars', 'Cash Mode', 'Receipt', 'Payment'],
+        infoMessage: "No vouchers model at the selected filter!"
+      }
+      
+      return result;
+    })
+}
+
 module.exports = {
-  addVouchers, getVouchers, getVoucherModel, addVoucherModel
+  addVouchers, getVouchers, getVoucherModel, addVoucherModel, cheatCodeFiltering
 }

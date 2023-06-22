@@ -342,6 +342,9 @@ router.get("/:id/getvouchers", voucherController.getVouchers);
 
 router.post('/:id/getvouchermodel', voucherController.getVoucherModel);
 
-router.post("/:id/addvouchermodel", voucherController.addVoucherModel)
+router.post("/:id/addvouchermodel", voucherController.addVoucherModel);
+
+router.post("/:id/cheatcodefilter", voucherController.cheatCodeFiltering);
+
 
 module.exports = router;
