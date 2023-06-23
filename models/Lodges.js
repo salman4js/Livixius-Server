@@ -63,7 +63,8 @@ const lodgeSchema = new mongoose.Schema({
     isSpecific: {type: Boolean, default: false},
     canDelete: {type: Boolean, default: false},
     extraCalc: {type: Boolean, default: false},
-    grcPreview: {type: Boolean, default: false}
+    grcPreview: {type: Boolean, default: false},
+    redirectTo: {type: String, default: "livixius"}
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);

@@ -87,9 +87,8 @@ function getVoucherModel(req,res,next){
 // Function to filter the voucher model result through cheat code!
 async function cheatCodeFiltering(req,res,next){
   const queryAction = Queries.analyseQuery(req.body);
-  queryAction['voucherId'] = req.body.voucherId;
+  queryAction['voucherId'] = req.body.voucherId
   const result = await voucherModelFiltering(queryAction);
-  console.log(result);
   res.send(result);
 }
 
@@ -102,21 +101,24 @@ function voucherModelFiltering(queryResult){
     voucherId: queryResult.voucherId,
   };
   
-  if(queryResult.attribute === "Particulars"){
-    filterQuery.particulars = queryResult.retrieveValue
-  }
-  
-  if(queryResult.attribute === "Receipt"){
-    filterQuery.receipt = queryResult.retrieveValue
-  }
-  
-  if(queryResult.attribute === "Date"){
-    filterQuery.dateTime = queryResult.retrieveValue
-  }
+  if(!(queryResult.attribute === "All")){
+    if(queryResult.attribute === "Particulars"){
+      filterQuery.particulars = queryResult.retrieveValue
+    }
+    
+    if(queryResult.attribute === "Receipt"){
+      filterQuery.receipt = queryResult.retrieveValue
+    }
+    
+    if(queryResult.attribute === "Date"){
+      filterQuery.dateTime = queryResult.retrieveValue
+    }
 
-  if (queryResult.attribute === "CashMode") {
-    filterQuery.cashMode = queryResult.retrieveValue
+    if (queryResult.attribute === "CashMode") {
+      filterQuery.cashMode = queryResult.retrieveValue
+    }
   }
+  
   
   return VoucherModel.find(filterQuery)
     .then(data => {

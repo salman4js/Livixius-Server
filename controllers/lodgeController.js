@@ -65,7 +65,7 @@ const loginLodge = (req,res,next) => {
                     pan: lodge.pan,
                     name: lodge.name,
                     number: lodge.number,
-                    redirect: "vouchers",
+                    redirect: lodge.redirectTo,
                     token
                   })
                   updateAuth(username, token);

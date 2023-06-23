@@ -41,7 +41,8 @@ const checkMatrix = async (req,res,next) => {
       emailId: config.emailId,
       canDelete: config.canDelete,
       extraCalc: config.extraCalc,
-      grcPreview: config.grcPreview
+      grcPreview: config.grcPreview,
+      redirectTo: config.redirectTo
     })
   } catch(err){
     res.status(200).json({
@@ -118,7 +119,8 @@ const updateMatrix = (req,res,next) => {
     isSpecific: req.body.isSpecific,
     canDelete: req.body.canDeleteRooms,
     extraCalc: req.body.extraCalc,
-    grcPreview: req.body.grcPreview
+    grcPreview: req.body.grcPreview,
+    redirectTo: req.body.redirectTo
   })
   .then(data => {
     res.status(200).json({
