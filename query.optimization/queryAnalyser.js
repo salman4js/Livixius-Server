@@ -30,7 +30,8 @@ function analyseQuery(value){
   } else {
     fromSelector = parsedQuery[2];
     toSelector = parsedQuery[4];
-    return {action, attribute, fromSelector, toSelector}
+    retrieveValue = [parsedQuery[3], parsedQuery[5]]
+    return {action, attribute, fromSelector, toSelector, retrieveValue}
   }
   
 }

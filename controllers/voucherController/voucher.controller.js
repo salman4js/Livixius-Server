@@ -111,7 +111,7 @@ function voucherModelFiltering(queryResult){
     }
     
     if(queryResult.attribute === "Date"){
-      filterQuery.dateTime = queryResult.retrieveValue
+      filterQuery.dateTime = { $gte: queryResult.retrieveValue[0], $lte: queryResult.retrieveValue[1] };
     }
 
     if (queryResult.attribute === "CashMode") {
