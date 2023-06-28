@@ -22,6 +22,7 @@ const tVehicleController = require("../controllers/tVehicleController.js");
 const clientController = require("../controllers/Config/clientController.js");
 const invoiceController = require("../controllers/Invoice.controller/Invoice.controller.js");
 const voucherController = require("../controllers/voucherController/voucher.controller");
+const multipleLoginController = require("../controllers/MultipleLoginController/multiple.login.controller");
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -345,6 +346,15 @@ router.post('/:id/getvouchermodel', voucherController.getVoucherModel);
 router.post("/:id/addvouchermodel", voucherController.addVoucherModel);
 
 router.post("/:id/cheatcodefilter", voucherController.cheatCodeFiltering);
+
+// Multiple Login Routes!
+router.post("/:id/addmultiplelogin", multipleLoginController.addLogins);
+
+router.get("/:id/getlogins", multipleLoginController.getLogins);
+
+router.post("/:id/deletelogin", multipleLoginController.deleteLogin);
+
+router.post("/:id/loginas", multipleLoginController.loginAs);
 
 
 module.exports = router;

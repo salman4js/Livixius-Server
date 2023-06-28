@@ -52,6 +52,10 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vouchers"
     }],
+    multipleLogins: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MultipleLogins"
+    }],
     invoiceCount: {type: Number, default: 0},
     isGst: {type: Boolean, default: false},
     isHourly: {type: Boolean, default: false},
@@ -64,7 +68,8 @@ const lodgeSchema = new mongoose.Schema({
     canDelete: {type: Boolean, default: false},
     extraCalc: {type: Boolean, default: false},
     grcPreview: {type: Boolean, default: false},
-    redirectTo: {type: String, default: "livixius"}
+    multipleLogins: {type: Boolean, default: false},
+    redirectTo: {type: String, default: "livixius"},
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);

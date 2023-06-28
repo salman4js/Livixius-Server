@@ -66,6 +66,7 @@ const loginLodge = (req,res,next) => {
                     name: lodge.name,
                     number: lodge.number,
                     redirect: lodge.redirectTo,
+                    multipleLogins: lodge.multipleLogins,
                     token
                   })
                   updateAuth(username, token);

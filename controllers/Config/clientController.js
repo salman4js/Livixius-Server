@@ -24,7 +24,7 @@ const checkMatrix = async (req,res,next) => {
   
   // Check all the required config!
   const config = await Lodge.findById(req.params.id);
-  
+    
   try{
     res.status(200).json({
       success: true,
@@ -42,7 +42,8 @@ const checkMatrix = async (req,res,next) => {
       canDelete: config.canDelete,
       extraCalc: config.extraCalc,
       grcPreview: config.grcPreview,
-      redirectTo: config.redirectTo
+      redirectTo: config.redirectTo,
+      multipleLogins: config.multipleLogins
     })
   } catch(err){
     res.status(200).json({
@@ -107,7 +108,6 @@ const checkDuplicate = async (lodgeId, config) => {
 
 // GST enable/ disable controller!
 const updateMatrix = (req,res,next) => {
-  
   Lodge.findByIdAndUpdate(req.params.id, {
     isGst: req.body.isGst,
     isHourly: req.body.isHourly,
@@ -120,7 +120,8 @@ const updateMatrix = (req,res,next) => {
     canDelete: req.body.canDeleteRooms,
     extraCalc: req.body.extraCalc,
     grcPreview: req.body.grcPreview,
-    redirectTo: req.body.redirectTo
+    redirectTo: req.body.redirectTo,
+    multipleLogins: req.body.multipleLogin
   })
   .then(data => {
     res.status(200).json({
