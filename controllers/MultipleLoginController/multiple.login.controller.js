@@ -9,7 +9,7 @@ async function addLogins(req,res,next){
     const multipleLogins = new MultipleLogins(req.body);
     
     if(multipleLogins){
-      await Lodge.findByIdAndUpdate({_id: req.body.lodge}, {$push: {multipleLogins: multipleLogins._id}})
+      await Lodge.findByIdAndUpdate({_id: req.body.lodge}, {$push: {multipleLogin: multipleLogins._id}})
     }
     
     await multipleLogins.save();
@@ -19,6 +19,7 @@ async function addLogins(req,res,next){
     })
   } catch(err){
     res.status(200).json({
+      error: err,
       success: false,
       message: "Couldn't create a login ID at the moment!"
     })
@@ -67,7 +68,8 @@ function getLogins(req,res,next){
   .then(data => {
     res.status(200).json({
       success: true,
-      message: data
+      message: data,
+      tableHeaders: ['Username', 'Password', 'Permission Level']
     })
   }).catch(err => {
     res.status(200).json({

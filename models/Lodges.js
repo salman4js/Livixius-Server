@@ -52,7 +52,7 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vouchers"
     }],
-    multipleLogins: [{
+    multipleLogin: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "MultipleLogins"
     }],
