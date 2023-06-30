@@ -80,7 +80,12 @@ function getLogins(req,res,next){
 }
 
 // Delete single login ID!
-function deleteLogin(req,res,next){
+async function deleteLogin(req,res,next){
+  
+  // Delete multiple login reference from the lodge reference1
+  await Lodge.findByIdAndUpdate({_id: req.body.lodgeid}, {$pull: {multipleLogin: req.body.loginId}});
+  
+  // Delete multiple login original reference!
   MultipleLogins.findByIdAndDelete({_id: req.body.loginId})
     .then(data => {
       res.status(200).json({
