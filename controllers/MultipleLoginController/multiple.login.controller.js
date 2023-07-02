@@ -26,6 +26,27 @@ async function addLogins(req,res,next){
   }
 }
 
+// Edit single login details!
+function editLogins(req,res,next){
+  MultipleLogins.findByIdAndUpdate(req.body.loginId, {
+    username: req.body.username,
+    password: req.body.password,
+    loginAs: req.body.loginAs
+  })
+  .then(data => {
+    res.status(200).json({
+      success: true,
+      message: "Login Id updated successfully!"
+    })
+  })
+  .catch(err => {
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  })
+}
+
 // Login Route for multiple login - receptionist!
 async function loginAs(req,res,next){
   try{
@@ -43,6 +64,7 @@ async function loginAs(req,res,next){
             res.status(200).json({
               success: true,
               message: `Receptionist logged in as ${username}`,
+              permissionLevel: data.loginAs,
               loggedInUser: data.username,
               loggedInAsRecep: data.loginAs === "receptionistLevel" ? true : false
             })
@@ -79,9 +101,33 @@ function getLogins(req,res,next){
   })
 }
 
+// Multiple delete login ID!
+async function multipleDeleteLogin(req,res,next){
+  console.log(req.body)
+  var loginId = req.body.loginId;
+  
+  try{
+    loginId.forEach( async (id) => {
+      await Lodge.findByIdAndUpdate({_id: req.body.lodgeid}, {$pull: {multipleLogin: id}});
+      await MultipleLogins.findByIdAndDelete({_id: id})
+    })
+    
+    res.status(200).json({
+      success: true,
+      message: "Login ID's deleted successfully!"
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  }
+  
+}
+
 // Delete single login ID!
 async function deleteLogin(req,res,next){
-  
+
   // Delete multiple login reference from the lodge reference1
   await Lodge.findByIdAndUpdate({_id: req.body.lodgeid}, {$pull: {multipleLogin: req.body.loginId}});
   
@@ -95,6 +141,7 @@ async function deleteLogin(req,res,next){
     })
     .catch(err => {
       res.status(200).json({
+        error: err,
         success: false,
         message: "Some internal error occured!"
       })
@@ -103,5 +150,5 @@ async function deleteLogin(req,res,next){
 
 
 module.exports = {
-  addLogins, getLogins, deleteLogin, loginAs
+  addLogins, getLogins, deleteLogin, loginAs, multipleDeleteLogin, editLogins
 }

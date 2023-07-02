@@ -356,5 +356,8 @@ router.post("/:id/deletelogin", multipleLoginController.deleteLogin);
 
 router.post("/:id/loginas", multipleLoginController.loginAs);
 
+router.post("/:id/multiplelogindelete", multipleLoginController.multipleDeleteLogin);
+
+router.post("/:id/editlogins", multipleLoginController.editLogins);
 
 module.exports = router;
