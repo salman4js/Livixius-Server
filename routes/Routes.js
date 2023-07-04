@@ -23,6 +23,7 @@ const clientController = require("../controllers/Config/clientController.js");
 const invoiceController = require("../controllers/Invoice.controller/Invoice.controller.js");
 const voucherController = require("../controllers/voucherController/voucher.controller");
 const multipleLoginController = require("../controllers/MultipleLoginController/multiple.login.controller");
+const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -359,5 +360,12 @@ router.post("/:id/loginas", multipleLoginController.loginAs);
 router.post("/:id/multiplelogindelete", multipleLoginController.multipleDeleteLogin);
 
 router.post("/:id/editlogins", multipleLoginController.editLogins);
+
+// Payment tracker routes!
+router.get("/:id/getpaymenttracker", paymentTrackerController.getPayment);
+
+router.post("/:id/addpaymenttracker", paymentTrackerController.addPaymentTracker);
+
+router.post("/:id/deletesinglepayment", paymentTrackerController.deleteSinglePaymentTracker);
 
 module.exports = router;

@@ -46,6 +46,10 @@ const roomSchema = new mongoose.Schema({
       type : mongoose.Schema.Types.ObjectId,
       ref : "Prebooks"
     }],
+    paymentTracker: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PaymentTracker"
+    }],
     channel : String
 })
 

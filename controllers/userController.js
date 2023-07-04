@@ -5,6 +5,9 @@ const UserDb = require("../models/UserDb.js");
 const RoomType = require("../models/RoomType.js");
 const jwt = require("jsonwebtoken");
 
+// Payment tracker instance!
+const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller")
+
 // Importing brew date package to do the date handling!
 const bwt = require('brew-date');
 // Importing invoice memory generator implementation function!
@@ -562,6 +565,16 @@ const updateOccupiedData = async (req, res, next) => {
         discount: req.body.discount,
         checkoutTime: req.body.checkOutTime,
       })
+      
+      // Track advance payment entry
+      const paymentParams = {
+        roomno: req.body.roomno,
+        room: req.body.roomId,
+        amountFor: req.body.amountFor,
+        amount: req.body.advance,
+        dateTime: req.body.dateTime
+      }
+      const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams)
       
       // Updating room prevalid to true as we got date of checkout!
       if(req.body.dateofcheckout !== undefined){

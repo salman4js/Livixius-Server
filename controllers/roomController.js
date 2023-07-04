@@ -16,6 +16,9 @@ const UserDb = require("../models/UserDb.js");
 
 const RoomType = require("../models/RoomType.js");
 
+// Payment tracker controller instance!
+const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
+
 // Importing Channel Manager!
 const channel = require("./startup.data/startup.data.js");
 
@@ -160,7 +163,6 @@ const roomOne = async (req, res, next) => {
 }
 
 const roomById = async (req, res, next) => {
-  console.log(req.body.roomid)
   Room.findById({ _id: req.body.roomid })
     .then(data => {
         res.status(200).json({
@@ -453,8 +455,19 @@ const addUserRooms = async (req, res, next) => {
           receiptId: uniqueId
         })
         if(userdatabase){
-          userdatabase.save()
+          userdatabase.save();
         }
+        
+        // Track payment in paymentTracker schema!
+        const paymentParams = {
+          roomno: req.body.roomno,
+          amount: req.body.advance,
+          amountFor: req.body.amountFor,
+          room: req.body.roomid,
+          dateTime: req.body.dateTime
+        }
+        const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams);
+        
         // Check for the date of checkout!
         if(checkin){
           if(checkin.dateofcheckout != undefined){

@@ -103,7 +103,6 @@ function getLogins(req,res,next){
 
 // Multiple delete login ID!
 async function multipleDeleteLogin(req,res,next){
-  console.log(req.body)
   var loginId = req.body.loginId;
   
   try{
