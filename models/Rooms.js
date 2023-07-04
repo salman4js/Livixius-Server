@@ -17,7 +17,7 @@ const roomSchema = new mongoose.Schema({
     discountPrice : String,
     advance: {type:  Boolean, default: false},
     advancePrice: String,
-    totalAmount: String,
+    totalAmount: String, // When channel manager enabled and if the user updates the price amount!
     dishes : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "UserDishes"

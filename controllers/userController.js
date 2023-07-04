@@ -558,7 +558,7 @@ const updateOccupiedData = async (req, res, next) => {
         extraBeds: req.body.extraBeds,
         aadharcard: req.body.aadharcard,
         dateofcheckout: req.body.dateofcheckout,
-        advance: req.body.advance,
+        advance: req.body.updatedAdvance, // Added prev advance with the updated advance in the UI itself!
         discount: req.body.discount,
         checkoutTime: req.body.checkOutTime,
       })
