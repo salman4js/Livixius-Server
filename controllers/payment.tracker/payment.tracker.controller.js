@@ -1,6 +1,8 @@
 const PaymentTracker = require("../../models/payment.tracker/payment.tracker");
-
+const commonUtils = require("../../common.functions/common.functions");
 const Room = require("../../models/Rooms");
+const User = require("../../models/User");
+const PreBookUser = require("../../models/PreBookUser");
 
 // Add payment tracker to the particular rooms!
 async function addPaymentTracker(req,res,next){
@@ -32,11 +34,44 @@ async function setPaymentTracker(data){
 
 // Get all the payment for the specific rooms!
 async function getPayment(req,res,next){
-  PaymentTracker.find({room: req.body.room})
-    .then(data => {
+
+  var modelData = {
+    'paymentTrackerId' : '_id', 
+    'amount': 'amount', 
+    'amountFor': 'amountFor', 
+    'dateTime': 'dateTime', 
+    'isPrebook': 'isPrebook'
+  }
+  
+  var prebookTableHeaders = ['Amount', 'Amount For', 'Date & Time', 'Mode', 'Customer Name', "Expected Check-In"];
+  
+  var checkinTableHeaders = ['Amount', 'Amount For', 'Date & Time', 'Mode'];
+  
+  var tableHeaders = req.body.isPrebook ? prebookTableHeaders : checkinTableHeaders;
+  
+  PaymentTracker.find({room: req.body.room, isPrebook: req.body.isPrebook, isCheckedout: false})
+    .then(async data => {
+      const trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants!
+      for (var i = 0; i < trimmedData.length; i++) {
+        if(req.body.isPrebook){
+          // Get customer details and assign it in the table response only if its a prebook property!
+          var filterQuery = {
+            userId: data[i].userId,
+            room: data[i].room,
+            isPrebook: req.body.isPrebook
+          }
+          const customerDetails = await getCustomerDetails(filterQuery);
+          trimmedData[i]['customername'] = customerDetails[i].prebookUsername;
+          trimmedData[i]['expectedCheckin'] = customerDetails[i].prebookDateofCheckin;
+        }
+        trimmedData[i].isPrebook = trimmedData[i].isPrebook ? "Prebook" : "Check-In"
+      }
+
       res.status(200).json({
         success: true,
-        message: data
+        message: trimmedData,
+        tableHeaders: tableHeaders,
+        infoMessage: "No payment are currently being tracked for this room!"
       })
     }).catch(err => {
       res.status(200).json({
@@ -63,6 +98,153 @@ async function deleteSinglePaymentTracker(req,res,next){
     )})
 }
 
+// Get customer details from the userController!
+async function getCustomerDetails(filterQuery){
+  
+  if(!filterQuery.isPrebook){
+    const result = await User.find(filterQuery);
+    return result;
+  } else {
+    const result = await PreBookUser.find(filterQuery);
+    return result;
+  }
+}
+
+// Data for receipt generation by the paymentID!
+async function getPaymentDetails(req, res, next) {
+  var paymentIds = req.body.paymentIds;
+  
+  // Model data for paymentTracker
+  var modelData = {
+    "paymentId" : '_id',
+    "roomno" : 'roomno',
+    'dateTime' : "dateTime",
+    "amountFor": "amountFor",
+    "amount": "amount",
+  } 
+  
+  // Model data for customer details for checkin property!
+  var customerData = {
+    "customername" : "username",
+    "phonenumber" : "phonenumber"
+  }
+  
+  // Model data for customer details for prebook property!
+  var prebookCustomerData = {
+    "customername" : "prebookUsername",
+    "phonenumber": "prebookPhoneNumber"
+  }
+  
+  // total amount handler!
+  var totalAmount = 0;
+  
+  try {
+    var promises = paymentIds.map(async (id) => {
+      // Check to see if the selection are of the same customers, in prebook scenario!
+      const paymentTracker = await PaymentTracker.findById({ _id: id });
+      return paymentTracker;
+    });
+    const paymentTracker = await PaymentTracker.findById({_id: paymentIds[0]}) //  Since we are dealing with the same room
+    // By payment id, we can able to get room id!
+    // Get customer details for receipt generation!
+    var filterQuery = {
+      room: paymentTracker.room,
+      _id: paymentTracker.userId,
+      isPrebook: req.body.isPrebook
+    }
+    const customerDetails = await getCustomerDetails(filterQuery);
+    const modelDataForCustomerDetails = req.body.isPrebook ? prebookCustomerData : customerData; // Send the modelData based on the state the user in!
+    const customizedCustomerDetails = commonUtils.trimData(customerDetails, modelDataForCustomerDetails);
+
+    var result = await Promise.all(promises);
+    // Check for same selection!
+    const checkSelections = await checkValidSelections(result);
+    if(checkSelections){
+      const trimmedData = commonUtils.trimData(result, modelData);
+      
+      // Generate total amount for the selected paymentTracker!
+      result.map((options, index) => {
+        totalAmount += Number(options.amount);
+      })
+      
+      res.status(200).json({
+        success: true,
+        message: trimmedData,
+        customerDetails: customizedCustomerDetails[0], // We always get one object 
+        // in the array as we can only able to checkin one customer at a time!
+        // But in case of prebook receipt generation, we might get multiple objects!
+        totalAmount: totalAmount,
+        tableHeaders: ['Room No', 'Date & Time', "Amount For", 'Amount']
+      });
+    } else {
+      res.status(200).json({
+        success: false,
+        message: "Multiple different users selections!"
+      });
+    }
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occurred!"
+    });
+  }
+}
+
+// Check for same customer selections!
+async function checkValidSelections(data){
+  // Take first userId as the reference!
+  const refUserId = data[0].userId;
+  const areValidSelections = data.every(obj => obj.userId === refUserId);
+  return areValidSelections; 
+}
+
+// Delete payment tracker while checking out implementation!
+async function deletePaymentTracker(roomId){
+  const result = await PaymentTracker.updateMany({room: roomId, isPrebook: false}, {isCheckedout: true});
+  return result;
+}
+
+// Update paymentTracker state to checkin!
+async function updatePaymentTracker(options){
+  const result = await PaymentTracker.updateMany({room: options.room, userId: options.userId}, {isPrebook: false, userId: options.updatedUserId});
+  return result;
+}
+
+// Get all payment tracker!
+async function getAllPaymentTracker(req, res, next){
+  PaymentTracker.find({})
+    .then(data => {
+      res.status(200).json({
+        success: true,
+        message: data
+      })
+    }).catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured!"
+      })
+    })
+}
+
+// Delete all payment tracker of the particular!
+async function deleteAllPaymentTracker(req,res,next){
+  PaymentTracker.deleteMany({lodge: req.params.id})
+    .then(data => {
+      res.status(200).json({
+        success: true,
+        message: "Deleted!"
+      })
+    }).catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Some internal error occured!"
+      })
+    })
+}
+
+
 module.exports = {
-  addPaymentTracker, getPayment, deleteSinglePaymentTracker, setPaymentTracker
+  addPaymentTracker, getPayment, deleteSinglePaymentTracker, setPaymentTracker, 
+  getPaymentDetails, deletePaymentTracker, deleteAllPaymentTracker,
+  getAllPaymentTracker, updatePaymentTracker
 }

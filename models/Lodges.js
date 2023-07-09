@@ -56,6 +56,10 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "MultipleLogins"
     }],
+    paymentTracker: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PaymentTracker"
+    }],
     invoiceCount: {type: Number, default: 0},
     isGst: {type: Boolean, default: false},
     isHourly: {type: Boolean, default: false},

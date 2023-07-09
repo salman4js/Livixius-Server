@@ -362,10 +362,16 @@ router.post("/:id/multiplelogindelete", multipleLoginController.multipleDeleteLo
 router.post("/:id/editlogins", multipleLoginController.editLogins);
 
 // Payment tracker routes!
-router.get("/:id/getpaymenttracker", paymentTrackerController.getPayment);
+router.post("/:id/getpaymenttracker", paymentTrackerController.getPayment);
 
 router.post("/:id/addpaymenttracker", paymentTrackerController.addPaymentTracker);
 
 router.post("/:id/deletesinglepayment", paymentTrackerController.deleteSinglePaymentTracker);
+
+router.post("/:id/getpaymentdetails", paymentTrackerController.getPaymentDetails);
+
+router.post("/:id/deleteallpaymenttracker", paymentTrackerController.deleteAllPaymentTracker);
+
+router.post("/:id/getallpaymenttracker", paymentTrackerController.getAllPaymentTracker);
 
 module.exports = router;

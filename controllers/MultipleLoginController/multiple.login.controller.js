@@ -102,27 +102,30 @@ function getLogins(req,res,next){
 }
 
 // Multiple delete login ID!
-async function multipleDeleteLogin(req,res,next){
-  var loginId = req.body.loginId;
-  
-  try{
-    loginId.forEach( async (id) => {
-      await Lodge.findByIdAndUpdate({_id: req.body.lodgeid}, {$pull: {multipleLogin: id}});
-      await MultipleLogins.findByIdAndDelete({_id: id})
-    })
-    
+async function multipleDeleteLogin(req, res, next) {
+  var loginIds = req.body.loginId;
+
+  try {
+    for (const id of loginIds) {
+      await Lodge.findByIdAndUpdate(
+        { _id: req.body.lodgeid },
+        { $pull: { multipleLogin: id } }
+      );
+      await MultipleLogins.findByIdAndDelete({ _id: id });
+    }
+
     res.status(200).json({
       success: true,
-      message: "Login ID's deleted successfully!"
-    })
-  } catch(err){
+      message: "Login IDs deleted successfully!"
+    });
+  } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Some internal error occured!"
-    })
+      message: "Some internal error occurred!"
+    });
   }
-  
 }
+
 
 // Delete single login ID!
 async function deleteLogin(req,res,next){

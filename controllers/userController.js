@@ -237,7 +237,7 @@ const loginUser = (req, res, next) => {
         })
 }
 
-
+// Get all user irrespective of the lodge!
 const allUser = (req, res, next) => {
     User.find({})
         .then(data => {
@@ -250,12 +250,42 @@ const allUser = (req, res, next) => {
         })
 }
 
-const userRoom = (req, res, next) => {
-    User.find({ room: req.body.roomid })
+// Get remaming amount has to be paid by the staying customer!
+async function getRemainingAmount(roomid, daysStayed, isHourly){
+  const roomData = await Room.findById({_id: roomid});
+  // Calculate the remaining amount by the customer!
+  const isChannel = roomData.channel !== "Walk-In" ? true : false;
+  const calculatedPrice = isChannel ? roomData.totalAmount : (Number(roomData.price) - Number(roomData.advancePrice) - Number(roomData.discountPrice));
+  const totalAmount = Number(calculatedPrice) + Number(roomData.extraBedPrice) + Number(roomData.advancePrice);
+  const gstPercent = getGSTPercent(roomData.price);
+  const gstAmount = Number(totalAmount) * Number(gstPercent);
+  const amountWithGst = totalAmount + gstAmount
+  return Math.round(amountWithGst - +roomData.advancePrice);
+}
+
+// Get GST percent!
+function getGSTPercent(price){
+  return Number(price) < 7500 ? 0.12 : 0.18;
+}
+
+// Get customer details!
+async function getCustomerDetails(roomId){
+  const result = await User.find({ room: roomId });
+  return result;
+}
+
+// Get customer data for the particular room!
+const userRoom = async (req, res, next) => {
+    // Get remaining amount has to be paid by the customer!
+    // const noofstays = req.body.stayeddays.match(/\d+/);
+    // const remainingAmount = await getRemainingAmount(req.body.roomid, noofstays[0], req.body.isHourly)
+
+    // Get user data
+    getCustomerDetails(req.body.roomid) // Externalizing the implementation out of the controller!
         .then(data => {
             res.status(200).json({
                 success: true,
-                message: data,
+                message: data
             })
         })
         .catch(err => {
@@ -277,12 +307,14 @@ const deleteUser = async (req, res, next) => {
       await invoiceMemory.updateInitialState(req.params.id);
     }
     
-  
     var isGstEnabled = req.body.isGst;
     if(isGstEnabled){
       // Create invoice memory for the particular user only when GST is disabled!
       await createInvoiceMemory(req.params.id, req.body.userid, req.body.checkoutTime, req.body.checkoutdate);
     }
+    
+    // Delete paymentTracker for the checking out room!
+    paymentTrackerController.deletePaymentTracker(req.body.roomid); // Delete paymentTracker when the customer checks out!
   
     try {
         const room = req.body.roomid
@@ -338,6 +370,7 @@ async function createInvoiceMemory(lodgeId, userid, checkoutTime, checkoutDate){
   return result;
 }
 
+// Generate bill preview!
 const generateBill = async (req,res,next) => {
   try{
     const noofstays = req.body.stayeddays.match(/\d+/);
@@ -377,7 +410,6 @@ const generateBill = async (req,res,next) => {
 
 // Calculate price based on the config for hourly or daily!
 function calculatePrice(price, days, isHourly, extraCount, extraBedPrice){
-  
   if(isHourly){
     const pricePerHour = price / 24; // 24 being the number of hours per day!
     return Math.round((pricePerHour * days)); // Days being the hours in the context along with it calculate extra bed price
@@ -534,7 +566,7 @@ async function getType(lodgeid, data, date){
           total += Number(options.bill);
         } else {
           resultObj[room.suiteName] = Number(options.bill);
-          total += Number(options.bill);
+          total += Number(options.bill)
         }
       }
     }
@@ -572,7 +604,10 @@ const updateOccupiedData = async (req, res, next) => {
         room: req.body.roomId,
         amountFor: req.body.amountFor,
         amount: req.body.advance,
-        dateTime: req.body.dateTime
+        dateTime: req.body.dateTime,
+        isPrebook: req.body.isPrebook,
+        lodge: req.params.id,
+        userId: userId
       }
       const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams)
       

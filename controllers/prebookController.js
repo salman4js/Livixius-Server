@@ -1,6 +1,7 @@
 const Prebook = require("../models/PreBookUser.js");
 const Room = require("../models/Rooms.js");
 const User = require('../models/User.js');
+const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller")
 // Import brew-date package
 const brewDate = require('brew-date');
 const commonFunction = require("../common.functions/common.functions");
@@ -48,11 +49,20 @@ const preBookUserRooms = async (req, res,next) => {
         await Room.findByIdAndUpdate({_id : preBooking.room}, {$push : {prebookuser : preBooking._id}});
       }
       await preBooking.save();
+      
+      // Call the payment tracker!
+      if(req.body.paymentTracker.callPaymentTracker){
+        // Add prebooking user id to the paymentTracker!
+        req.body.paymentTracker['userId'] = preBooking._id;
+        await paymentTrackerController.setPaymentTracker(req.body.paymentTracker);
+      }
+      
       res.status(200).json({
         success : true,
         message : "Customer has been pre-booked successfully!"
       })
     } catch (err){
+      console.log(err)
       res.status(200).json({
         success : false,
         message : "Some internal error occured!"
@@ -127,6 +137,13 @@ const ShowAllPrebookedUser = (req,res,next) => {
 
 // Edit prebooked customer details!
 async function editPrebookedRooms(req,res,next){
+
+  // Call the payment tracker!
+  if(req.body.paymentTracker.callPaymentTracker){
+    // Add prebook Id to the paymentTracker!
+    req.body.paymentTracker['userId'] = req.body.prebookId;
+    const result = await paymentTrackerController.setPaymentTracker(req.body.paymentTracker);
+  }
 
   Prebook.findByIdAndUpdate(req.body.prebookId, {
     prebookUsername : req.body.prebookUsername,

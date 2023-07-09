@@ -33,6 +33,23 @@ function getTimeBetweenWithDate(date, dateTime){
   return value;  
 }
 
+// trim data as per the need!
+function trimData(data, modelData, inArray){
+    var actualData = [];
+    var values = Object.keys(modelData)
+   
+    data.map((options, index) => {
+        var result = {}; // Move the declaration inside the loop
+        values.forEach((op) => {
+            const id = modelData[op];
+            result[op] = options[id];
+          })
+          actualData.push(result);
+    });
+    
+   return actualData;
+}
+
 module.exports = {
-  getTimeBetweenWithDate
+  getTimeBetweenWithDate, trimData
 }

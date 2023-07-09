@@ -459,14 +459,26 @@ const addUserRooms = async (req, res, next) => {
         }
         
         // Track payment in paymentTracker schema!
-        const paymentParams = {
-          roomno: req.body.roomno,
-          amount: req.body.advance,
-          amountFor: req.body.amountFor,
-          room: req.body.roomid,
-          dateTime: req.body.dateTime
+        if(!req.body.prebook){ // If not prebook, add advance to the paymentTracker!
+          const paymentParams = {
+            roomno: req.body.roomno,
+            amount: req.body.advance,
+            amountFor: req.body.amountFor,
+            room: req.body.roomid,
+            dateTime: req.body.dateTime,
+            isPrebook: req.body.isPrebook,
+            lodge: req.params.id,
+            userId: checkin._id
+          }
+          const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams);
+        } else {
+          const paymentParams = {
+            room: req.body.roomid,
+            userId: req.body.userId, // Prebook user id!
+            updatedUserId: checkin._id
+          }
+          const paymentTracker = await paymentTrackerController.updatePaymentTracker(paymentParams);
         }
-        const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams);
         
         // Check for the date of checkout!
         if(checkin){
