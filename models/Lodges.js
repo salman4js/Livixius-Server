@@ -60,6 +60,10 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "PaymentTracker"
     }],
+    refundTracker: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RefundTracker"
+    }],
     invoiceCount: {type: Number, default: 0},
     isGst: {type: Boolean, default: false},
     isHourly: {type: Boolean, default: false},

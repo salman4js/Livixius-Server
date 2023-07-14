@@ -50,6 +50,16 @@ function trimData(data, modelData, inArray){
    return actualData;
 }
 
+// Add model data attribute!
+function addModelDataAttribute(modelData, attribute){ // here attribute means the attribute to get added!
+  var result = 0;
+  modelData.map((options) => {
+    result += Number(options[attribute]);
+  })
+  
+  return result;
+}
+
 module.exports = {
-  getTimeBetweenWithDate, trimData
+  getTimeBetweenWithDate, trimData, addModelDataAttribute
 }

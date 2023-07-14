@@ -198,7 +198,7 @@ async function checkValidSelections(data){
   return areValidSelections; 
 }
 
-// Delete payment tracker while checking out implementation!
+// Delete payment tracker while checking out implementation! (Move this payment tracker from prebook section to checkin section~!)
 async function deletePaymentTracker(roomId){
   const result = await PaymentTracker.updateMany({room: roomId, isPrebook: false}, {isCheckedout: true});
   return result;
@@ -242,9 +242,33 @@ async function deleteAllPaymentTracker(req,res,next){
     })
 }
 
+// Check any payments has been made by the user!
+async function checkPayments(userId){
+  return PaymentTracker.find({ userId: userId })
+      .then(data => {
+        return data;
+      })
+      .catch(error => {
+        return error;
+      });
+}
+
+// Get paid amount by the particular user!
+async function getPaidAmount(paymentsData){
+  var attribute = "amount"; // Attribute to get added!
+  return commonUtils.addModelDataAttribute(paymentsData, attribute);
+}
+
+// Delete payment tracker instance for prebook by userId!
+async function deletePrebookPaymentTracker(userId){
+  const paymentTracker = await PaymentTracker.deleteMany({userId: userId});
+  return paymentTracker;
+}
+
 
 module.exports = {
   addPaymentTracker, getPayment, deleteSinglePaymentTracker, setPaymentTracker, 
   getPaymentDetails, deletePaymentTracker, deleteAllPaymentTracker,
-  getAllPaymentTracker, updatePaymentTracker
+  getAllPaymentTracker, updatePaymentTracker, checkPayments, getPaidAmount,
+  deletePrebookPaymentTracker
 }

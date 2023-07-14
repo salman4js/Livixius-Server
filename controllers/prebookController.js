@@ -1,7 +1,7 @@
 const Prebook = require("../models/PreBookUser.js");
 const Room = require("../models/Rooms.js");
 const User = require('../models/User.js');
-const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller")
+const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 // Import brew-date package
 const brewDate = require('brew-date');
 const commonFunction = require("../common.functions/common.functions");
@@ -62,7 +62,6 @@ const preBookUserRooms = async (req, res,next) => {
         message : "Customer has been pre-booked successfully!"
       })
     } catch (err){
-      console.log(err)
       res.status(200).json({
         success : false,
         message : "Some internal error occured!"
@@ -170,36 +169,47 @@ async function editPrebookedRooms(req,res,next){
   })
 }
 
-const ShowAllPrebookedRooms = (req,res,next) => {
-  Prebook.find({lodge: req.params.id})
-  .then(data => {
+// Get all prebooked rooms!
+const ShowAllPrebookedRooms = async (req, res, next) => {
+  try {
+    const data = await Prebook.find({ lodge: req.params.id });
     res.status(200).json({
-      success : true,
-      message : data
-    })
-  })
-  .catch(err => {
+      success: true,
+      message: data
+    });
+  } catch (err) {
     res.status(200).json({
-      success : false,
-      message : "Some internal error occured"
-    })
-  })
-}
+      success: false,
+      message: "Some internal error occurred",
+    });
+  }
+};
 
-const deletePrebookUserRooms = (req,res,next) => {
-  Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
-  .then(data => {
+// Delete prebook user rooms!
+const deletePrebookUserRooms = async(req,res,next) => {
+  const paymentTracker = await paymentTrackerController.checkPayments(req.body.prebookUserId);
+  const getPaidAmount = await paymentTrackerController.getPaidAmount(paymentTracker);
+  if(getPaidAmount > 0){
     res.status(200).json({
-      success : true,
-      message : "Pre Book user got deleted!"
+      success: false,
+      message: "This guest has paid some amount and that has to be refunded",
+      refundAmount: getPaidAmount
     })
-  })
-  .catch(err => {
-    res.status(200).json({
-      success : false,
-      message : "Some internal error occured!"
+  } else {
+    Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
+    .then(data => {
+      res.status(200).json({
+        success : true,
+        message : "Pre Book user got deleted!"
+      })
     })
-  })
+    .catch(err => {
+      res.status(200).json({
+        success : false,
+        message : "Some internal error occured!"
+      })
+    })  
+  }
 }
 
 // Prebook Cabinet for upcoming bookings!
@@ -347,20 +357,14 @@ function convert12to24(time){
 
 // Get only rooms which are available for prebooking based on search data!
 function getAvailablePrebook(req,res,next){
-  
   const checkinDate = req.body.checkinDate;
   const checkinTime = req.body.checkinTime;
   const checkoutDate = req.body.checkoutDate;
   const checkoutTime = req.body.checkoutTime;
   
   const checkin = checkinDate + " " + checkinTime;
-  const checkout = checkoutDate + " " + checkoutTime;
-  
-  // Form a date
-  
-  
+  const checkout = checkoutDate + " " + checkoutTime;  
 }
-
 
 module.exports = {
   preBookUserRooms, ShowAllPrebookedUser, ShowAllPrebookedRooms,
