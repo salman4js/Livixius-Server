@@ -341,6 +341,12 @@ router.post("/:id/initialstateofinvoicecount", invoiceController.getInitialState
 // Vouchers Routes!
 router.post("/:id/addvouchers", voucherController.addVouchers);
 
+router.post("/:id/editvouchermodel", voucherController.editVoucherModel);
+
+router.post("/:id/getprevvouchermodel", voucherController.getPrevVoucherModel);
+
+router.post("/:id/deletevouchermodel", voucherController.deleteVoucherModel);
+
 router.get("/:id/getvouchers", voucherController.getVouchers);
 
 router.post('/:id/getvouchermodel', voucherController.getVoucherModel);

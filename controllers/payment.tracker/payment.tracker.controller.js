@@ -1,6 +1,7 @@
 const PaymentTracker = require("../../models/payment.tracker/payment.tracker");
 const commonUtils = require("../../common.functions/common.functions");
 const Room = require("../../models/Rooms");
+const Lodge = require("../../models/Lodges")
 const User = require("../../models/User");
 const PreBookUser = require("../../models/PreBookUser");
 
@@ -61,8 +62,8 @@ async function getPayment(req,res,next){
             isPrebook: req.body.isPrebook
           }
           const customerDetails = await getCustomerDetails(filterQuery);
-          trimmedData[i]['customername'] = customerDetails[i].prebookUsername;
-          trimmedData[i]['expectedCheckin'] = customerDetails[i].prebookDateofCheckin;
+          trimmedData[i]['customername'] = customerDetails[0].prebookUsername;
+          trimmedData[i]['expectedCheckin'] = customerDetails[0].prebookDateofCheckin;
         }
         trimmedData[i].isPrebook = trimmedData[i].isPrebook ? "Prebook" : "Check-In"
       }
@@ -84,18 +85,54 @@ async function getPayment(req,res,next){
 // Delete single payment tracker!
 async function deleteSinglePaymentTracker(req,res,next){
   PaymentTracker.findByIdAndDelete({_id: req.body.paymentId})
-    .then(data => {
+    .then(async data => {
+      // Delete room and lodge instance!
+      const deleteRoomAndLodgeRef = await deleteRoomAndLodgeInstance(data);
+      // Decrement the amount tracker by the payment tracker in the advance of the user instance!
+      const getAmount = data.amount; // Single payment tracker instance!
+      const totalAdvance = await getTotalAdvance(data.userId, data.isPrebook);
+      const updatedAmount = Number(totalAdvance) - Number(getAmount);
+      const updatedInstance = await updateInstance(data, updatedAmount);
       res.status(200).json({
         success: true,
-        message: "Payment Tracker Deleted!"
+        message: "Payment Tracker Deleted!",
+        roomId: data.room
       })
-    })
-    .catch(err => {(
+    }).catch(err => {
+      console.log(err)
       res.status(200).json({
         success: false,
-        message: "Internal error occured"
+        message: "Some internal error occured!"
       })
-    )})
+    })
+}
+
+// Update the schema instanc based on action!
+async function updateInstance(data, updatedAmount){
+  if(!data.isPrebook){
+    await User.findByIdAndUpdate({_id: data.userId}, {advance: updatedAmount.toString()});
+  } else {
+    await PreBookUser.findByIdAndUpdate({_id: data.userId}, {prebookAdvance: updatedAmount.toString()});
+  }
+  return;
+}
+
+// Get the total advance paid by the guest!
+async function getTotalAdvance(userId, isPrebookState){
+  if(!isPrebookState){
+    var userInstance =  await User.findById({_id: userId});
+    return userInstance.advance;
+  } else {
+    var prebookUserInstance = await PreBookUser.findById({_id: userId});
+    return prebookUserInstance.prebookAdvance;
+  }
+}
+
+// Delete room and lodge instance when payment tracker gets deleted!
+async function deleteRoomAndLodgeInstance(data){
+  await Lodge.findByIdAndUpdate({_id: data.lodge}, {$pull: {paymentTracker:data._id}});
+  await Room.findByIdAndUpdate({_id: data.room}, {$pull: {paymentTracker: data._id}});
+  return;
 }
 
 // Get customer details from the userController!
