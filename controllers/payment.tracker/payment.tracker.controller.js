@@ -111,6 +111,8 @@ async function deleteSinglePaymentTracker(req,res,next){
 async function updateInstance(data, updatedAmount){
   if(!data.isPrebook){
     await User.findByIdAndUpdate({_id: data.userId}, {advance: updatedAmount.toString()});
+    // Update room schema for the advance amount, we are dealing with room schema for bill preview!
+    await Room.findByIdAndUpdate({_id: data.room, user: data.userId}, {advancePrice: updatedAmount.toString()});
   } else {
     await PreBookUser.findByIdAndUpdate({_id: data.userId}, {prebookAdvance: updatedAmount.toString()});
   }
