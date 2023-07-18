@@ -4,6 +4,7 @@ const UserDish = require("../models/UserDishes");
 const UserDb = require("../models/UserDb.js");
 const RoomType = require("../models/RoomType.js");
 const jwt = require("jsonwebtoken");
+const commonUtils = require("../common.functions/common.functions")
 
 // Payment tracker instance!
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller")
@@ -609,7 +610,13 @@ const updateOccupiedData = async (req, res, next) => {
         lodge: req.params.id,
         userId: userId
       }
-      const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams)
+      const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams);
+      
+      // Update room schema advancePrice, since we are dealing with room schema for bill preview!
+      // Check if the updatedAdvance schema has been updated!
+      if(commonUtils.checkIfValid(req.body.updatedAdvance, "0")){
+        const updateRoomSchemaAdvancePrice = await Room.findByIdAndUpdate({_id: req.body.roomId}, {advancePrice: req.body.updatedAdvance, advance: true}); 
+      }
       
       // Updating room prevalid to true as we got date of checkout!
       if(req.body.dateofcheckout !== undefined){

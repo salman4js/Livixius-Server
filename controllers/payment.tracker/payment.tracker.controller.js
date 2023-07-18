@@ -52,6 +52,7 @@ async function getPayment(req,res,next){
   
   PaymentTracker.find({room: req.body.room, isPrebook: req.body.isPrebook, isCheckedout: false})
     .then(async data => {
+      console.log(data)
       let trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants!
       for (var i = 0; i < trimmedData.length; i++) {
         if(req.body.isPrebook){
@@ -79,6 +80,7 @@ async function getPayment(req,res,next){
         infoMessage: "No payment are currently being tracked for this room!"
       })
     }).catch(err => {
+      console.log(err)
       res.status(200).json({
         success: false,
         message: "Internal server error occured!"
@@ -203,10 +205,13 @@ async function getPaymentDetails(req, res, next) {
     // Check for same selection!
     const checkSelections = await checkValidSelections(result);
     if(checkSelections){
-      const trimmedData = commonUtils.trimData(result, modelData);
+      let trimmedData = commonUtils.trimData(result, modelData);
       
+      // When the amount field is empty or not provided, set the field amount into zero value!
+      trimmedData = commonUtils.transformNonValidValues(trimmedData, "0");
+
       // Generate total amount for the selected paymentTracker!
-      result.map((options, index) => {
+      trimmedData.map((options, index) => {
         totalAmount += Number(options.amount);
       })
       

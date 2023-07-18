@@ -73,10 +73,21 @@ function transformNonValidValues(data, transformInto){
       }
     }
   })
-  
-  return data
+  return data;
+}
+
+// Check if the data is valid or not
+// Not undefined, Not null, Not empty and any other additional checks!
+function checkIfValid(data, additionalCheck){
+  if(data !== undefined && data !== null && data !== '' && 
+  data !== additionalCheck && data !== 'function String() { [native code] }'){ // Will also mongodb schema instance!
+    return true;
+  } else {
+    return false;
+  }
 }
 
 module.exports = {
-  getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues
+  getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
+  checkIfValid
 }
