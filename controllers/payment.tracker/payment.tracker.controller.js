@@ -52,7 +52,6 @@ async function getPayment(req,res,next){
   
   PaymentTracker.find({room: req.body.room, isPrebook: req.body.isPrebook, isCheckedout: false})
     .then(async data => {
-      console.log(data)
       let trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants!
       for (var i = 0; i < trimmedData.length; i++) {
         if(req.body.isPrebook){
@@ -80,7 +79,6 @@ async function getPayment(req,res,next){
         infoMessage: "No payment are currently being tracked for this room!"
       })
     }).catch(err => {
-      console.log(err)
       res.status(200).json({
         success: false,
         message: "Internal server error occured!"
@@ -105,7 +103,6 @@ async function deleteSinglePaymentTracker(req,res,next){
         roomId: data.room
       })
     }).catch(err => {
-      console.log(err)
       res.status(200).json({
         success: false,
         message: "Some internal error occured!"

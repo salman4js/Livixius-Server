@@ -189,14 +189,7 @@ const ShowAllPrebookedRooms = async (req, res, next) => {
 const deletePrebookUserRooms = async(req,res,next) => {
   const paymentTracker = await paymentTrackerController.checkPayments(req.body.prebookUserId);
   const getPaidAmount = await paymentTrackerController.getPaidAmount(paymentTracker);
-  if(getPaidAmount > 0){
-    res.status(200).json({
-      success: false,
-      message: "This guest has paid some amount and that has to be refunded",
-      refundAmount: getPaidAmount
-    })
-  } else {
-    Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
+  Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
     .then(data => {
       res.status(200).json({
         success : true,
@@ -209,7 +202,28 @@ const deletePrebookUserRooms = async(req,res,next) => {
         message : "Some internal error occured!"
       })
     })  
-  }
+  // Commenting this line as the UI doesn't support refund tracker yet.
+  // if(getPaidAmount > 0){
+  //   res.status(200).json({
+  //     success: false,
+  //     message: "This guest has paid some amount and that has to be refunded",
+  //     refundAmount: getPaidAmount
+  //   })
+  // } else {
+  //   Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
+  //   .then(data => {
+  //     res.status(200).json({
+  //       success : true,
+  //       message : "Pre Book user got deleted!"
+  //     })
+  //   })
+  //   .catch(err => {
+  //     res.status(200).json({
+  //       success : false,
+  //       message : "Some internal error occured!"
+  //     })
+  //   })  
+  // }
 }
 
 // Prebook Cabinet for upcoming bookings!
