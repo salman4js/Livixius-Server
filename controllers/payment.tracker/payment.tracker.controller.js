@@ -187,7 +187,7 @@ async function getPaymentDetails(req, res, next) {
       const paymentTracker = await PaymentTracker.findById({ _id: id });
       return paymentTracker;
     });
-    const paymentTracker = await PaymentTracker.findById({_id: paymentIds[0]}) //  Since we are dealing with the same room
+    const paymentTracker = await PaymentTracker.findById({_id: paymentIds[0]}); //  Since we are dealing with the same room
     // By payment id, we can able to get room id!
     // Get customer details for receipt generation!
     var filterQuery = {
