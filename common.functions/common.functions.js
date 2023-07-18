@@ -60,6 +60,23 @@ function addModelDataAttribute(modelData, attribute){ // here attribute means th
   return result;
 }
 
+// Function to verify that the value is a valid one!
+// Not undefined, Not null, not empty!
+// If it is invalid, it will change that into the passed arguments and return it!
+function transformNonValidValues(data, transformInto){
+  data.map((obj, key) => {
+    for (let key in obj){
+      if(obj.hasOwnProperty(key)){
+        if(obj[key] === undefined || obj[key] === null || obj[key] === ''){
+          obj[key] = transformInto
+        }
+      }
+    }
+  })
+  
+  return data
+}
+
 module.exports = {
-  getTimeBetweenWithDate, trimData, addModelDataAttribute
+  getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues
 }

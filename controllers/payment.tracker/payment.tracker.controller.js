@@ -52,7 +52,7 @@ async function getPayment(req,res,next){
   
   PaymentTracker.find({room: req.body.room, isPrebook: req.body.isPrebook, isCheckedout: false})
     .then(async data => {
-      const trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants!
+      let trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants!
       for (var i = 0; i < trimmedData.length; i++) {
         if(req.body.isPrebook){
           // Get customer details and assign it in the table response only if its a prebook property!
@@ -65,8 +65,12 @@ async function getPayment(req,res,next){
           trimmedData[i]['customername'] = customerDetails[0].prebookUsername;
           trimmedData[i]['expectedCheckin'] = customerDetails[0].prebookDateofCheckin;
         }
-        trimmedData[i].isPrebook = trimmedData[i].isPrebook ? "Prebook" : "Check-In"
+        trimmedData[i].isPrebook = trimmedData[i].isPrebook ? "Prebook" : "Check-In";
       }
+      
+      // If the amount has not provided, set it as zero!
+      var transformInto = 0;
+      trimmedData = commonUtils.transformNonValidValues(trimmedData, transformInto);
 
       res.status(200).json({
         success: true,
