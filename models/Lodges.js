@@ -78,6 +78,9 @@ const lodgeSchema = new mongoose.Schema({
     grcPreview: {type: Boolean, default: false},
     multipleLogins: {type: Boolean, default: false},
     redirectTo: {type: String, default: "livixius"},
+    validateInvoiceDetails: {type: Boolean, default: true},
+    printManager: {type: Boolean, default: false},
+    removePan: {type: Boolean, default: false}
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);

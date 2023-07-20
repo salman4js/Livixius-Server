@@ -43,7 +43,10 @@ const checkMatrix = async (req,res,next) => {
       extraCalc: config.extraCalc,
       grcPreview: config.grcPreview,
       redirectTo: config.redirectTo,
-      multipleLogins: config.multipleLogins
+      multipleLogins: config.multipleLogins,
+      validateInvoiceDetails: config.validateInvoiceDetails,
+      printManager: config.printManager,
+      removePan: config.removePan
     })
   } catch(err){
     res.status(200).json({
@@ -121,7 +124,10 @@ const updateMatrix = (req,res,next) => {
     extraCalc: req.body.extraCalc,
     grcPreview: req.body.grcPreview,
     redirectTo: req.body.redirectTo,
-    multipleLogins: req.body.multipleLogin
+    multipleLogins: req.body.multipleLogin,
+    validateInvoiceDetails: req.body.validateInvoiceDetails,
+    printManager: req.body.printManager,
+    removePan: req.body.removePan
   })
   .then(data => {
     res.status(200).json({
