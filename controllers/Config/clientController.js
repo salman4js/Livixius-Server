@@ -24,7 +24,7 @@ const checkMatrix = async (req,res,next) => {
   
   // Check all the required config!
   const config = await Lodge.findById(req.params.id);
-    
+
   try{
     res.status(200).json({
       success: true,
@@ -46,7 +46,8 @@ const checkMatrix = async (req,res,next) => {
       multipleLogins: config.multipleLogins,
       validateInvoiceDetails: config.validateInvoiceDetails,
       printManager: config.printManager,
-      removePan: config.removePan
+      removePan: config.removePan,
+      universalMessage: config.universalMessage
     })
   } catch(err){
     res.status(200).json({
@@ -127,7 +128,8 @@ const updateMatrix = (req,res,next) => {
     multipleLogins: req.body.multipleLogin,
     validateInvoiceDetails: req.body.validateInvoiceDetails,
     printManager: req.body.printManager,
-    removePan: req.body.removePan
+    removePan: req.body.removePan,
+    universalMessage: req.body.universalMessage
   })
   .then(data => {
     res.status(200).json({

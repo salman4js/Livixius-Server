@@ -80,7 +80,12 @@ const lodgeSchema = new mongoose.Schema({
     redirectTo: {type: String, default: "livixius"},
     validateInvoiceDetails: {type: Boolean, default: true},
     printManager: {type: Boolean, default: false},
-    removePan: {type: Boolean, default: false}
+    removePan: {type: Boolean, default: false},
+    universalMessage: {
+      show: {type: Boolean, default: false},
+      message: String
+    }
+    
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);

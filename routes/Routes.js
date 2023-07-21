@@ -390,4 +390,11 @@ router.delete("/:id/deleterefundtracker", refundTrackerController.deleteRefund);
 
 router.post("/:id/deletespecificrefund", refundTrackerController.deleteSpecificRefund);
 
+// Universal message routes!
+router.post("/:id/setuniversalmessage", lodgeController.setUniversalMessage);
+
+router.get("/:id/getuniversalmessage", lodgeController.getUniversalMessage);
+
+router.post("/:id/killuniversalmessage", lodgeController.shutdownUniversalMessage);
+
 module.exports = router;

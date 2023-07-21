@@ -143,8 +143,81 @@ const updateLodge = (req,res,next) => {
     })
 }
 
+// Function to fetch the universal message!
+async function fetchUniversalMessage(lodgeId){
+  const lodgeInstance = await Lodge.findById({_id: lodgeId});
+  return lodgeInstance.universalMessage;
+}
 
+// Controller to fetch universal message!
+async function getUniversalMessage(req,res,next){
+  try{
+    const result = await fetchUniversalMessage(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: result,
+      state: result.show
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  }
+}
+
+// Function to patch universal message!
+async function patchUniversalMessage(lodgeId, universalMessage){
+  const lodgeInstance = await Lodge.findByIdAndUpdate({_id: lodgeId}, {$set: {universalMessage: universalMessage}}, {new: true})
+  return lodgeInstance;
+}
+
+// Controller to set universal message!
+async function setUniversalMessage(req,res,next){
+  try{
+    const result = patchUniversalMessage(req.params.id, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Universal message updated!"
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  }
+}
+
+// Function to kill the universal message untill the admin trigger it again!
+async function killUniversalMessage(lodgeId){
+  var killMessage = {
+    show: false,
+    message: undefined
+  }
+  const lodgeInstance = await Lodge.findByIdAndUpdate({_id: lodgeId}, {$set: {universalMessage: killMessage}}, {new: true});
+  return lodgeInstance;
+}
+
+// Controller to kill the universal message!
+async function shutdownUniversalMessage(req,res,next){
+  try{
+    const result = await killUniversalMessage(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: {
+        show: false,
+        message: "No message at this time"
+      }
+    })
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured, cannot kill universal message at the moment!"
+    })
+  }
+}
 
 module.exports = {
-    addLodge,loginLodge, allLodges, deleteLodge, findLodge, updateLodge
+    addLodge,loginLodge, allLodges, deleteLodge, findLodge, updateLodge, 
+    getUniversalMessage, setUniversalMessage, shutdownUniversalMessage
 }
