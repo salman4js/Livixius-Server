@@ -194,8 +194,11 @@ const deletePrebookUserRooms = async(req,res,next) => {
   const lodgeInstance = await Lodge.findById({_id: req.params.id});
   const getRefundPercentage = lodgeInstance.refundPercentage;
   const getAmountToBeRefunded = getPaidAmount - (getPaidAmount * getRefundPercentage / 100);
+  
+  // Check in config if the refund tracker has been enabled!
+  const isRefundTrackerEnabled = lodgeInstance.refundTracker;
 
-  if(getPaidAmount > 0){
+  if(isRefundTrackerEnabled && getPaidAmount > 0){
     res.status(200).json({
       success: false,
       message: "This guest has paid some amount and that has to be refunded",
