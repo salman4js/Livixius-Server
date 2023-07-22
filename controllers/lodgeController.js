@@ -217,7 +217,32 @@ async function shutdownUniversalMessage(req,res,next){
   }
 }
 
+// Function to update refund percentage!
+async function updateRefundPercentage(lodgeId, refundPercentage){
+  const result = await Lodge.findByIdAndUpdate({_id: lodgeId}, {$set: {refundPercentage: refundPercentage}}, {new: true});
+  return result;
+}
+
+// Controller to update the refund percentage!
+async function putRefundPercentage(req,res,next){
+  try{
+    const updateRefundInstance = await updateRefundPercentage(req.params.id, req.body.refundPercentage);
+    if(updateRefundInstance){
+      res.status(200).json({
+        success: true,
+        message: "Refund Percentage has been updated",
+        refundPercentage: updateRefundInstance.refundPercentage
+      })
+    }
+  } catch(err){
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
+    })
+  }
+}
+
 module.exports = {
     addLodge,loginLodge, allLodges, deleteLodge, findLodge, updateLodge, 
-    getUniversalMessage, setUniversalMessage, shutdownUniversalMessage
+    getUniversalMessage, setUniversalMessage, shutdownUniversalMessage, putRefundPercentage
 }

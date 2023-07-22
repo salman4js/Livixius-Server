@@ -1,6 +1,7 @@
 const Prebook = require("../models/PreBookUser.js");
 const Room = require("../models/Rooms.js");
 const User = require('../models/User.js');
+const Lodge = require("../models/Lodges.js")
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 // Import brew-date package
 const brewDate = require('brew-date');
@@ -189,7 +190,19 @@ const ShowAllPrebookedRooms = async (req, res, next) => {
 const deletePrebookUserRooms = async(req,res,next) => {
   const paymentTracker = await paymentTrackerController.checkPayments(req.body.prebookUserId);
   const getPaidAmount = await paymentTrackerController.getPaidAmount(paymentTracker);
-  Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
+  // Get the refund percentage of the particular lodge!
+  const lodgeInstance = await Lodge.findById({_id: req.params.id});
+  const getRefundPercentage = lodgeInstance.refundPercentage;
+  const getAmountToBeRefunded = getPaidAmount - (getPaidAmount * getRefundPercentage / 100);
+
+  if(getPaidAmount > 0){
+    res.status(200).json({
+      success: false,
+      message: "This guest has paid some amount and that has to be refunded",
+      refundAmount: getAmountToBeRefunded.toString()
+    })
+  } else {
+    Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
     .then(data => {
       res.status(200).json({
         success : true,
@@ -202,28 +215,7 @@ const deletePrebookUserRooms = async(req,res,next) => {
         message : "Some internal error occured!"
       })
     })  
-  // Commenting this line as the UI doesn't support refund tracker yet.
-  // if(getPaidAmount > 0){
-  //   res.status(200).json({
-  //     success: false,
-  //     message: "This guest has paid some amount and that has to be refunded",
-  //     refundAmount: getPaidAmount
-  //   })
-  // } else {
-  //   Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
-  //   .then(data => {
-  //     res.status(200).json({
-  //       success : true,
-  //       message : "Pre Book user got deleted!"
-  //     })
-  //   })
-  //   .catch(err => {
-  //     res.status(200).json({
-  //       success : false,
-  //       message : "Some internal error occured!"
-  //     })
-  //   })  
-  // }
+  }
 }
 
 // Prebook Cabinet for upcoming bookings!

@@ -64,6 +64,7 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "RefundTracker"
     }],
+    refundPercentage: {type: Number, default: 10},
     invoiceCount: {type: Number, default: 0},
     isGst: {type: Boolean, default: false},
     isHourly: {type: Boolean, default: false},

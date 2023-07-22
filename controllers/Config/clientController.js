@@ -47,7 +47,8 @@ const checkMatrix = async (req,res,next) => {
       validateInvoiceDetails: config.validateInvoiceDetails,
       printManager: config.printManager,
       removePan: config.removePan,
-      universalMessage: config.universalMessage
+      universalMessage: config.universalMessage,
+      refundPercentage: config.refundPercentage
     })
   } catch(err){
     res.status(200).json({

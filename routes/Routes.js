@@ -397,4 +397,7 @@ router.get("/:id/getuniversalmessage", lodgeController.getUniversalMessage);
 
 router.post("/:id/killuniversalmessage", lodgeController.shutdownUniversalMessage);
 
+// Refund Percentage
+router.post("/:id/updaterefundpercentage", lodgeController.putRefundPercentage);
+
 module.exports = router;
