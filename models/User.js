@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
     username : String,
     phonenumber : String,
     secondphonenumber : String,
+    address: String,
     adults : String,
     childrens : String,
     extraBeds: {type: String, default: 0},

@@ -298,7 +298,6 @@ const userRoom = async (req, res, next) => {
 }
 
 const deleteUser = async (req, res, next) => {
-  
     // Check for the date, if its the first date of the month, reset the invoice
     // Count to zero.
     const date = new Date();

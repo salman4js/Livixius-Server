@@ -348,7 +348,6 @@ const addDishRooms = async (req, res, next) => {
         time: req.body.time,
         lodge : req.params.id,
       })
-      console.log(userdish.room)
       if (userdish) {
         await Room.findByIdAndUpdate({ _id: userdish.room }, { $push: { dishes: userdish._id}})
       }
@@ -358,7 +357,6 @@ const addDishRooms = async (req, res, next) => {
         message : "Your order is on the preparation"
       })
     } catch (err) {
-      console.log(err)
       res.status(200).json({
         success : false,
         message : "Some Internal Error Occured.."
@@ -414,6 +412,7 @@ const addUserRooms = async (req, res, next) => {
           username: req.body.customername,
           phonenumber : req.body.phonenumber,
           secondphonenumber : req.body.secondphonenumber,
+          address: req.body.address,
           adults : req.body.adults,
           childrens : req.body.childrens,
           aadharcard : req.body.aadhar,
@@ -436,6 +435,7 @@ const addUserRooms = async (req, res, next) => {
           username: req.body.customername,
           phonenumber : req.body.phonenumber,
           secondphonenumber : req.body.secondphonenumber,
+          address: req.body.address,
           adults : req.body.adults,
           childrens : req.body.childrens,
           aadharcard : req.body.aadhar,
