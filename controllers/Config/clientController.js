@@ -49,7 +49,7 @@ const checkMatrix = async (req,res,next) => {
       removePan: config.removePan,
       universalMessage: config.universalMessage,
       refundPercentage: config.refundPercentage,
-      refundTracker: config.refundTracker
+      refundTracker: config.isRefundTrackerEnabled
     })
   } catch(err){
     res.status(200).json({
@@ -132,7 +132,7 @@ const updateMatrix = (req,res,next) => {
     printManager: req.body.printManager,
     removePan: req.body.removePan,
     universalMessage: req.body.universalMessage,
-    refundTracker: req.body.refundTracker
+    isRefundTrackerEnabled: req.body.refundTracker
   })
   .then(data => {
     res.status(200).json({

@@ -60,11 +60,11 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "PaymentTracker"
     }],
-    refundTracker: [{
+    refundTrackers: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "RefundTracker"
     }],
-    refundTracker: {type: Boolean, default: false},
+    isRefundTrackerEnabled: {type: Boolean, default: false},
     refundPercentage: {type: Number, default: 10},
     invoiceCount: {type: Number, default: 0},
     isGst: {type: Boolean, default: false},
