@@ -483,9 +483,9 @@ const addUserRooms = async (req, res, next) => {
         // Check for the date of checkout!
         if(checkin){
           if(checkin.dateofcheckout != undefined){
-            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, extraCount: req.body.extraBeds, $push : {user : checkin._id}} )
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, extraCount: req.body.extraBeds, extraBedPrice: req.body.extraBedPrice, $push : {user : checkin._id}} )
           } else {
-            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, extraCount: req.body.extraBeds, preValid : false, $push : {user : checkin._id}} )
+            await Room.findByIdAndUpdate({_id : checkin.room}, {isOccupied : "true", channel: req.body.channel, extraCount: req.body.extraBeds, extraBedPrice: req.body.extraBedPrice, preValid : false, $push : {user : checkin._id}} )
           }
           
           // Check the response for the discount!
