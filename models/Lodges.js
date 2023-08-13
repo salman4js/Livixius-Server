@@ -64,6 +64,14 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "RefundTracker"
     }],
+    roomStatus: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RoomStatus"
+    }],
+    afterCheckedout: {type: String},
+    inCleaning: {type: String},
+    afterCleaned: {type: String},
+    afterCheckin: {type: String},
     isRefundTrackerEnabled: {type: Boolean, default: false},
     refundPercentage: {type: Number, default: 10},
     invoiceCount: {type: Number, default: 0},

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema({
+    floorNo: {type: String, default: 'GF'},
     roomno : String,
     isOccupied : {type : String, default : "false"},
     preBooked : {type : Boolean, default : false},
@@ -50,6 +51,14 @@ const roomSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "PaymentTracker"
     }],
+    roomStatus: String,
+    prevRoomStatus: String,
+    nextRoomStatus: String,
+    nextOfNextRoomStatus: String,
+    roomStatusConstant: {type: String, default: 'afterCleaned'}, // this is the default status when the room is being created...
+    // Change the room status constant to custom state, and that should let the UI know that the room has been updated by the recep.
+    // And will not change untill and unless the change has been revereted.
+    prevRoomStatusConstant: {type: String, default: "afterCleaned"},
     channel : String
 })
 

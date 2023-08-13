@@ -19,12 +19,19 @@ const RoomType = require("../models/RoomType.js");
 // Payment tracker controller instance!
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 
+// Room Status implementation!
+const RoomStatusImplementation = require('./room.status/room.status.implementation');
+
+// User controller1
+const userController = require("../controllers/userController");
+
 // Importing Channel Manager!
 const channel = require("./startup.data/startup.data.js");
 
 // Importing Brew-Date package
 const bd = require('brew-date');
 
+// Create room!
 const createRoom = async (req, res, next) => {
   if (req.body.roomno == "") {
     res.status(200).json({
@@ -55,6 +62,7 @@ const createRoom = async (req, res, next) => {
     try {
       if(await checkDuplicate(req.params.id, req.body.roomno) === null){
         const room = new Room({
+         floorNo: req.body.floorNo,
          roomno: req.body.roomno,
          bedCount: req.body.bedcount,
          suiteName: req.body.suitename,
@@ -65,10 +73,19 @@ const createRoom = async (req, res, next) => {
        if (room) {
          await Lodge.findByIdAndUpdate({ _id: room.lodge }, { $push: { rooms: room._id } })
        }
-       await room.save()
+       await room.save();
+       
+       // After the room has been saved, set the initial room status to ['afterCleaned'] state!
+       const roomStatuses = await RoomStatusImplementation.getTheNextRoomState(req.body, 'afterCleaned');
+       req.body['roomStatus'] = roomStatuses.currentRoomStatus
+       req.body['nextRoomStatus'] = roomStatuses.nextRoomStatus
+       req.body['nextOfNextRoomStatus'] = roomStatuses.nextOfNextRoomStatus
+       req.body['roomStatusConstant'] = "afterCleaned";
+       req.body['roomId'] = room._id;
+       await RoomStatusImplementation.roomStatusSetter(req.body);
        res.status(200).json({
-         success: true,
-         message: "Room Added"
+         success : true,
+         message : "Room created"
        })
       } else {
         res.status(200).json({
@@ -77,6 +94,7 @@ const createRoom = async (req, res, next) => {
         })
       }
     } catch (err) {
+      console.log(err)
       res.status(200).json({
         success: false,
         message: "Some internal Error"
@@ -117,7 +135,6 @@ const countAvailability = async(lodgeid, state) => {
 const availability = (req, res, next) => {
   Room.find({ lodge: req.params.id, isOccupied: "false" })
     .then(data => {
-      console.log(data)
       res.status(200).json({
         success : true,
         message : data,
@@ -125,7 +142,6 @@ const availability = (req, res, next) => {
       })
     })
     .catch(err => {
-      console.log(err)
       res.status(200).json({
         success : false,
         message : "Some internal error has occured!"
@@ -136,7 +152,6 @@ const availability = (req, res, next) => {
 const occupiedRooms = (req,res,next) => {
   Room.find({lodge : req.params.id, isOccupied : "true"})
     .then(data => {
-      console.log(data);
       res.status(200).json({
         success : true,
         message : data
@@ -153,11 +168,9 @@ const occupiedRooms = (req,res,next) => {
 const roomOne = async (req, res, next) => {
   Room.find({ roomno: req.body.roomno })
     .then(data => {
-      console.log(data)
       res.send(data)
     })
     .catch(err => {
-      console.log(err)
       res.send("Error occured, please check the console")
     })
 }
@@ -181,11 +194,9 @@ const roomById = async (req, res, next) => {
 const dishByRoom = (req, res, next) => {
   Room.findById({ _id: req.body.roomid })
     .then(data => {
-      console.log(data.dishes);
       res.send(data.dishes)
     })
     .catch(err => {
-      console.log(err);
       res.send("Error occured, please check the console")
     })
 }
@@ -231,23 +242,34 @@ const roomsUpdater = async (req, res, next) => {
           message : "Room already occupied, You can't modify occupied room's data!"
         })
       } else {
+        
+        // When we manually set the room status, we have to keep track of old status
+        // So that when releasing it from the custom state, it will go back to what state it is already in..
+        // get the current room status constant and room status and store it in the prev states of those!
+        var roomInstance = await Room.findById({_id: req.body.roomId});
+        var currentRoomStatusConstant = roomInstance.prevRoomStatusConstant;
+        var currentRoomStatus = roomInstance.prevRoomStatus;
+      
         // Update room price everytime the suite type gets updated!
         const roomPrice = await RoomType.findOne({lodge : req.params.id, suiteType: req.body.suitename});
         Room.findByIdAndUpdate(req.body.roomId, {
+          floorNo: req.body.floorNo,
           roomno: req.body.roomno,
           suiteName: req.body.suitename,
+          roomStatusConstant: req.body.roomStatus !== undefined && req.body.roomStatus !== 'Release' ? req.body.roomStatusConstant : currentRoomStatusConstant, 
+          roomStatus: req.body.roomStatus !== undefined && req.body.roomStatus !== 'Release' ? req.body.roomStatus : currentRoomStatus,
+          prevRoomStatus: req.body.roomStatus !== undefined ? currentRoomStatus : undefined,
+          prevRoomStatusConstant: req.body.roomStatus !== undefined ? currentRoomStatusConstant : undefined,
           bedCount: req.body.bedcount,
           price : roomPrice.price
         })
           .then(data => {
-            console.log(data)
             res.status(200).json({
               success : true,
               message : "Room Data Updated"
             })
           })
           .catch(err => {
-            console.log(err)
             res.status(200).json({
               success : false,
               message : "Some internal error occured"
@@ -265,21 +287,18 @@ const roomsUpdater = async (req, res, next) => {
 
 const checkOccupiedData = async (roomId) => {
   const value = await Room.findOne({ _id : roomId});
-  console.log(typeof(value.isOccupied));
   return value.isOccupied;
 };
 
 const deleteRoom = async (req, res, next) => {
   Room.findByIdAndDelete(req.body.roomId)
     .then(data => {
-      console.log(data)
       res.status(200).json({
         success : true,
         message : "Room data deleted successfully!"
       })
     })
     .catch(err => {
-      console.log(err)
       res.status(200).json({
         success : false,
         message : "Some internal error occured!"
@@ -517,7 +536,10 @@ const addUserRooms = async (req, res, next) => {
             await Room.findByIdAndUpdate({_id : checkin.room}, {preBooked : req.body.prebook, 
               price : checkin.prebookroomprice, advancePrebookPrice : req.body.advancePrebookPrice})
           }
-        }
+        };
+        
+        // Update the room status!
+        userController.checkAndMoveRoomStatus(req.body, "afterCheckin");
         
         await checkin.save();
         res.status(200).json({
@@ -525,7 +547,6 @@ const addUserRooms = async (req, res, next) => {
           message : "Customer has been checked in successfully!"
         })
       } catch(err){
-        console.log(err);
         res.status(200).json({
           success : false,
           message : "Some internal error occured"
@@ -558,14 +579,12 @@ const addServiceRooms = async (req, res, next) => {
       room: req.body.roomId,
       time: req.body.time
     })
-    console.log(userservice.room)
     if (userservice) {
       await Room.findByIdAndUpdate({ _id: userservice.room }, { $push: { services: userservice._id } })
     }
     await userservice.save()
     res.send(true)
   } catch (err) {
-    console.log(err)
     res.send("Error occured, please check the console")
   }
 }
@@ -575,11 +594,9 @@ const updateRoomData = async (req, res, next) => {
   try {
     const room = req.body.roomid
     await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [] } })
-    console.log("Room dishes data updated sucessfully")
     res.send("Room dish data updated sucessfully!")
 
   } catch (err) {
-    console.log(err);
     res.send("Error occured, please check the console!")
   }
 }
@@ -591,14 +608,12 @@ const callAWaiter = async (req, res, next) => {
       Time: req.body.time,
       room: req.body.roomid
     })
-    console.log(waiter.room)
     if (waiter) {
       await Room.findByIdAndUpdate({ _id: waiter.room }, { $push: { callawaiter: waiter._id } })
     }
     await waiter.save()
     res.send(true)
   } catch (err) {
-    console.log(err)
     res.send("Error occured, please check the console")
   }
 }

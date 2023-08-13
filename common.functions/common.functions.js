@@ -13,7 +13,6 @@ var time = [
   '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM'
 ]
 
-
 // Get time between dates!
 function getTimeBetweenWithDate(date, dateTime){
       
@@ -85,9 +84,16 @@ function checkIfValid(data, additionalCheck){
   } else {
     return false;
   }
+};
+
+// Get room status constant line up!
+function getRoomStatusConstants(){
+  // Default room status order!
+  var roomStatusOrder = ['afterCheckedout', 'inCleaning', 'afterCleaned', 'afterCheckin'];
+  return roomStatusOrder;
 }
 
 module.exports = {
   getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
-  checkIfValid
+  checkIfValid, getRoomStatusConstants
 }

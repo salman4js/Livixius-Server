@@ -5,8 +5,8 @@ const Lodge = require("../../models/Lodges");
 
 // Add refund to the refund list controller!
 async function addRefund(req,res,next){
-  const refundTracker = await RefundTrackerImplementation.setRefund(req.body);
   // Create a new refund tracker instance!
+  const refundTracker = await RefundTrackerImplementation.setRefund(req.body);
   if(refundTracker){
     res.status(200).json({
       success: true,

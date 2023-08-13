@@ -25,6 +25,7 @@ const voucherController = require("../controllers/voucherController/voucher.cont
 const multipleLoginController = require("../controllers/MultipleLoginController/multiple.login.controller");
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 const refundTrackerController = require("../controllers/refund.tracker/refund.tracker.controller")
+const roomStatusController = require("../controllers/room.status/room.status.controller");
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -399,5 +400,14 @@ router.post("/:id/killuniversalmessage", lodgeController.shutdownUniversalMessag
 
 // Refund Percentage
 router.post("/:id/updaterefundpercentage", lodgeController.putRefundPercentage);
+
+// Room Status!
+router.post("/:id/addroomstatus", roomStatusController.addRoomStatus);
+
+router.get("/:id/getallroomstatus", roomStatusController.getAllRoomStatus);
+
+router.post("/:id/deleteallroomstatus", roomStatusController.deleteAllRoomStatus);
+
+router.post("/:id/movetonextstate", roomStatusController.moveCurrentToNextStatus);
 
 module.exports = router;

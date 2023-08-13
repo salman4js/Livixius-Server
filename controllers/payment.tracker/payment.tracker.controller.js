@@ -36,6 +36,12 @@ async function setPaymentTracker(data){
 // Get all the payment for the specific rooms!
 async function getPayment(req,res,next){
 
+  // Info Message!
+  var prebookInfoMessage = 'No prebook payment are currently being tracked for this room!';
+  var checkinInfoMessage = 'No payment are currently being tracked for this room!'
+  var infoMessage = req.body.isPrebook ? prebookInfoMessage : checkinInfoMessage
+
+  // Model Data for trim the prebook data!
   var modelData = {
     'paymentTrackerId' : '_id', 
     'amount': 'amount', 
@@ -44,6 +50,7 @@ async function getPayment(req,res,next){
     'isPrebook': 'isPrebook'
   }
   
+  // Table header property values for UI!
   var prebookTableHeaders = ['Amount', 'Amount For', 'Date & Time', 'Mode', 'Customer Name', "Expected Check-In"];
   
   var checkinTableHeaders = ['Amount', 'Amount For', 'Date & Time', 'Mode'];
@@ -76,7 +83,7 @@ async function getPayment(req,res,next){
         success: true,
         message: trimmedData,
         tableHeaders: tableHeaders,
-        infoMessage: "No payment are currently being tracked for this room!"
+        infoMessage: infoMessage
       })
     }).catch(err => {
       res.status(200).json({
@@ -142,7 +149,6 @@ async function deleteRoomAndLodgeInstance(data){
 
 // Get customer details from the userController!
 async function getCustomerDetails(filterQuery){
-  
   if(!filterQuery.isPrebook){
     const result = await User.find(filterQuery);
     return result;

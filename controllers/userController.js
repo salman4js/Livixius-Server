@@ -7,7 +7,10 @@ const jwt = require("jsonwebtoken");
 const commonUtils = require("../common.functions/common.functions")
 
 // Payment tracker instance!
-const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller")
+const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
+
+// Room status instance!
+const roomStatusImplementation = require("../controllers/room.status/room.status.implementation");
 
 // Importing brew date package to do the date handling!
 const bwt = require('brew-date');
@@ -313,9 +316,12 @@ const deleteUser = async (req, res, next) => {
       await createInvoiceMemory(req.params.id, req.body.userid, req.body.checkoutTime, req.body.checkoutdate);
     }
     
+    // Get the room status of after checkout!
+    checkAndMoveRoomStatus(req.body, 'afterCheckedout');
+    
     // Delete paymentTracker for the checking out room!
     paymentTrackerController.deletePaymentTracker(req.body.roomid); // Delete paymentTracker when the customer checks out!
-  
+    
     try {
         const room = req.body.roomid
         // Reverting the changes caused by the discount and advance in the schema!
@@ -345,6 +351,27 @@ const deleteUser = async (req, res, next) => {
             message : err
         })
     }
+}
+
+// Check and move room status!
+async function checkAndMoveRoomStatus(reqBody, key){
+  // Convert roomid request into roomId!
+  reqBody['roomId'] = reqBody.roomid
+  var data = {key: key, accId: reqBody.accId}
+  const roomStatus = await roomStatusImplementation.getRoomStatusSeq(data);
+  // Get the next room status!
+  const nextStatus = await roomStatusImplementation.getTheNextRoomState(reqBody, key);
+  if(nextStatus){
+    reqBody['roomStatus'] = roomStatus;
+    reqBody['nextStatus'] = nextStatus.nextRoomStatus
+    reqBody['nextOfNextStatus'] = nextStatus.nextOfNextStatus
+    reqBody['roomStatusConstant'] = key
+  }
+  if(roomStatus){
+    await roomStatusImplementation.roomStatusSetter(reqBody)
+  } else {
+    return;
+  }
 }
 
 // Helper Function -- deleteuser!
@@ -642,5 +669,5 @@ const updateOccupiedData = async (req, res, next) => {
 
 module.exports = {
     allUser, addUser, loginUser, deleteUser, checkUser, userRoom, userdb, generateBill, addUserFromD2, userdbRoom, totalDateCalculator, 
-    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev, updateOccupiedData, roomTypeAnalysis
+    favCustomer, datesEstimate, weeklyEstimate, totalDailyCalculator, roomTypeRev, updateOccupiedData, roomTypeAnalysis, checkAndMoveRoomStatus
 }

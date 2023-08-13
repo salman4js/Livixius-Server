@@ -28,28 +28,7 @@ const checkMatrix = async (req,res,next) => {
   try{
     res.status(200).json({
       success: true,
-      isGstEnabled: config.isGst,
-      isHourly: config.isHourly,
-      isChannel: config.isChannel,
-      updatePrice: config.updatePrice,
-      isExtra: config.isExtra,
-      isExclusive: config.isExclusive,
-      isInsights: config.isInsights,
-      isSpecific: config.isSpecific,
-      extraPrice: config.extraPrice,
-      address: config.area,
-      emailId: config.emailId,
-      canDelete: config.canDelete,
-      extraCalc: config.extraCalc,
-      grcPreview: config.grcPreview,
-      redirectTo: config.redirectTo,
-      multipleLogins: config.multipleLogins,
-      validateInvoiceDetails: config.validateInvoiceDetails,
-      printManager: config.printManager,
-      removePan: config.removePan,
-      universalMessage: config.universalMessage,
-      refundPercentage: config.refundPercentage,
-      refundTracker: config.isRefundTrackerEnabled
+      object: config
     })
   } catch(err){
     res.status(200).json({
@@ -132,7 +111,11 @@ const updateMatrix = (req,res,next) => {
     printManager: req.body.printManager,
     removePan: req.body.removePan,
     universalMessage: req.body.universalMessage,
-    isRefundTrackerEnabled: req.body.refundTracker
+    isRefundTrackerEnabled: req.body.refundTracker,
+    afterCheckedout: req.body.afterCheckedout,
+    inCleaning: req.body.inCleaning,
+    afterCheckin: req.body.afterCheckin,
+    afterCleaned: req.body.afterCleaning
   })
   .then(data => {
     res.status(200).json({

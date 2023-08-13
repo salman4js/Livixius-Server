@@ -3,14 +3,19 @@ const serverless = require("serverless-http");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
+// Custom Middlewares!
+const {CustomMiddleWares} = require('./middlewares/custom.middleware');
+// Defining routes!
+const server = require("./routes/Routes");
 
 //mongodb+srv://salman:<password>@cluster0.vsziv.mongodb.net/?retryWrites=true&w=majority
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+// Using custom middleware!~
+app.use('/:id', CustomMiddleWares.addParamsInBody);
 
-const server = require("./routes/Routes")
 
 const database = "mongodb+srv://salman-1:salman@cluster0.vsziv.mongodb.net/?retryWrites=true&w=majority";
 
