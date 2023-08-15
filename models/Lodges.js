@@ -91,6 +91,7 @@ const lodgeSchema = new mongoose.Schema({
     validateInvoiceDetails: {type: Boolean, default: true},
     printManager: {type: Boolean, default: false},
     removePan: {type: Boolean, default: false},
+    linkVouchersWithLivixius: {type: Boolean, default: false},
     universalMessage: {
       show: {type: Boolean, default: false},
       message: String

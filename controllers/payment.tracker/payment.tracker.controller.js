@@ -4,6 +4,7 @@ const Room = require("../../models/Rooms");
 const Lodge = require("../../models/Lodges")
 const User = require("../../models/User");
 const PreBookUser = require("../../models/PreBookUser");
+const ResponseHandler = require("../../ResponseHandler/ResponseHandler");
 
 // Add payment tracker to the particular rooms!
 async function addPaymentTracker(req,res,next){
@@ -263,11 +264,32 @@ async function updatePaymentTracker(options){
 
 // Get all payment tracker!
 async function getAllPaymentTracker(req, res, next){
-  PaymentTracker.find({})
+  var infoMessage = 'No payment are currently being tracked for this room';
+  var tableHeaders = ['Amount', 'Amount For', 'Date & Time', 'Booking Mode', 'Status'];
+  // Trim model data!
+  var modelData = {
+    'paymentTrackerId' : '_id', 
+    'amount': 'amount', 
+    'amountFor': 'amountFor', 
+    'dateTime': 'dateTime',
+    'isPrebook': 'isPrebook',
+    'isCheckedout': 'isCheckedout'
+  }
+  PaymentTracker.find({lodge: req.body.accId, room: req.body.roomId})
     .then(data => {
+      // Send what only the UI wants!
+      var trimmedData = commonUtils.trimData(data, modelData);
+      // Modify the data according to the UI!
+      for (var i = 0; i < trimmedData.length; i++) {
+        trimmedData[i].isPrebook = trimmedData[i].isPrebook ? "Prebook" : "Check-In";
+        trimmedData[i].isCheckedout = trimmedData[i].isCheckedout ? 'OUT' : 'IN'
+      }
+      
       res.status(200).json({
         success: true,
-        message: data
+        message: trimmedData,
+        infoMessage: infoMessage,
+        tableHeaders: tableHeaders
       })
     }).catch(err => {
       res.status(200).json({
@@ -291,7 +313,7 @@ async function deleteAllPaymentTracker(req,res,next){
         message: "Some internal error occured!"
       })
     })
-}
+};
 
 // Check any payments has been made by the user!
 async function checkPayments(userId){
@@ -302,7 +324,18 @@ async function checkPayments(userId){
       .catch(error => {
         return error;
       });
-}
+};
+
+// Get all payment tracker amount sum controller!
+async function getAllPaymentTrackerAmountSum(req,res,next){
+  const result = await getAllPaymentTrackerSum(req.body);
+  console.log(result)
+  if(result){
+    ResponseHandler.success(res, result);
+  } else {
+    ResponseHandler.error(res);
+  }
+};
 
 // Get paid amount by the particular user!
 async function getPaidAmount(paymentsData){
@@ -314,6 +347,18 @@ async function getPaidAmount(paymentsData){
 async function deletePrebookPaymentTracker(userId){
   const paymentTracker = await PaymentTracker.deleteMany({userId: userId});
   return paymentTracker;
+};
+
+// Get all payment tracker sum as lodge wise!
+async function getAllPaymentTrackerSum(reqBody){
+  const paymentTracker = await PaymentTracker.find({lodge: reqBody.accId});
+  var totalAmount = 0;
+  var totalTaxableAmount = 0;
+  paymentTracker.map((options, index) => {
+    totalAmount += Number(options.amount);
+    totalTaxableAmount += commonUtils.getTaxableAmount(Number(options.amount));
+  });
+  return {totalAmount, totalTaxableAmount};
 }
 
 
@@ -321,5 +366,5 @@ module.exports = {
   addPaymentTracker, getPayment, deleteSinglePaymentTracker, setPaymentTracker, 
   getPaymentDetails, deletePaymentTracker, deleteAllPaymentTracker,
   getAllPaymentTracker, updatePaymentTracker, checkPayments, getPaidAmount,
-  deletePrebookPaymentTracker
+  deletePrebookPaymentTracker, getAllPaymentTrackerSum, getAllPaymentTrackerAmountSum
 }

@@ -356,6 +356,10 @@ router.post("/:id/addvouchermodel", voucherController.addVoucherModel);
 
 router.post("/:id/cheatcodefilter", voucherController.cheatCodeFiltering);
 
+router.post("/:id/getallvouchermodelsum", voucherController.getAllVouchersModelSum);
+
+router.post("/:id/getnetprofitpreview", voucherController.getNetProfitPreview);
+
 // Multiple Login Routes!
 router.post("/:id/addmultiplelogin", multipleLoginController.addLogins);
 
@@ -381,6 +385,8 @@ router.post("/:id/getpaymentdetails", paymentTrackerController.getPaymentDetails
 router.post("/:id/deleteallpaymenttracker", paymentTrackerController.deleteAllPaymentTracker);
 
 router.post("/:id/getallpaymenttracker", paymentTrackerController.getAllPaymentTracker);
+
+router.post("/:id/getallpaymenttrackersum", paymentTrackerController.getAllPaymentTrackerAmountSum);
 
 // Refund tracker routes!
 router.post("/:id/addrefundtracker", refundTrackerController.addRefund);

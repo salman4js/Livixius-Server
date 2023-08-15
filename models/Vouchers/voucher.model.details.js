@@ -10,6 +10,10 @@ const voucherDetails = new mongoose.Schema({
   voucherId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vouchers"
+  },
+  accId: { // accId being the lodge id here!
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Lodges"
   }
 })
 

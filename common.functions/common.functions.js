@@ -91,9 +91,22 @@ function getRoomStatusConstants(){
   // Default room status order!
   var roomStatusOrder = ['afterCheckedout', 'inCleaning', 'afterCleaned', 'afterCheckin'];
   return roomStatusOrder;
+};
+
+// Get gst percent!
+function getGSTPercent(amount){
+  return amount > 7500 ? 0.18 : 0.12;
+}
+
+// Get taxable amount for each payments!
+function getTaxableAmount(amount){
+  var gstPercent = getGSTPercent(amount);
+  var amountWithoutGST = amount / (1 + gstPercent);
+  var taxableAmount = amount - amountWithoutGST;
+  return taxableAmount;
 }
 
 module.exports = {
   getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
-  checkIfValid, getRoomStatusConstants
+  checkIfValid, getRoomStatusConstants, getTaxableAmount
 }

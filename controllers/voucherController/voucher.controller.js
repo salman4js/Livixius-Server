@@ -2,6 +2,9 @@ const Voucher = require("../../models/Vouchers/voucher.model.js");
 const VoucherModel = require("../../models/Vouchers/voucher.model.details");
 const Lodge = require("../../models/Lodges");
 const Queries = require("../../query.optimization/queryAnalyser");
+const commonUtils = require("../../common.functions/common.functions");
+const vouchersImpl = require('./voucher.implementation');
+const ResponseHandler = require("../../ResponseHandler/ResponseHandler");
 
 // Add parent vouchers!
 async function addVouchers(req,res,next){
@@ -105,7 +108,7 @@ function getVouchers(req,res,next){
         message: "Internal error occured!"
       })
     })
-}
+};
 
 // Add voucher model to the respective vouchers1
 async function addVoucherModel(req,res,next){
@@ -132,11 +135,22 @@ async function addVoucherModel(req,res,next){
 
 // Send voucher model to the client!
 function getVoucherModel(req,res,next){
+  // Trim model data!
+  var modelData = {
+    '_id' : '_id', 
+    'vNo': 'vNo', 
+    'dateTime': 'dateTime', 
+    'particulars': 'particulars',
+    'cashMode': 'cashMode',
+    'receipt': 'receipt',
+    'payment': 'payment'
+  }
   VoucherModel.find({voucherId: req.body.voucherId})
     .then(data => {
+      var trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants
       res.status(200).json({
         success: true,
-        message: data,
+        message: trimmedData,
         tableHeaders: ['Voucher No', 'Date', 'Particulars', 'Cash Mode', 'Receipt', 'Payment'],
         infoMessage: "No vouchers has been added in this list..."
       })
@@ -196,9 +210,30 @@ function voucherModelFiltering(queryResult){
       
       return result;
     })
+};
+
+// Get all voucher model amount (receipt, payment) sum!
+async function getAllVouchersModelSum(req,res,next){
+  const result = await vouchersImpl.getAllVouchersSum(req.body);
+  if(result !== undefined){
+    ResponseHandler.success(res, result);
+  } else {
+    ResponseHandler.error(res)
+  }
+};
+
+// Get all net profit preview!
+async function getNetProfitPreview(req,res,next){
+  const result = await vouchersImpl.netProfitPreview(req.body);
+  if(result !== undefined){
+    ResponseHandler.success(res, result);
+  } else {
+    ResponseHandler.error(res);
+  }
 }
 
 module.exports = {
   addVouchers, getVouchers, getVoucherModel, addVoucherModel, 
-  cheatCodeFiltering, editVoucherModel, deleteVoucherModel, getPrevVoucherModel
+  cheatCodeFiltering, editVoucherModel, deleteVoucherModel, getPrevVoucherModel,
+  getAllVouchersModelSum, getNetProfitPreview
 }
