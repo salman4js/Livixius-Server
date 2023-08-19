@@ -5,8 +5,8 @@ const voucherDetails = new mongoose.Schema({
   dateTime: String,
   particulars: String,
   cashMode: String,
-  receipt: String,
-  payment: String,
+  receipt: {type: String, default: '0'},
+  payment: {type: String, default: '0'},
   voucherId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vouchers"
