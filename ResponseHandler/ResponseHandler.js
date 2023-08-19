@@ -1,4 +1,5 @@
 class ResponseHandler {
+  // Send success response!
   static success(res, data, infoMessage) {
     res.status(200).json({
       success: true,
@@ -7,6 +8,7 @@ class ResponseHandler {
     });
   }
 
+  // Send error response!
   static error(res) {
     res.status(500).json({
       success: false,

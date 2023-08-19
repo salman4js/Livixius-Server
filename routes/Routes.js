@@ -360,6 +360,8 @@ router.post("/:id/getallvouchermodelsum", voucherController.getAllVouchersModelS
 
 router.post("/:id/getnetprofitpreview", voucherController.getNetProfitPreview);
 
+router.post("/:id/getttotalamountofallvouchermodel", voucherController.getTotalAmountOfAllVoucherModel);
+
 // Multiple Login Routes!
 router.post("/:id/addmultiplelogin", multipleLoginController.addLogins);
 

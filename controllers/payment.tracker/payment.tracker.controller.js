@@ -329,7 +329,6 @@ async function checkPayments(userId){
 // Get all payment tracker amount sum controller!
 async function getAllPaymentTrackerAmountSum(req,res,next){
   const result = await getAllPaymentTrackerSum(req.body);
-  console.log(result)
   if(result){
     ResponseHandler.success(res, result);
   } else {
@@ -351,7 +350,22 @@ async function deletePrebookPaymentTracker(userId){
 
 // Get all payment tracker sum as lodge wise!
 async function getAllPaymentTrackerSum(reqBody){
-  const paymentTracker = await PaymentTracker.find({lodge: reqBody.accId});
+  // Convert the request body date into payment tracker model date!
+  var paymentTrackerModelDate = commonUtils.convertDateIntoCustomFormat(reqBody.date, 'dd mmm');
+  // Extract day and month portions from the formatted date using regex
+   const regexPattern = /^(\d{2}) ([A-Za-z]{3})/;
+   const match = paymentTrackerModelDate.match(regexPattern);
+   const day = match[1];   // Extracted day
+   const month = match[2]; // Extracted month
+   
+   // Filter PaymentTracker based on the month, day, and lodge
+   const paymentTracker = await PaymentTracker.find({
+     lodge: reqBody.accId,
+     dateTime: {
+       $regex: `^${day} ${month}`, // Match day and month at the start of dateTime
+       $options: 'i' // Case-insensitive matching
+     }
+   });
   var totalAmount = 0;
   var totalTaxableAmount = 0;
   paymentTracker.map((options, index) => {

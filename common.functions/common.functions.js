@@ -1,3 +1,5 @@
+const brewDate = require('brew-date');
+
 var time = [
   '12:00 AM', '12:30 AM', '01:00 AM',  '01:30 AM',
   '02:00 AM',  '02:30 AM',  '03:00 AM',  '03:30 AM',
@@ -11,7 +13,7 @@ var time = [
   '06:00 PM',  '06:30 PM',  '07:00 PM',  '07:30 PM',
   '08:00 PM',  '08:30 PM',  '09:00 PM',  '09:30 PM',
   '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM'
-]
+];
 
 // Get time between dates!
 function getTimeBetweenWithDate(date, dateTime){
@@ -104,9 +106,14 @@ function getTaxableAmount(amount){
   var amountWithoutGST = amount / (1 + gstPercent);
   var taxableAmount = amount - amountWithoutGST;
   return taxableAmount;
+};
+
+// Convert date into custom format!
+function convertDateIntoCustomFormat(dateString, format){
+  return brewDate.convertDateInto(dateString, format)
 }
 
 module.exports = {
   getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
-  checkIfValid, getRoomStatusConstants, getTaxableAmount
+  checkIfValid, getRoomStatusConstants, getTaxableAmount, convertDateIntoCustomFormat
 }

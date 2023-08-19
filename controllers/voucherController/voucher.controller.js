@@ -171,7 +171,6 @@ async function cheatCodeFiltering(req,res,next){
   res.send(result);
 }
 
-
 // Filtering of voucher model details!
 function voucherModelFiltering(queryResult){
   
@@ -230,10 +229,20 @@ async function getNetProfitPreview(req,res,next){
   } else {
     ResponseHandler.error(res);
   }
+};
+
+// Get the total amount spent based on voucher model!
+async function getTotalAmountOfAllVoucherModel(req,res,next){
+  const result = await vouchersImpl.getIndividualVoucherModel(req.body);
+  if(result){
+    ResponseHandler.success(res, result);
+  } else {
+    ResponseHandler.error(res);
+  }
 }
 
 module.exports = {
   addVouchers, getVouchers, getVoucherModel, addVoucherModel, 
   cheatCodeFiltering, editVoucherModel, deleteVoucherModel, getPrevVoucherModel,
-  getAllVouchersModelSum, getNetProfitPreview
+  getAllVouchersModelSum, getNetProfitPreview, getTotalAmountOfAllVoucherModel
 }
