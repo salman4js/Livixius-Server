@@ -1,6 +1,7 @@
 const PaymentTracker = require("../../models/payment.tracker/payment.tracker");
 const commonUtils = require("../../common.functions/common.functions");
 const Room = require("../../models/Rooms");
+const RoomImpl = require("../room.controller.implementation/room.controller.implementation");
 const Lodge = require("../../models/Lodges")
 const User = require("../../models/User");
 const PreBookUser = require("../../models/PreBookUser");
@@ -368,10 +369,11 @@ async function getAllPaymentTrackerSum(reqBody){
    });
   var totalAmount = 0;
   var totalTaxableAmount = 0;
-  paymentTracker.map((options, index) => {
+  await Promise.all(paymentTracker.map( async(options, index) => {
     totalAmount += Number(options.amount);
-    totalTaxableAmount += commonUtils.getTaxableAmount(Number(options.amount));
-  });
+    var roomInstance = await RoomImpl.getRoomById(options.room);
+    totalTaxableAmount += commonUtils.getTaxableAmount(Number(options.amount), Number(roomInstance.price)); // Taxable amount has to be based on room price per day!
+  }));
   return {totalAmount, totalTaxableAmount};
 }
 

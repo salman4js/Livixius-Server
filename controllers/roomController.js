@@ -660,12 +660,9 @@ async function getRoomNo(req,res,next){
       message: "Some internal error occured!"
     })
   }
-}
-
-
+};
 
 module.exports = {
   createRoom, allRooms, roomsUpdater, deleteRoom, addDishRooms, updateRoomData, roomOne, addUserRooms,
-  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut, getRoomNo, updateRoomPrice
-
+  roomById, dishByRoom, addServiceRooms, callAWaiter, availability, getRoomId, occupiedRooms, upcomingCheckOut, getRoomNo, updateRoomPrice,
 }

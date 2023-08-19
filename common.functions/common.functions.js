@@ -101,10 +101,10 @@ function getGSTPercent(amount){
 }
 
 // Get taxable amount for each payments!
-function getTaxableAmount(amount){
-  var gstPercent = getGSTPercent(amount);
-  var amountWithoutGST = amount / (1 + gstPercent);
-  var taxableAmount = amount - amountWithoutGST;
+function getTaxableAmount(amountPaid, pricePerDay){
+  var gstPercent = getGSTPercent(pricePerDay);
+  var amountWithoutGST = amountPaid / (1 + gstPercent);
+  var taxableAmount = amountPaid - amountWithoutGST;
   return taxableAmount;
 };
 

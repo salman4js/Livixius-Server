@@ -59,7 +59,7 @@ async function netProfitPreview(reqBody){
   return {vouchersPayment: voucherPayment + " Rs", 
     vouchersReceipt: vouchersReceipt + " Rs", 
     paymentTrackerSum: paymentTrackerSum.totalAmount + " Rs",
-    paymentTrackerTotalTaxable: Math.round(paymentTrackerSum.totalTaxableAmount) + " Rs",
+    paymentTrackerTotalTaxable: paymentTrackerSum.totalTaxableAmount.toFixed(2) + " Rs",
     netProfit: Math.round(netProfit) + " Rs",
     netProfitForVouchers: Math.round(netProfitForVouchers) + " Rs",
     individualVoucherReportForPayment: individualVoucherReportForPayment,

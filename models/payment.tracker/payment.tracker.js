@@ -16,6 +16,6 @@ const paymentTracker = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lodges"
   }
-})
+});
 
 module.exports = mongoose.model("PaymentTracker", paymentTracker);
