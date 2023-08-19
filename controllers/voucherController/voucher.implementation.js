@@ -67,8 +67,16 @@ async function netProfitPreview(reqBody){
     individualVoucherReportTableHeader: individualVoucherReportTableHeader,
     netProfitStatus: netProfit > 0 ? "PROFIT" : "LOSS"
   };
+};
+
+// Get last entry voucher model voucher number!
+async function getLastEntryVoucherModelNumber(reqBody){
+  var voucherModelInstance = await VouchersModel.find({accId: reqBody.accId, voucherId: reqBody.voucherId});
+  var lastEntryVoucherModelIndex = voucherModelInstance.length - 1;
+  var lastEntryVoucherModel = voucherModelInstance[lastEntryVoucherModelIndex];
+  return lastEntryVoucherModel?.vNo !== undefined ? lastEntryVoucherModel.vNo : 0;
 }
 
 module.exports = {
-  getAllVouchersSum, netProfitPreview, getIndividualVoucherModel
+  getAllVouchersSum, netProfitPreview, getIndividualVoucherModel, getLastEntryVoucherModelNumber
 }
