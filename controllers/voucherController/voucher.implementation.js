@@ -55,7 +55,7 @@ async function netProfitPreview(reqBody){
   var individualVoucherReportTableHeader = ['Voucher Name', 'Amount'];
   var paymentTrackerSum =  await paymentTrackerImpl.getAllPaymentTrackerSum(reqBody);
   var netProfitForVouchers = voucherPayment - vouchersReceipt;
-  var netProfit = (paymentTrackerSum.totalAmount - paymentTrackerSum.totalTaxableAmount) - netProfitForVouchers;
+  var netProfit = (paymentTrackerSum.totalAmount + vouchersReceipt) - (voucherPayment + paymentTrackerSum.totalTaxableAmount);
   return {vouchersPayment: voucherPayment + " Rs", 
     vouchersReceipt: vouchersReceipt + " Rs", 
     paymentTrackerSum: paymentTrackerSum.totalAmount + " Rs",
@@ -64,7 +64,8 @@ async function netProfitPreview(reqBody){
     netProfitForVouchers: Math.round(netProfitForVouchers) + " Rs",
     individualVoucherReportForPayment: individualVoucherReportForPayment,
     individualVoucherReportForReceipt: individualVoucherReportForReceipt,
-    individualVoucherReportTableHeader: individualVoucherReportTableHeader
+    individualVoucherReportTableHeader: individualVoucherReportTableHeader,
+    netProfitStatus: netProfit > 0 ? "PROFIT" : "LOSS"
   };
 }
 
