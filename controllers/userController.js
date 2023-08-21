@@ -319,8 +319,15 @@ const deleteUser = async (req, res, next) => {
     // Get the room status of after checkout!
     checkAndMoveRoomStatus(req.body, 'afterCheckedout');
     
+    // Before checking out add the checkout payment to payment tracker and then delete it!
+    var paymentTrackerAmountFor = 'While checking out'
+    var paymentTrackerData = {roomno: req.body.roomno, amount: req.body.amount + req.body.stayGst, 
+      amountFor: paymentTrackerAmountFor, userId: req.body.userid, 
+      room: req.body.roomid, lodge: req.body.accId, dateTime: req.body.dateTime }
+    await paymentTrackerController.setPaymentTracker(paymentTrackerData)
+    
     // Delete paymentTracker for the checking out room!
-    paymentTrackerController.deletePaymentTracker(req.body.roomid); // Delete paymentTracker when the customer checks out!
+    await paymentTrackerController.deletePaymentTracker(req.body.roomid); // Delete paymentTracker when the customer checks out!
     
     try {
         const room = req.body.roomid
