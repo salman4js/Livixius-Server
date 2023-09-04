@@ -128,5 +128,5 @@ async function deleteInvoiceMemory(req,res,next){
 }
 
 module.exports = {
-  addInvoice, addInvoiceData, getAllInvoiceMemory, deleteInvoiceMemory, getInitialStateOfInvoiceCount
+  addInvoice, addInvoiceData, getAllInvoiceMemory, deleteInvoiceMemory, getInitialStateOfInvoiceCount, updateInitialState
 }

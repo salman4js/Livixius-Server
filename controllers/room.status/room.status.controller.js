@@ -46,7 +46,7 @@ async function moveCurrentToNextStatus(req,res,next){
   req.body['roomStatus'] = afterCleanedState ? "" : currentRoomStatus.nextRoomStatus;
   req.body['nextStatus'] = afterCleanedState ? "" : currentRoomStatus.nextOfNextRoomStatus; // If next status is in empty string, that will let the UI know
   // that the room is ready to be checked in...
-  req.body['roomStatusConstant'] = afterCleanedState ? roomStatusConstant : RoomStatusImpl.getTheNextRoomStateOrder(roomStatusConstant);
+  req.body['roomStatusConstant'] = RoomStatusImpl.getTheNextRoomStateOrder(roomStatusConstant);
 
   RoomStatusImpl.roomStatusSetter(req.body)
     .then(data => {

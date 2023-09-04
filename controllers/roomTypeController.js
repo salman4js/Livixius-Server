@@ -117,6 +117,7 @@ const editTypeData = async (req,res,next) => {
   }
 }
 
+// Get all available room types!
 const allRoomType = (req,res,next) => {
   RoomType.find({lodge : req.params.id})
   .then(data => {

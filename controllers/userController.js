@@ -437,7 +437,7 @@ const generateBill = async (req,res,next) => {
   } catch(err) {
     res.status(200).json({
       success : false,
-      message : "Some internal error has occured"
+      message : "Some internal error has occured",
     })
   }
 }
