@@ -1,6 +1,6 @@
 class ResponseHandler {
   // Send success response!
-  static success(res, data, infoMessage) {
+  static success(res, infoMessage, data) {
     res.status(200).json({
       success: true,
       infoMessage,

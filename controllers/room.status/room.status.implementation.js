@@ -44,7 +44,7 @@ async function deleteAllRoomStatus(data){
 // Set initial room status and also Move the room status to the specified status!
 async function roomStatusSetter(data){
   return await Room.findByIdAndUpdate({_id: data.roomId}, {$set: {roomStatus: data.roomStatus, 
-    nextRoomStatus: data.nextStatus, nextOfNextRoomStatus: data.nextOfNextStatus, roomStatusConstant: data.roomStatusConstant}});
+    nextRoomStatus: data.nextStatus, nextOfNextRoomStatus: data.nextOfNextStatus, roomStatusConstant: data.roomStatusConstant}}, {new: true});
 }
 
 // Get room status as per the passed key!
