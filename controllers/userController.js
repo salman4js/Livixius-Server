@@ -26,11 +26,9 @@ const addUser = (req, res, next) => {
     })
     user.save()
         .then(data => {
-            console.log(data)
             res.send(true)
         })
         .catch(err => {
-            console.log(err)
             res.send(false)
         })
 }
@@ -41,13 +39,11 @@ const addUserFromD2 = (req,res,next) => {
   })
   user.save()
   .then(res => {
-    console.log(res);
     res.status(200).json({
       success : true,
       message : "Added to the database!"
     })
     .catch(err => {
-      console.log(err);
       res.status(200).json({
         success : false,
         message : "Some internal error occured!"
@@ -245,11 +241,9 @@ const loginUser = (req, res, next) => {
 const allUser = (req, res, next) => {
     User.find({})
         .then(data => {
-            console.log(data)
             res.send(data)
         })
         .catch(err => {
-            console.log(err)
             res.send(err)
         })
 }
