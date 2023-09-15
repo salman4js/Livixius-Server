@@ -92,6 +92,7 @@ const lodgeSchema = new mongoose.Schema({
     printManager: {type: Boolean, default: false},
     removePan: {type: Boolean, default: false},
     restrictAdvance: {type: Boolean, default: false},
+    checkinDateEditable: {type: Boolean, default: false},
     linkVouchersWithLivixius: {type: Boolean, default: false},
     universalMessage: {
       show: {type: Boolean, default: false},

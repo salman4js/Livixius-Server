@@ -620,24 +620,28 @@ const updateOccupiedData = async (req, res, next) => {
         childrens: req.body.childrens,
         extraBeds: req.body.extraBeds,
         aadharcard: req.body.aadharcard,
+        dateofcheckin: req.body.dateofcheckin, // This will be only active if edit details of checkin date is enabled in UI!
         dateofcheckout: req.body.dateofcheckout,
         advance: req.body.updatedAdvance, // Added prev advance with the updated advance in the UI itself!
         discount: req.body.discount,
         checkoutTime: req.body.checkOutTime,
       })
       
-      // Track advance payment entry
-      const paymentParams = {
-        roomno: req.body.roomno,
-        room: req.body.roomId,
-        amountFor: req.body.amountFor,
-        amount: req.body.advance,
-        dateTime: req.body.dateTime,
-        isPrebook: req.body.isPrebook,
-        lodge: req.params.id,
-        userId: userId
-      }
-      const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams);
+      // Track payment only if there are any amount paid by the customer!
+      if(req.body.updatedAdvance > 0){
+        // Track advance payment entry
+        const paymentParams = {
+          roomno: req.body.roomno,
+          room: req.body.roomId,
+          amountFor: req.body.amountFor,
+          amount: req.body.advance,
+          dateTime: req.body.dateTime,
+          isPrebook: req.body.isPrebook,
+          lodge: req.params.id,
+          userId: userId
+        }
+        const paymentTracker = await paymentTrackerController.setPaymentTracker(paymentParams);
+      };
       
       // Update room schema advancePrice, since we are dealing with room schema for bill preview!
       // Check if the updatedAdvance schema has been updated!
@@ -665,7 +669,7 @@ const updateOccupiedData = async (req, res, next) => {
       message: "Some internal error occured..."
     })
   }
-}
+};
 
 
 module.exports = {
