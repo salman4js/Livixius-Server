@@ -53,7 +53,7 @@ const loginLodge = (req,res,next) => {
                       message : "Please check your credentials"
                   })
               } else {
-                  let token = jwt.sign({name : lodge.username}, "secretValue", {expiresIn : '1h'})
+                  let token = jwt.sign({name : lodge.username}, "secretValue", {expiresIn : '1h'});
                   res.json({
                     success : true,
                     message : "User Logged In",

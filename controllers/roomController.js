@@ -110,13 +110,16 @@ const checkDuplicate = async (lodgeid, roomno) => {
 
 const allRooms = async (req, res, next) => {
   const availabilityCount = await countAvailability(req.params.id, req.params.state);
+  // UI wants room status along with this response!
+  var roomStatus = await RoomStatusImplementation.getAllRoomStatus({accId: req.params.id});
   Room.find({ lodge: req.params.id })
     .then(data => {
       res.status(200).json({
         success : true,
         message : data,
         countAvailability: availabilityCount,
-        channels: channel.channelManager.channelManager
+        channels: channel.channelManager.channelManager,
+        roomStatus: roomStatus
       })
     })
     .catch(err => {
