@@ -41,7 +41,11 @@ async function moveCurrentToNextStatus(req,res,next){
   var roomStatusConstant = roomInstance.roomStatusConstant;
   const currentRoomStatus = await RoomStatusImpl.getTheNextRoomState(req.body, roomStatusConstant);
   // Check if the room is in afterCleaned state!
-  const afterCleanedState = (roomStatusConstant === 'inCleaning');
+  const isNextAvailableState = (roomStatusConstant === 'inCleaning');
+  if(isNextAvailableState){
+    // Update room occupied state to false when the next state is available state!
+    await Room.updateOne({_id: req.body.roomId}, {$set: {isOccupied: 'false'}});
+  };
   // Append the room status value into the request body!
   req.body['roomStatus'] = currentRoomStatus.nextRoomStatus;
   req.body['nextStatus'] = currentRoomStatus.nextOfNextRoomStatus; // If next status is in empty string, that will let the UI know
