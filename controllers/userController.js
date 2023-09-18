@@ -12,6 +12,9 @@ const paymentTrackerController = require("../controllers/payment.tracker/payment
 // Room status instance!
 const roomStatusImplementation = require("../controllers/room.status/room.status.implementation");
 
+// Refund tracker instance!
+const refundTrackerImpl = require('../controllers/refund.tracker/refund.tracker.implementation');
+
 // Importing brew date package to do the date handling!
 const bwt = require('brew-date');
 // Importing invoice memory generator implementation function!
@@ -292,12 +295,23 @@ const userRoom = async (req, res, next) => {
                 message: "Some Internal Error Occured, Please Try Again Later!"
             })
         })
-}
+};
+
+// Create new refund tracker while checking out the normal checkout!
+async function updateRefundTracker(data){
+  var result = await refundTrackerImpl.setRefund(data);
+  if(result){
+    return true;
+  } else {
+    return false;
+  }
+};
 
 const deleteUser = async (req, res, next) => {
     // Check for the date, if its the first date of the month, reset the invoice
     // Count to zero.
     const date = new Date();
+    var refundTrackerUpdated;
     const currentDate = new Date(req.body.checkoutdate); // Current Date 
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).toString(); // First day of the month!
     if(currentDate == firstDayOfMonth){
@@ -341,10 +355,17 @@ const deleteUser = async (req, res, next) => {
         const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
         //console.log("Room type", updateRate.price);
         await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
+        // Update refund tracker!
+        if(req.body.refund > 0){
+          var data = {refundFor: 'Refunded via check-in', userId: req.body.userid, lodge: req.params.id, username: req.body.username, refundAmount: req.body.refund,
+            roomno: req.body.roomno, date: req.body.checkoutdate, roomId: req.body.roomid};
+          refundTrackerUpdated = await updateRefundTracker(data);
+        };
         // Sending the response back to brew!
         res.status(200).json({
             success : true,
-            message : "Customer has been checked out properly!"
+            message : "Customer has been checked out properly!",
+            refundTrackerUpdated: refundTrackerUpdated
         })
     } catch (err) {
         res.status(200).json({

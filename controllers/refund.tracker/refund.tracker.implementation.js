@@ -7,7 +7,9 @@ async function setRefund(data){
   var refundTracker = await new RefundTracker(data);
   if(refundTracker){
     // When refund tracker added, delete that instance from payment tracker!
-    const paymentTracker = PaymentTracker.deletePrebookPaymentTracker(data.userId);
+    if(!data.isPaymentTrackerHandled){
+      const paymentTracker = PaymentTracker.deletePrebookPaymentTracker(data.userId);
+    };
     await Lodge.findByIdAndUpdate({_id: data.lodge}, {$push: {refundTrackers: refundTracker._id}});
     await refundTracker.save();
   }
