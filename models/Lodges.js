@@ -94,6 +94,7 @@ const lodgeSchema = new mongoose.Schema({
     restrictAdvance: {type: Boolean, default: false},
     checkinDateEditable: {type: Boolean, default: false},
     linkVouchersWithLivixius: {type: Boolean, default: false},
+    showFullDetails: {type: Boolean, default: false},
     universalMessage: {
       show: {type: Boolean, default: false},
       message: String

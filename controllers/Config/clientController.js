@@ -117,7 +117,8 @@ const updateMatrix = (req,res,next) => {
     afterCleaned: req.body.afterCleaning,
     linkVouchersWithLivixius: req.body.linkVouchersWithLivixius,
     restrictAdvance: req.body.restrictAdvance,
-    checkinDateEditable: req.body.checkinDateEditable
+    checkinDateEditable: req.body.checkinDateEditable,
+    showFullDetails: req.body.showFullDetails
   })
   .then(data => {
     res.status(200).json({
