@@ -448,6 +448,7 @@ const addUserRooms = async (req, res, next) => {
           discount: req.body.discount,
           advance : req.body.advance,
           roomno: req.body.roomno,
+          floorNo: req.body.floorNo,
           channel: req.body.channel,
           extraBeds: req.body.extraBeds,
           extraBedPrice: req.body.extraBedPrice,
@@ -467,6 +468,7 @@ const addUserRooms = async (req, res, next) => {
           expCheckinTime: req.body.expCheckinTime,
           actualCheckinTime: req.body.actualCheckinTime,
           roomno : req.body.roomno,
+          floorNo: req.body.floorNo,
           userid : checkin._id,
           lodge : req.params.id,
           discount: req.body.discount,
@@ -542,11 +544,16 @@ const addUserRooms = async (req, res, next) => {
         };
         
         // Update the room status!
-        userController.checkAndMoveRoomStatus(req.body, "afterCheckin");
+        await userController.checkAndMoveRoomStatus(req.body, "afterCheckin");
+        
+        // After all the checkin and prebook checkin operations are done, Get the latest updated room model and pass it in the response!
+        var updatedModel = await Room.findById({_id: checkin.room});
         
         await checkin.save();
         res.status(200).json({
           success : true,
+          updatedModel: updatedModel,
+          updatedUserModel: checkin,
           message : "Customer has been checked in successfully!"
         })
       } catch(err){

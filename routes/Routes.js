@@ -118,7 +118,7 @@ const checkUserName = async (req_userId) => {
 
 // All GET Methods
 
-router.get("/allusers", userController.allUser)
+router.get("/:id/allusers", userController.allUser);
 
 router.get("/alllodge", lodgeController.allLodges)
 

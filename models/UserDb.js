@@ -20,6 +20,7 @@ const userdbSchema = new mongoose.Schema({
     checkoutTime: String,
     stayedDays : String,
     roomno : String,
+    floorNo: String,
     userid : String,
     bill : String,
     refund: {type: Number, default: 0},

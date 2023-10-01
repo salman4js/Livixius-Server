@@ -242,14 +242,20 @@ const loginUser = (req, res, next) => {
 
 // Get all user irrespective of the lodge!
 const allUser = (req, res, next) => {
-    User.find({})
+    User.find({lodge: req.params.id})
         .then(data => {
-            res.send(data)
+          res.status(200).json({
+            success: true,
+            message: data
+          })
         })
         .catch(err => {
-            res.send(err)
+          res.status(200).json({
+            success: false,
+            message: "Failed getting the all users on the property!"
+          })
         })
-}
+};
 
 // Get remaming amount has to be paid by the staying customer!
 async function getRemainingAmount(roomid, daysStayed, isHourly){
@@ -339,11 +345,12 @@ const deleteUser = async (req, res, next) => {
     
     try {
         const room = req.body.roomid
+        const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
         // Reverting the changes caused by the discount and advance in the schema!
-        await Room.updateOne({ _id: room }, { $set: { dishes: [], services: [], user : [], channel : undefined, extraCount : 0,
+        var updatedModel = await Room.findByIdAndUpdate({ _id: room }, { $set: { dishes: [], services: [], user : [], channel : undefined, extraCount : 0,
         preBooked : false, preValid : true, advance: false, discount: false, 
         discountPrice: String, advancePrice: String, advanceDiscountPrice: String, 
-        advancePrebookPrice: String } })
+        advancePrebookPrice: String, price : updateRate.price }}, {new: true})
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
         await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
@@ -352,9 +359,7 @@ const deleteUser = async (req, res, next) => {
           foodGst: req.body.foodGst, stayGst: req.body.stayGst, 
           totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, 
           isGst: req.body.isGst, roomType: req.body.roomtype}})
-        const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
-        //console.log("Room type", updateRate.price);
-        await Room.findOneAndUpdate({_id : room}, {$set : {price : updateRate.price}});
+        
         // Update refund tracker!
         if(req.body.refund > 0){
           var data = {refundFor: 'Refunded via check-in', userId: req.body.userid, lodge: req.params.id, username: req.body.username, refundAmount: req.body.refund,
@@ -365,6 +370,7 @@ const deleteUser = async (req, res, next) => {
         res.status(200).json({
             success : true,
             message : "Customer has been checked out properly!",
+            updatedModel: updatedModel,
             refundTrackerUpdated: refundTrackerUpdated
         })
     } catch (err) {
