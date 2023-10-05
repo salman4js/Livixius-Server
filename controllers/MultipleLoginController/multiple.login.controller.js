@@ -53,7 +53,7 @@ async function loginAs(req,res,next){
     username = req.body.username,
     password = req.body.password
     MultipleLogins.findOne({username: username})
-      .then(data => {
+      .then(async data => {
         if(data){
           if(data.password !== password){
             res.status(200).json({
@@ -61,12 +61,16 @@ async function loginAs(req,res,next){
               message: "Please check your credentials!"
             })
           } else {
+            // As the UI clearing out the entire preference storage on session expires,
+            // REST has to re-send the config preferences back the UI on multiple login to store it again!
+            var configPref = await Lodge.findById({_id: req.body.accId})
             res.status(200).json({
               success: true,
               message: `Receptionist logged in as ${username}`,
               permissionLevel: data.loginAs,
               loggedInUser: data.username,
-              loggedInAsRecep: data.loginAs === "receptionistLevel" ? true : false
+              loggedInAsRecep: data.loginAs === "receptionistLevel" ? true : false,
+              configPref: configPref
             })
           }
         } else {

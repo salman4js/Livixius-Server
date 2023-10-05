@@ -56,7 +56,6 @@ async function moveCurrentToNextStatus(req,res,next){
     .then(data => {
       ResponseHandler.success(res, infoMessage, data);
     }).catch(err => {
-      console.log(err)
       ResponseHandler.error(res);
     })
 }
