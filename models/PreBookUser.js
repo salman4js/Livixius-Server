@@ -21,6 +21,7 @@ const preBookSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "Rooms"
   }, 
+  floorNo: String,
   lodge : {
     type : mongoose.Schema.Types.ObjectId,
     ref : "Lodges"

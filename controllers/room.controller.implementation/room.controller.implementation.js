@@ -1,6 +1,6 @@
 // Room controller implementation part taken care here!
-
 const Room = require("../../models/Rooms");
+const User = require("../../models/User");
 
 // Get room instance based on the roomId!
 async function getRoomById(roomId){
@@ -8,6 +8,24 @@ async function getRoomById(roomId){
   return result;
 };
 
+// Get upcoming checkout helper function!
+async function checkUpcoming(data, date){
+  var endResult = [];
+  for (const options of data) {
+    if (options.dateofcheckout !== undefined && date.includes(options.dateofcheckout)){
+      endResult.push(options);
+    }
+  }
+  return endResult;
+};
+
+// Get upcoming checkout implementation!
+async function getUpcomingCheckout(data){
+  const result = await User.find({lodge: data.accId});
+  const upcomingCheckout = await checkUpcoming(result, data.datesBetween);
+  return upcomingCheckout;
+};
+
 module.exports = {
-  getRoomById
+  getRoomById, getUpcomingCheckout
 }

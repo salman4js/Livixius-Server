@@ -39,6 +39,7 @@ const preBookUserRooms = async (req, res,next) => {
         prebookDateofCheckout : req.body.prebookdateofcheckout,
         prebookprice : req.body.prebookprice,
         room : req.body.roomid,
+        floorNo : req.body.floorNo,
         lodge : req.params.id,
         roomno : roomno,
         prebookcheckinTime: req.body.checkinTime,

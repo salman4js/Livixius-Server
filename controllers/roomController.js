@@ -22,7 +22,10 @@ const paymentTrackerController = require("../controllers/payment.tracker/payment
 // Room Status implementation!
 const RoomStatusImplementation = require('./room.status/room.status.implementation');
 
-// User controller1
+// Room Controller Implementation!
+const RoomControllerImpl = require("./room.controller.implementation/room.controller.implementation");
+
+// User controller
 const userController = require("../controllers/userController");
 
 // Importing Channel Manager!
@@ -108,27 +111,27 @@ const checkDuplicate = async (lodgeid, roomno) => {
   return value;
 }
 
+// Room lodge route handler!
 const allRooms = async (req, res, next) => {
+  // Create an response object with basic response data!
+  var responseData = {success: undefined, message: undefined};
   const availabilityCount = await countAvailability(req.params.id, req.params.state);
   // UI wants room status along with this response!
   var roomStatus = await RoomStatusImplementation.getAllRoomStatus({accId: req.params.id});
-  Room.find({ lodge: req.params.id })
-    .then(data => {
-      res.status(200).json({
-        success : true,
-        message : data,
-        countAvailability: availabilityCount,
-        channels: channel.channelManager.channelManager,
-        roomStatus: roomStatus
-      })
-    })
-    .catch(err => {
-      res.status(200).json({
-        success : false,
-        message : "Some internal error has occured!"
-      })
-    })
-}
+  const result = await Room.find({lodge: req.params.id});
+  if(result){
+    responseData.success = true,
+    responseData.message = result,
+    responseData.countAvailability = availabilityCount,
+    responseData.channels = channel.channelManager.channelManager,
+    responseData.roomStatus = roomStatus;
+  } else {
+    responseData.success = false;
+    responseData.message = 'Internal error occured!'
+  };
+  // When the computations are done, send the response back to the client!
+  res.status(200).json(responseData);
+};
 
 const countAvailability = async(lodgeid, state) => {
   const result = await Room.find({lodge: lodgeid, isOccupied: state});
@@ -628,34 +631,22 @@ const callAWaiter = async (req, res, next) => {
   }
 }
 
-// Upcoming check out based on the provided date by the customer 
-async function upcomingCheckOut(req,res,next){
-  User.find({lodge: req.params.id})
-    .then(async data => {
-      const endResult = await checkUpcoming(data, req.body.datesBetween);
-      res.status(200).json({
-        success: true,
-        message: endResult
-      })
+// Upcoming check out based on the provided date by the customer!
+// Externalized upcoming checkout computational part to room controller implementation!
+async function upcomingCheckOut(req,res,next){ 
+  const result = await RoomControllerImpl.getUpcomingCheckout(req.body);
+  if(result){
+    res.status(200).json({
+      success: true,
+      message: result
     })
-    .catch(err => {
-      res.status(200).json({
-        success: false,
-        message: "Some internal error occured!"
-      })
+  } else {
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured!"
     })
-}
-
-// Upcoming checkout function template helper!
-async function checkUpcoming(data, date){
-    var endResult = [];
-    for (const options of data) {
-    if (options.dateofcheckout !== undefined && date.includes(options.dateofcheckout)){
-      endResult.push(options);
-    }
   }
-    return endResult;
-}
+};
 
 async function getRoomNo(req,res,next){
   try{
