@@ -15,6 +15,9 @@ const roomStatusImplementation = require("../controllers/room.status/room.status
 // Refund tracker instance!
 const refundTrackerImpl = require('../controllers/refund.tracker/refund.tracker.implementation');
 
+// User controller implementation!
+const userControllerImpl = require('../controllers/user.controller.implementation/user.controller.implementation')
+
 // Importing brew date package to do the date handling!
 const bwt = require('brew-date');
 // Importing invoice memory generator implementation function!
@@ -252,10 +255,10 @@ const allUser = (req, res, next) => {
         .catch(err => {
           res.status(200).json({
             success: false,
-            message: "Failed getting the all users on the property!"
+            message: "Failed getting the all users on the property"
           })
         })
-};
+}
 
 // Get remaming amount has to be paid by the staying customer!
 async function getRemainingAmount(roomid, daysStayed, isHourly){
@@ -476,21 +479,13 @@ function calculatePrice(price, days, isHourly, extraCount, extraBedPrice){
 // Favourite customer handler
 async function favCustomer(req, res, next){
   try{
-    await UserDb.find({lodge: req.params.id})
-      .then(async data => {
-        const endResult = await checkFrequent(data);
-        if(endResult !== undefined){
-          res.status(200).json({
-            success: true,
-            message: endResult
-          })
-        } else {
-          res.status(200).json({
-            success: true,
-            message: []
-          })
-        }
-      }) 
+    const result = await userControllerImpl.getFavCustomer(req.body);
+    if(result){
+      res.status(200).json({
+        success: true,
+        message: result
+      })
+    }
   } catch(err){
     res.status(200).json({
       success: false,

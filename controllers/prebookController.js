@@ -3,6 +3,7 @@ const Room = require("../models/Rooms.js");
 const User = require('../models/User.js');
 const Lodge = require("../models/Lodges.js")
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
+const prebookControllerImpl = require("../controllers/prebook.controller.implementation/prebook.controller.implementation");
 // Import brew-date package
 const brewDate = require('brew-date');
 const commonFunction = require("../common.functions/common.functions");
@@ -223,32 +224,19 @@ const deletePrebookUserRooms = async(req,res,next) => {
 
 // Prebook Cabinet for upcoming bookings!
 const upcomingPrebook = async (req,res,next) => {
-  Prebook.find({lodge: req.params.id})
-  .then(async data => {
-      const endResult = await checkValues(data, req.body.datesBetween);
-      res.status(200).json({
-        success: true,
-        message: endResult
-      })
-  })
-  .catch(err => {
+  const upcomingPrebook = await prebookControllerImpl.getUpcomingPrebook(req.body);
+  if(upcomingPrebook){
+    res.status(200).json({
+      success: true,
+      message: upcomingPrebook
+    })
+  } else {
     res.status(200).json({
       success: false,
-      message: "Some internal error occured!"
+      message: 'Internal server error occured!'
     })
-  })
-}
-
-// Prebook cabinet helper function 
-async function checkValues(data, date){
-  var value = [];
-  await data.map((options,key) => {
-    if(options.prebookDateofCheckin !== undefined && date.includes(options.prebookDateofCheckin)){
-      value.push(options);
-    }
-  });
-  return value;
-}
+  }
+};
 
 // Get available prebook rooms!
 async function availablePrebook(datesBetween, prebookedData, userCheckedIn){
@@ -262,7 +250,7 @@ async function availablePrebook(datesBetween, prebookedData, userCheckedIn){
         }
       })
   })
-  
+
   userCheckedIn.map((options,key) => {
     options.dates.forEach((k, i) => {
       if(datesBetween.includes(k)){

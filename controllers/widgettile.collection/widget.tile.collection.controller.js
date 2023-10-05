@@ -4,7 +4,6 @@ const ResponseHandler = require("../../ResponseHandler/ResponseHandler")
 
 // Get widget tile collection based on the preferences!
 async function getWidgetTileCollections(req,res){
-    console.log(req.body, "Request")
     const result = await WidgetTileColImpl.getWidgetTileCollection(req.body);
     var infoMessage;
     if(result){
