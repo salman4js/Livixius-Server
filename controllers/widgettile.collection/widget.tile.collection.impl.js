@@ -8,7 +8,7 @@ function getWidgetCollectionPref(){
   return {
     upcomingCheckout: true,
     upcomingPrebook: true,
-    favorites: true
+    favorites: false
   }
 };
 

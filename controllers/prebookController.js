@@ -62,7 +62,8 @@ const preBookUserRooms = async (req, res,next) => {
       
       res.status(200).json({
         success : true,
-        message : "Customer has been pre-booked successfully!"
+        message : "Customer has been pre-booked successfully!",
+        updatedUserModel: preBooking
       })
     } catch (err){
       res.status(200).json({
