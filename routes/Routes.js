@@ -26,7 +26,7 @@ const multipleLoginController = require("../controllers/MultipleLoginController/
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 const refundTrackerController = require("../controllers/refund.tracker/refund.tracker.controller")
 const roomStatusController = require("../controllers/room.status/room.status.controller");
-const widgetCollectionController = require('../controllers/widgettile.collection/widget.tile.collection.controller')
+const preferenceColController = require('../controllers/preference.collection/preference.collection.controller')
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -420,6 +420,8 @@ router.post("/:id/deleteallroomstatus", roomStatusController.deleteAllRoomStatus
 router.post("/:id/movetonextstate", roomStatusController.moveCurrentToNextStatus);
 
 // Widget tile collection controller!
-router.post('/:id/getwidgettilecol', widgetCollectionController.getWidgetTileCollections);
+router.post('/:id/getwidgettilecol', preferenceColController.getWidgetTileCollections);
+
+router.post('/:id/updatepref', preferenceColController.updatePreferences);
 
 module.exports = router;

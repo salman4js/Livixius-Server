@@ -40,7 +40,7 @@ function trimData(data, modelData, inArray){
     var values = Object.keys(modelData)
    
     data.map((options, index) => {
-        var result = {}; // Move the declaration inside the loop
+        var result = {};
         values.forEach((op) => {
             const id = modelData[op];
             result[op] = options[id];
@@ -81,7 +81,7 @@ function transformNonValidValues(data, transformInto){
 // Not undefined, Not null, Not empty and any other additional checks!
 function checkIfValid(data, additionalCheck){
   if(data !== undefined && data !== null && data !== '' && 
-  data !== additionalCheck && data !== 'function String() { [native code] }'){ // Will also mongodb schema instance!
+  data !== additionalCheck && data !== 'function String() { [native code] }'){ // Will also check mongodb schema instance!
     return true;
   } else {
     return false;

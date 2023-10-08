@@ -68,6 +68,10 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "RoomStatus"
     }],
+    preferenceCollections: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PreferenceCollections'
+    }],
     afterCheckedout: {type: String},
     inCleaning: {type: String},
     afterCleaned: {type: String},
@@ -99,7 +103,6 @@ const lodgeSchema = new mongoose.Schema({
       show: {type: Boolean, default: false},
       message: String
     }
-    
 })
 
 module.exports = mongoose.model("Lodges", lodgeSchema);
