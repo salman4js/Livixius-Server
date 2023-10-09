@@ -1,5 +1,6 @@
 const Lodge = require("../models/Lodges");
 const jwt = require("jsonwebtoken");
+const PreferenceImpl = require('./preference.collection/preference.collection.impl');
 
 const addLodge = async (req,res,next) => {
     const lodge = new Lodge({
@@ -45,7 +46,7 @@ const loginLodge = (req,res,next) => {
       username = req.body.username,
       password = req.body.password
       Lodge.findOne({username : username})
-      .then(lodge => {
+      .then(async lodge => {
           if (lodge){
               if(lodge.password !== password){
                   res.status(200).json({
@@ -53,7 +54,9 @@ const loginLodge = (req,res,next) => {
                       message : "Please check your credentials"
                   })
               } else {
+                  var prefData = {accId: lodge._id}
                   let token = jwt.sign({name : lodge.username}, "secretValue", {expiresIn : '1h'});
+                  var userPreferences = await PreferenceImpl.getWidgetTileCollection(prefData);
                   res.json({
                     success : true,
                     message : "User Logged In",
@@ -69,6 +72,7 @@ const loginLodge = (req,res,next) => {
                     multipleLogins: lodge.multipleLogins,
                     loginId: lodge._id + "-" + lodge.username,
                     hasMultipleLogins: lodge.multipleLogin.length > 0,
+                    preferences: userPreferences,
                     token
                   })
                   updateAuth(username, token);

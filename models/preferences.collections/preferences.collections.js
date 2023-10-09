@@ -5,6 +5,8 @@ const preferenceCollections = new mongoose.Schema({
   upcomingCheckout: {type: Boolean, default: false},
   upcomingPrebook: {type: Boolean, default: false},
   favorites: {type: Boolean, default: false},
+  datesBetween: {type: Number, default: 3},
+  dashboardVersion: {type: Boolean, default: false}, // true indicates new dashboard.
   accId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lodges"
