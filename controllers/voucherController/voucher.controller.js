@@ -232,7 +232,8 @@ async function getAllVouchersModelSum(req,res,next){
 async function getNetProfitPreview(req,res,next){
   const result = await vouchersImpl.netProfitPreview(req.body);
   if(result !== undefined){
-    ResponseHandler.success(res, result);
+    var infoMessage = 'Voucher tracker calculation completed!';
+    ResponseHandler.success(res, infoMessage, result);
   } else {
     ResponseHandler.error(res);
   }
