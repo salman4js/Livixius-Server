@@ -1,5 +1,6 @@
 const MultipleLogins = require("../../models/MultipleLogins");
 const Lodge = require("../../models/Lodges");
+const PreferenceImpl = require("../preference.collection/preference.collection.impl");
 
 // Keys to differentiate between manager and receptionist - "receptionistLevel" && "managerLevel"
 
@@ -61,16 +62,19 @@ async function loginAs(req,res,next){
               message: "Please check your credentials!"
             })
           } else {
-            // As the UI clearing out the entire preference storage on session expires,
-            // REST has to re-send the config preferences back the UI on multiple login to store it again!
-            var configPref = await Lodge.findById({_id: req.body.accId})
+            // Rest has to send the Preference Collection when there is multiple login enabled
+            var prefData = {accId: req.body.accId},
+              userPreferences;
+            if(req.body.getPreference){
+              userPreferences = PreferenceImpl.getWidgetTileCollection(prefData);
+            };
             res.status(200).json({
               success: true,
               message: `Receptionist logged in as ${username}`,
               permissionLevel: data.loginAs,
               loggedInUser: data.username,
               loggedInAsRecep: data.loginAs === "receptionistLevel" ? true : false,
-              configPref: configPref
+              userPref: userPreferences
             })
           }
         } else {
