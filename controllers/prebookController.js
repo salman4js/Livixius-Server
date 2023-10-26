@@ -49,7 +49,7 @@ const preBookUserRooms = async (req, res,next) => {
         prebookChannel: req.body.prebookChannel
       })
       if(preBooking){
-        await Room.findByIdAndUpdate({_id : preBooking.room}, {$push : {prebookuser : preBooking._id}});
+        await Room.findByIdAndUpdate({_id : preBooking.room}, {$push : {prebookuser : preBooking._id, prebookDateofCheckin: preBooking.prebookDateofCheckin}});
       }
       await preBooking.save();
       
