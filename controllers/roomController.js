@@ -448,6 +448,12 @@ const addUserRooms = async (req, res, next) => {
           checkoutTime: req.body.checkoutTime,
           prebookroomprice : req.body.prebookprice,
           lodge : req.params.id,
+          // Room transfer representations
+          oldRoomPrice: req.body.oldRoomPrice, // this is to keep track of old room price incase of room transfer!
+          oldRoomNo: req.body.oldRoomNo,
+          oldRoomStayDays: req.body.oldRoomStayDays,
+          isRoomTransfered: req.body.isRoomTransfered,
+          // End of room transfer representations
           discount: req.body.discount,
           advance : req.body.advance,
           roomno: req.body.roomno,
@@ -474,6 +480,12 @@ const addUserRooms = async (req, res, next) => {
           floorNo: req.body.floorNo,
           userid : checkin._id,
           lodge : req.params.id,
+          // Room transfer representations
+          oldRoomPrice: req.body.oldRoomPrice, // this is to keep track of old room price incase of room transfer!
+          oldRoomNo: req.body.oldRoomNo,
+          oldRoomStayDays: req.body.oldRoomStayDays,
+          isRoomTransfered: req.body.isRoomTransfered,
+          // End of room transfer representations
           discount: req.body.discount,
           advance : req.body.advance,
           channel: req.body.channel,

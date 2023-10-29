@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     dateofcheckout : String,
     checkoutTime: String,
     prebookroomprice : String,
+    isRoomTransfered: {type: Boolean, default: false},
+    oldRoomPrice: {type: Number, default: 0}, // this is to keep track of old room price incase of room transfer!
+    oldRoomNo: String,
+    oldRoomStayDays: {type: Number, default: 0},
     discount:  String,
     advance: String,
     roomno: String,

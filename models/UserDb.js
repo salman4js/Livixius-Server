@@ -26,6 +26,10 @@ const userdbSchema = new mongoose.Schema({
     refund: {type: Number, default: 0},
     dishbill: String,
     paid : Boolean,
+    isRoomTransfered: {type: Boolean, default: false},
+    oldRoomPrice: {type: Number, default: 0}, // this is to keep track of old room price incase of room transfer!
+    oldRoomNo: String,
+    oldRoomStayDays: {type: Number, default: 0},
     discount: String,
     advance: String,
     isGst: {type: Boolean, default: true},
