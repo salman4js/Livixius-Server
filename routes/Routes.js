@@ -26,7 +26,8 @@ const multipleLoginController = require("../controllers/MultipleLoginController/
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
 const refundTrackerController = require("../controllers/refund.tracker/refund.tracker.controller")
 const roomStatusController = require("../controllers/room.status/room.status.controller");
-const preferenceColController = require('../controllers/preference.collection/preference.collection.controller')
+const preferenceColController = require('../controllers/preference.collection/preference.collection.controller');
+const maintainanceLogController = require('../controllers/room.maintainance.log/room.maintainance.controller');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -423,5 +424,14 @@ router.post("/:id/movetonextstate", roomStatusController.moveCurrentToNextStatus
 router.post('/:id/getwidgettilecol', preferenceColController.getWidgetTileCollections);
 
 router.post('/:id/updatepref', preferenceColController.updatePreferences);
+
+// Maintainance Log!
+router.get('/:id/getallentries', maintainanceLogController.getAllEntry.bind(maintainanceLogController));
+
+router.post('/:id/addnewentry', maintainanceLogController.addNewEntry.bind(maintainanceLogController));
+
+router.get('/:id/getmaintainancelogtype', maintainanceLogController.getMaintainanceLogType.bind(maintainanceLogController));
+
+router.post('/:id/addmaintainancelogtype', maintainanceLogController.addMaintainanceLogType.bind(maintainanceLogController));
 
 module.exports = router;

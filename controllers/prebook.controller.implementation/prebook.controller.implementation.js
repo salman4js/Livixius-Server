@@ -1,5 +1,6 @@
 // Prebook controller implementation!
 const Prebook = require('../../models/PreBookUser');
+const Room = require('../../models/Rooms');
 
 // Check for upcoming prebook in all the prebook entries!
 async function checkUpcomingPrebook(data, date){
@@ -19,6 +20,12 @@ async function getUpcomingPrebook(data){
   return upcomingPrebook;
 };
 
+// Remove prebook date of checkin from the room's model when prebook is cancelled.
+async function removePrebookCheckinNode(options){
+  const result = await Room.findByIdAndUpdate({_id: options.roomId}, {$pull: {prebookDateofCheckin: options.checkinDate}}, {new: true});
+  return result;
+};
+
 module.exports = {
-  getUpcomingPrebook
+  getUpcomingPrebook, removePrebookCheckinNode
 }

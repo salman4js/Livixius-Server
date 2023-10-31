@@ -208,9 +208,11 @@ const deletePrebookUserRooms = async(req,res,next) => {
     })
   } else {
     Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
-    .then(data => {
+    .then(async data => {
+      var updatedPrebookRoomModel = await prebookControllerImpl.removePrebookCheckinNode({roomId: data._id, checkinDate: data.prebookDateofCheckin});
       res.status(200).json({
         success : true,
+        updatedPrebookRoomModel: updatedPrebookRoomModel,
         message : "Pre Book user got deleted!"
       })
     })
@@ -221,7 +223,7 @@ const deletePrebookUserRooms = async(req,res,next) => {
       })
     })  
   }
-}
+};
 
 // Prebook Cabinet for upcoming bookings!
 const upcomingPrebook = async (req,res,next) => {

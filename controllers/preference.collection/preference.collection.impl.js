@@ -19,7 +19,7 @@ async function getWidgetCollectionPref(data){
     var newPref = new Preferences({
       accId: data.accId
     });
-    newPref.save();
+    await newPref.save();
   }
 };
 

@@ -72,6 +72,10 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'PreferenceCollections'
     }],
+    maintainanceLogType: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'MaintainanceLogType'
+    }],
     afterCheckedout: {type: String},
     inCleaning: {type: String},
     afterCleaned: {type: String},

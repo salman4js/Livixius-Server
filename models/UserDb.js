@@ -43,6 +43,10 @@ const userdbSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"
     },
+    maintainanceLog: [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "MaintainanceLog"
+    }],
     roomType: String,
     lodge : {
       type : mongoose.Schema.Types.ObjectId,

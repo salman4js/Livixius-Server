@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"
     },
+    maintainanceLog: [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "MaintainanceLog"
+    }],
     lodge: String,
     channel: {type: String, default: "Walk-In"}
 })
