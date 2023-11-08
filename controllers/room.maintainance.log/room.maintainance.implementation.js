@@ -30,8 +30,8 @@ class MaintainanceLogImpl {
   };
   
   // Get all the entry from the log!
-  async getEntries(options){
-    var result = await this.model.find({userId: options.userId});
+  async getEntries(userId){
+    var result = await this.model.find({userId: userId});
     if(result){
       this.prepareResponseJSON(MaintainanceLogConstants.read.success, 'data', result);
       return this.responseJSON;

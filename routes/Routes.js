@@ -426,7 +426,7 @@ router.post('/:id/getwidgettilecol', preferenceColController.getWidgetTileCollec
 router.post('/:id/updatepref', preferenceColController.updatePreferences);
 
 // Maintainance Log!
-router.get('/:id/getallentries', maintainanceLogController.getAllEntry.bind(maintainanceLogController));
+router.get('/:id/:userId/getallentries', maintainanceLogController.getAllEntry.bind(maintainanceLogController));
 
 router.post('/:id/addnewentry', maintainanceLogController.addNewEntry.bind(maintainanceLogController));
 

@@ -26,7 +26,7 @@ class MaintainanceLogController {
   
   // Get all entry from the log!
   async getAllEntry(req,res,next){
-    var result = await this.logImpl.getEntries(req.body);
+    var result = await this.logImpl.getEntries(req.params.userId);
     this.responseHandler.parser(res, result);
   };
   
