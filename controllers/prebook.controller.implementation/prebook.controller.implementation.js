@@ -20,9 +20,10 @@ async function getUpcomingPrebook(data){
   return upcomingPrebook;
 };
 
-// Remove prebook date of checkin from the room's model when prebook is cancelled.
+// Remove prebook date of checkin and prebookuserid from the room's model when prebook is cancelled.
 async function removePrebookCheckinNode(options){
-  const result = await Room.findByIdAndUpdate({_id: options.roomId}, {$pull: {prebookDateofCheckin: options.checkinDate}}, {new: true});
+  console.log('Delete prebook options', options);
+  const result = await Room.findByIdAndUpdate({_id: options.roomId}, {$pull: {prebookDateofCheckin: options.checkinDate, prebookuser: options.prebookuserid}}, {new: true});
   return result;
 };
 

@@ -88,16 +88,16 @@ const createRoom = async (req, res, next) => {
        await RoomStatusImplementation.roomStatusSetter(req.body);
        res.status(200).json({
          success : true,
-         message : "Room created"
+         message : "Room created",
+         updatedData: room // Sending the created room data so that the roomData can be added in the global collections in the UI.
        })
       } else {
         res.status(200).json({
           success : false,
-          message : "Room No already exists!"
+          message : "Room No already exists!",
         })
       }
     } catch (err) {
-      console.log(err)
       res.status(200).json({
         success: false,
         message: "Some internal Error"

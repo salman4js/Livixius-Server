@@ -209,7 +209,7 @@ const deletePrebookUserRooms = async(req,res,next) => {
   } else {
     Prebook.findByIdAndDelete({_id : req.body.prebookUserId})
     .then(async data => {
-      var updatedPrebookRoomModel = await prebookControllerImpl.removePrebookCheckinNode({roomId: data._id, checkinDate: data.prebookDateofCheckin});
+      var updatedPrebookRoomModel = await prebookControllerImpl.removePrebookCheckinNode({roomId: req.body.roomId, checkinDate: data.prebookDateofCheckin, prebookuserid: req.body.prebookUserId});
       res.status(200).json({
         success : true,
         updatedPrebookRoomModel: updatedPrebookRoomModel,
