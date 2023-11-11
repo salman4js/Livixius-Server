@@ -158,11 +158,13 @@ async function editPrebookedRooms(req,res,next){
     prebookDateofCheckin : req.body.prebookDateofCheckin,
     prebookAdvance : req.body.prebookAdvance,
     prebookdiscount : req.body.prebookDiscount,
-  })
+  }, {new: true}) // To return the updated data.
   .then(data => {
     res.status(200).json({
       success: true,
-      message: "Customer details  has been updated!"
+      message: "Customer details  has been updated!",
+      updatedPrebookModel: data // this updated data is added here so that the UI can update widgetTileCollection
+      // when the user edits the prebook collection details.
     })
   })
   .catch(err => {
@@ -213,6 +215,7 @@ const deletePrebookUserRooms = async(req,res,next) => {
       res.status(200).json({
         success : true,
         updatedPrebookRoomModel: updatedPrebookRoomModel,
+        updatedPrebookModel: data,
         message : "Pre Book user got deleted!"
       })
     })

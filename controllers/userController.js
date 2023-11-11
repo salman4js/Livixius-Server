@@ -349,9 +349,9 @@ const deleteUser = async (req, res, next) => {
     try {
         const room = req.body.roomid
         const updateRate = await RoomType.findOne({lodge : req.params.id, suiteType : req.body.roomtype})
-        // Reverting the changes caused by the discount and advance in the schema!
-        var updatedModel = await Room.findByIdAndUpdate({ _id: room }, { $set: { dishes: [], services: [], user : [], channel : undefined, extraCount : 0,
-        preBooked : false, preValid : true, advance: false, discount: false, 
+        // Reverting the changes caused by the checkin of previous to the room model.
+        var updatedModel = await Room.findByIdAndUpdate({ _id: room }, { $set: { dishes: [], services: [], user : [], channel : 'Walk-In', extraCount : 0,
+        preBooked : false, preValid : true, advance: false, discount: false, totalAmount: 0,
         discountPrice: String, advancePrice: String, advanceDiscountPrice: String, 
         advancePrebookPrice: String, price : updateRate.price }}, {new: true})
         await User.findByIdAndDelete({_id : req.body.userid})
@@ -634,7 +634,7 @@ const updateOccupiedData = async (req, res, next) => {
         message: "Missing User Id"
       })
     } else {
-      await User.findByIdAndUpdate(userId, {
+      const updatedUserModel = await User.findByIdAndUpdate(userId, {
         username: req.body.username,
         phonenumber: req.body.phonenumber,
         secondphonenumber: req.body.secondphonenumber,
@@ -647,7 +647,7 @@ const updateOccupiedData = async (req, res, next) => {
         advance: req.body.updatedAdvance, // Added prev advance with the updated advance in the UI itself!
         discount: req.body.discount,
         checkoutTime: req.body.checkOutTime,
-      })
+      }, {new: true})
       
       // Track payment only if there are any amount paid by the customer!
       if(req.body.updatedAdvance > 0){
@@ -682,7 +682,8 @@ const updateOccupiedData = async (req, res, next) => {
       // Sending Response!
       res.status(200).json({
         success: true,
-        message: "Customer Details has been updated!"
+        message: "Customer Details has been updated!",
+        updatedUserModel: updatedUserModel
       })
     }
   } catch(err){
