@@ -27,6 +27,9 @@ const userdbSchema = new mongoose.Schema({
     dishbill: String,
     paid : Boolean,
     isRoomTransfered: {type: Boolean, default: false},
+    isUserTransfered: {type: Boolean, default: false}, // this is to keep track
+    // to determine if we want to add this user details in the booking history and also to keep track of expenses.
+    transferedRoomNo: {type: Number, default: 0},
     oldRoomPrice: {type: Number, default: 0}, // this is to keep track of old room price incase of room transfer!
     oldRoomNo: String,
     oldRoomStayDays: {type: Number, default: 0},

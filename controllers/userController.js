@@ -325,13 +325,13 @@ const deleteUser = async (req, res, next) => {
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).toString(); // First day of the month!
     if(currentDate == firstDayOfMonth){
       await invoiceMemory.updateInitialState(req.params.id);
-    }
+    };
     
     var isGstEnabled = req.body.isGst;
     if(isGstEnabled){
       // Create invoice memory for the particular user only when GST is disabled!
       await createInvoiceMemory(req.params.id, req.body.userid, req.body.checkoutTime, req.body.checkoutdate);
-    }
+    };
     
     // Get the room status of after checkout!
     checkAndMoveRoomStatus(req.body, 'afterCheckedout');
@@ -356,12 +356,18 @@ const deleteUser = async (req, res, next) => {
         advancePrebookPrice: String, price : updateRate.price }}, {new: true})
         await User.findByIdAndDelete({_id : req.body.userid})
         await UserDish.deleteMany({room : req.body.roomid})
-        await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
+        !req.body.isUserTransfered && await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
           dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
           prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, refund: req.body.refund,
           foodGst: req.body.foodGst, stayGst: req.body.stayGst, 
           totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, 
-          isGst: req.body.isGst, roomType: req.body.roomtype}})
+          isGst: req.body.isGst, roomType: req.body.roomtype}});
+        
+        // If the user transfer to a different room, Just dont update the billing details because those details will get added to the transfered room.
+        req.body.isUserTransfered && await UserDb.updateOne({userid: req.body.userid}, {$set: {isUserTransfered: req.body.isUserTransfered, 
+          transferedRoomNo: req.body.transferedRoomNo, stayedDays : req.body.stayeddays, 
+          dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
+          prebooked : req.body.prebook, roomType: req.body.roomtype}});
         
         // Update refund tracker!
         if(req.body.refund > 0){
@@ -375,14 +381,14 @@ const deleteUser = async (req, res, next) => {
             message : "Customer has been checked out properly!",
             updatedModel: updatedModel,
             refundTrackerUpdated: refundTrackerUpdated
-        })
+        });
     } catch (err) {
         res.status(200).json({
             success : false,
             message : err
-        })
-    }
-}
+        });
+    };
+};
 
 // Check and move room status!
 async function checkAndMoveRoomStatus(reqBody, key){

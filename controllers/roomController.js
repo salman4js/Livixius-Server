@@ -268,11 +268,12 @@ const roomsUpdater = async (req, res, next) => {
           prevRoomStatusConstant: req.body.roomStatus !== undefined ? currentRoomStatusConstant : undefined,
           bedCount: req.body.bedcount,
           price : roomPrice.price
-        })
+        }, {new: true}) // This will return the updated data so that UI collections can be updated.
           .then(data => {
             res.status(200).json({
               success : true,
-              message : "Room Data Updated"
+              message : "Room Data Updated",
+              updatedData: data
             })
           })
           .catch(err => {
@@ -432,6 +433,9 @@ const addUserRooms = async (req, res, next) => {
       const isChannel = req.body.isChannel;
       const updatePrice = req.body.updatePrice;
       
+      // Current room instance!
+      var currentRoomInstance = await Room.findById({_id: req.body.roomid});
+      
       try{
         const checkin = new User({
           username: req.body.customername,
@@ -540,12 +544,21 @@ const addUserRooms = async (req, res, next) => {
         
         // Check for the channel manager!
         if(isChannel && updatePrice !== undefined){
-          await Room.findByIdAndUpdate({_id: checkin.room}, {totalAmount: updatePrice})
-        } else {
-          if(updatePrice !== undefined){
-            await Room.findByIdAndUpdate({_id: checkin.room}, {price: updatePrice})
-          } 
-        }
+          await Room.findByIdAndUpdate({_id: checkin.room}, {totalAmount: updatePrice});
+        };
+        
+        if(isChannel && updatePrice === undefined){
+          /**
+            This is added here to prevent showing bill preview value as Zero,
+            that can happen when the channel manager is enabled and update price
+            has not been changed (undefined). Applicable to both dashboards.
+          **/
+          await Room.findByIdAndUpdate({_id: checkin.room}, {totalAmount: currentRoomInstance.price});
+        };
+        // When the channel manager is false and the request was made to update the price.
+        if(!isChannel && updatePrice !== undefined){
+          await Room.findByIdAndUpdate({_id: checkin.room}, {price: updatePrice});
+        };
         
         // Setting the prebook user room price as the price when they booked the room!
         if(req.body.prebook === true){
@@ -575,11 +588,11 @@ const addUserRooms = async (req, res, next) => {
         res.status(200).json({
           success : false,
           message : "Some internal error occured"
-        })
-      }
-    }
-  }
-}
+        });
+      };
+    };
+  };
+};
 
 // Update Room Price data
 async function updateRoomPrice(req,res,next){
