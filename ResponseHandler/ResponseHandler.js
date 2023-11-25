@@ -4,7 +4,7 @@ class ResponseHandler {
     res.status(200).json({
       success: true,
       infoMessage,
-      data,
+      data
     });
   };
 

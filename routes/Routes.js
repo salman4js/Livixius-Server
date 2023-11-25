@@ -32,7 +32,7 @@ const maintainanceLogController = require('../controllers/room.maintainance.log/
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
     console.log("accessing token verification");
-    const token = req.body.headers["x-access-token"];    
+    const token = req.body?.headers?.["x-access-token"] || req.headers['x-access-token'];
     if (!token) {
         res.status(200).json({
           success : false,
@@ -249,11 +249,11 @@ router.post("/:id/checkdeliveredroom", userDishController.checkDeliveredRoom);
 
 router.post("/:id/deleteroomdish", userDishController.deleteRoomDish);
 
-router.post("/:id/userdb", verifyJWT, userController.userdb);
+router.get("/:id/userdb", verifyJWT, userController.userdb);
 
 router.post("/:id/userdbroom", userController.userdbRoom);
 
-router.post("/:id/userdb1", userController.userdb);
+router.get("/:id/userdb1", userController.userdb);
 
 router.post("/:id/favcustomer", userController.favCustomer);
 

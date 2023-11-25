@@ -3,8 +3,11 @@ const Room = require("../models/Rooms.js");
 const UserDish = require("../models/UserDishes");
 const UserDb = require("../models/UserDb.js");
 const RoomType = require("../models/RoomType.js");
+// Importing brew date package to do the date handling!
+const bwt = require('brew-date');
 const jwt = require("jsonwebtoken");
-const commonUtils = require("../common.functions/common.functions")
+const commonUtils = require("../common.functions/common.functions");
+const ResponseHandler = require('../ResponseHandler/ResponseHandler.js');
 
 // Payment tracker instance!
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
@@ -17,9 +20,6 @@ const refundTrackerImpl = require('../controllers/refund.tracker/refund.tracker.
 
 // User controller implementation!
 const userControllerImpl = require('../controllers/user.controller.implementation/user.controller.implementation')
-
-// Importing brew date package to do the date handling!
-const bwt = require('brew-date');
 // Importing invoice memory generator implementation function!
 const invoiceMemory = require("./Invoice.controller/Invoice.controller");
 
@@ -58,24 +58,20 @@ const addUserFromD2 = (req,res,next) => {
   })
 }
 
-const userdb = (req,res,next) => {
-    UserDb.find({lodge : req.params.id})
-    .then(data => {
-        res.status(200).json({
-            success : true,
-            message : data,
-        })
-    })
-    .catch(err => {
-        res.status(200).json({
-            success : false,
-            message : "Some internal error occured!"
-        })
-    })
+const userdb = async (req,res,next) => {
+    var infoMessage = {
+        success: 'Booking history data retrieved',
+        error: 'Some internal error occurred.'
+    }
+    var result = await userControllerImpl.getBookingHistory(req.params);
+    if(result){
+        return ResponseHandler.success(res, infoMessage.success, result, 'historyField');
+    } else {
+        return ResponseHandler.success(res, infoMessage.error, result);
+    }
 }
 
 // Weekly Estimate
-
 async function weeklyEstimate(req,res,next){
   const datesBetween = req.body.dates;
   UserDb.find({lodge: req.params.id})

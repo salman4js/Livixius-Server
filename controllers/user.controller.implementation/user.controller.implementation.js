@@ -25,10 +25,14 @@ async function checkFrequent(users){
 // Get favorites customers!
 async function getFavCustomer(data){
   const result = await UserDb.find({lodge: data.accId});
-  const favCustomers = await checkFrequent(result);
-  return favCustomers;
+  return await checkFrequent(result);
 };
 
+// Get booking history based on the limit and skip params for pagination purpose.
+async function getBookingHistory(data){
+  return UserDb.find({lodge: data.id}).sort({ _id: -1 }).skip(data.skipcount).limit(data.limitcount);
+}
+
 module.exports = {
-  getFavCustomer
+  getFavCustomer, getBookingHistory
 }
