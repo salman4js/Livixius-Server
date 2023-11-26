@@ -249,11 +249,11 @@ router.post("/:id/checkdeliveredroom", userDishController.checkDeliveredRoom);
 
 router.post("/:id/deleteroomdish", userDishController.deleteRoomDish);
 
-router.get("/:id/userdb", verifyJWT, userController.userdb);
+router.get("/:id/:skipcount/:limitcount/userdb", verifyJWT, userController.userdb);
 
 router.post("/:id/userdbroom", userController.userdbRoom);
 
-router.get("/:id/userdb1", userController.userdb);
+router.get("/:id/:skipcount/:limitcount/userdb1", userController.userdb);
 
 router.post("/:id/favcustomer", userController.favCustomer);
 

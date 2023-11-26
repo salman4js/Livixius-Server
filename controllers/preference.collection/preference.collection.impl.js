@@ -12,6 +12,7 @@ async function getWidgetCollectionPref(data){
       upcomingCheckout: pref[0].upcomingCheckout,
       upcomingPrebook: pref[0].upcomingPrebook,
       favorites: pref[0].favorites,
+      history: pref[0].history,
       datesBetween: pref[0].datesBetween,
       dashboardVersion: pref[0].dashboardVersion
     }
@@ -26,7 +27,7 @@ async function getWidgetCollectionPref(data){
 // Update preference collections!
 async function updatePrefCollections(data){
   var pref = await Preferences.findOneAndUpdate({accId: data.accId}, {$set: {upcomingCheckout: data.upcomingCheckout,
-  upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, 
+  upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, history: data.history,
   datesBetween: data.datesBetweenCount, dashboardVersion: data.dashboardVersion}}, {new: true});
   // After the preference has been updated, get the widget tile collections!
   var collection = await getWidgetTileCollection(data);
@@ -43,6 +44,8 @@ async function getWidgetTileCollection(data){
   response.dashboardVersion = collectionPref?.dashboardVersion;
   // Datesbetween number is configurable but its existence is not!
   response.datesBetweenCount = collectionPref?.datesBetween;
+  // Widget tile model count.
+  response.widgetTileModelCount = {};
   // When we login for the first time, datesBetween array data will not be populated yet in the UI.
   // So rest gets the datesBetween array only when the UI is not passing it as the params!
   if(!data.datesBetween || data.datesBetween.length === 0){ // This means that UI has not send any data for datesBetween array
@@ -52,12 +55,20 @@ async function getWidgetTileCollection(data){
   // Check the preference and get data based on the preferences!
   if(collectionPref?.upcomingCheckout){
     response.upcomingCheckout = await RoomControllerImpl.getUpcomingCheckout(data);
+    response.widgetTileModelCount.upcomingCheckout = response.upcomingCheckout.length;
   }
   if(collectionPref?.upcomingPrebook){
     response.upcomingPrebook = await PrebookControllerImpl.getUpcomingPrebook(data);
+    response.widgetTileModelCount.upcomingPrebook = response.upcomingPrebook.length;
   }
   if(collectionPref?.favorites){
     response.favorites = await UserControllerImpl.getFavCustomer(data);
+    response.widgetTileModelCount.favorites = response.favorites.length;
+  }
+  if(collectionPref?.history){
+    var historyData = await UserControllerImpl.getBookingHistory(data);
+    response.history = historyData.result;
+    response.widgetTileModelCount.history = historyData.totalCount;
   }
   return collectionPref && response;
   

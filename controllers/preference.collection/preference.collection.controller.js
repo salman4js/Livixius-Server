@@ -22,7 +22,6 @@ async function updatePreferences(req, res, next){
   const result = await PreferenceImpl.updatePrefCollections(req.body);
   var infoMessage;
   if(result){
-    
     infoMessage = 'Preferences updated successfully!';
     ResponseHandler.success(res, infoMessage, result);
   } else {

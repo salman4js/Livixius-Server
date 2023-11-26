@@ -17,7 +17,7 @@ const userdbSchema = new mongoose.Schema({
     expCheckinTime: String,
     actualCheckinTime: String,
     dateofcheckout : {type : String, default : ""},
-    checkoutTime: String,
+    checkoutTime: {type: String, default: ''},
     stayedDays : String,
     roomno : String,
     floorNo: String,
@@ -39,7 +39,7 @@ const userdbSchema = new mongoose.Schema({
     channel: {type: String, default: "Walk-In"},
     foodGst: String,
     stayGst: String,
-    totalAmount: String,
+    totalAmount: {type: String, default: ''},
     prebooked : {type : Boolean, default : false},
     receiptId: String,
     room : {
