@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema({
     roomno: String,
     floorNo: String,
     receiptId: {type: String, default: Date.now()},
+    checkinBy: String,
+    checkoutBy: String,
+    transferBy: String,
     room : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"

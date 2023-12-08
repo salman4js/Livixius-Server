@@ -42,6 +42,9 @@ const userdbSchema = new mongoose.Schema({
     totalAmount: {type: String, default: ''},
     prebooked : {type : Boolean, default : false},
     receiptId: String,
+    checkinBy: String,
+    checkoutBy: String,
+    transferBy: String,
     room : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rooms"

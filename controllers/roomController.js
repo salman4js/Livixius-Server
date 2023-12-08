@@ -395,17 +395,17 @@ const addUserRooms = async (req, res, next) => {
   
   var uniqueId = Date.now(); // Unique ID for receipt!
 
-  if(req.body.aadhar ==  undefined || req.body.aadhar == ""){
+  if(req.body.aadhar ===  undefined || req.body.aadhar === ""){
     res.status(200).json({
       success : false,
       message : "Check Customer Data, all data has to be filled in! - ID Number Field."
     })
-  } else if((req.body.customername == undefined || req.body.customername == "")){
+  } else if((req.body.customername === undefined || req.body.customername === "")){
     res.status(200).json({
       success : false,
       message : "Check Customer Data, All Mandatory has to be filled! - Name Field."
     })
-  } else if(req.body.phonenumber == undefined || req.body.phonenumber == ""){
+  } else if(req.body.phonenumber === undefined || req.body.phonenumber === ""){
     res.status(200).json({
       success : false,
       message : "Check Customer Data, All Mandatory has to be filled! - Phone Number Field."
@@ -415,7 +415,7 @@ const addUserRooms = async (req, res, next) => {
       success : false,
       message : "Check Customer Data, All Mandatory has to be filled! - Adults Field."
     })
-  } else if (req.body.checkin == undefined || req.body.checkin == ""){
+  } else if (req.body.checkin === undefined || req.body.checkin === ""){
     res.status(200).json({
       success : false,
       message : "Check Customer Data, All Mandatory has to be filled! - Check-In Date."
@@ -423,7 +423,7 @@ const addUserRooms = async (req, res, next) => {
   } else {
     // Check if the room is already booked or not.
     const checkValue = await Room.findById({_id: req.body.roomid});
-    if(checkValue.isOccupied == "true"){
+    if(checkValue.isOccupied === "true"){
       res.status(200).json({
         success : false,
         message : "This room is already occupied!"
@@ -465,7 +465,9 @@ const addUserRooms = async (req, res, next) => {
           channel: req.body.channel,
           extraBeds: req.body.extraBeds,
           extraBedPrice: req.body.extraBedPrice,
-          receiptId: uniqueId
+          receiptId: uniqueId,
+          checkinBy: req.body.checkinBy,
+          transferBy: req.body.transferBy
         })
         const userdatabase = new UserDb({
           username: req.body.customername,
@@ -495,7 +497,9 @@ const addUserRooms = async (req, res, next) => {
           channel: req.body.channel,
           extraBeds: req.body.extraBeds,
           extraBedPrice: req.body.extraBedPrice,
-          receiptId: uniqueId
+          receiptId: uniqueId,
+          checkinBy: req.body.checkinBy,
+          transferBy: req.body.transferBy
         })
         if(userdatabase){
           userdatabase.save();

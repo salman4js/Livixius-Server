@@ -319,7 +319,7 @@ const deleteUser = async (req, res, next) => {
     var refundTrackerUpdated;
     const currentDate = new Date(req.body.checkoutdate); // Current Date 
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).toString(); // First day of the month!
-    if(currentDate == firstDayOfMonth){
+    if(currentDate === firstDayOfMonth){
       await invoiceMemory.updateInitialState(req.params.id);
     };
     
@@ -357,13 +357,13 @@ const deleteUser = async (req, res, next) => {
           prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, refund: req.body.refund,
           foodGst: req.body.foodGst, stayGst: req.body.stayGst, 
           totalAmount: req.body.amount + req.body.stayGst + req.body.foodGst, 
-          isGst: req.body.isGst, roomType: req.body.roomtype}});
+          isGst: req.body.isGst, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
         
-        // If the user transfer to a different room, Just dont update the billing details because those details will get added to the transfered room.
+        // If the user transfer to a different room, Just don't update the billing details because those details will get added to the transfered room.
         req.body.isUserTransfered && await UserDb.updateOne({userid: req.body.userid}, {$set: {isUserTransfered: req.body.isUserTransfered, 
           transferedRoomNo: req.body.transferedRoomNo, stayedDays : req.body.stayeddays, 
           dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
-          prebooked : req.body.prebook, roomType: req.body.roomtype}});
+          prebooked : req.body.prebook, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
         
         // Update refund tracker!
         if(req.body.refund > 0){

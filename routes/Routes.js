@@ -28,6 +28,8 @@ const refundTrackerController = require("../controllers/refund.tracker/refund.tr
 const roomStatusController = require("../controllers/room.status/room.status.controller");
 const preferenceColController = require('../controllers/preference.collection/preference.collection.controller');
 const maintainanceLogController = require('../controllers/room.maintainance.log/room.maintainance.controller');
+const exportCSVController = require('../controllers/export.to.csv/export.to.csv.controller');
+const downloadHelper = require('../content.methods/download.manager/download.manager');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -433,5 +435,11 @@ router.post('/:id/addnewentry', maintainanceLogController.addNewEntry.bind(maint
 router.get('/:id/getmaintainancelogtype', maintainanceLogController.getMaintainanceLogType.bind(maintainanceLogController));
 
 router.post('/:id/addmaintainancelogtype', maintainanceLogController.addMaintainanceLogType.bind(maintainanceLogController));
+
+// Export to CSV!
+router.post('/:id/exporttocsv', exportCSVController.exportCsv.bind(exportCSVController));
+
+// Download Manager URL!
+router.get('/:id/:filepath/:filename', downloadHelper.downloadContent.bind(downloadHelper));
 
 module.exports = router;
