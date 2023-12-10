@@ -106,6 +106,12 @@ const lodgeSchema = new mongoose.Schema({
     universalMessage: {
       show: {type: Boolean, default: false},
       message: String
+    },
+    customHtmlContent: {
+        type: Object,
+        default: {
+
+        }
     }
 })
 

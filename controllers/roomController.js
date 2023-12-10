@@ -210,39 +210,39 @@ const dishByRoom = (req, res, next) => {
 
 const roomsUpdater = async (req, res, next) => {
 
-  if(req.body.roomno == ""){
+  if(req.body.roomno === ""){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.bedcount == ""){
+  } else if(req.body.bedcount === ""){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.suitename == ""){
+  } else if(req.body.suitename === ""){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.roomno == undefined){
+  } else if(req.body.roomno === undefined){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.bedcount == undefined){
+  } else if(req.body.bedcount === undefined){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.suitename == undefined){
+  } else if(req.body.suitename === undefined){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
   } else {
     try{
-      if(await checkOccupiedData(req.body.roomId) === "true"){
+      if(await checkOccupiedData(req.body.roomId)){
         res.status(200).json({
           success : false,
           message : "Room already occupied, You can't modify occupied room's data!"
