@@ -7,7 +7,6 @@ class MaintainanceLogImpl {
   constructor(){
     this.model = MaintainanceLog;
     this.type = MaintainanceLogType;
-    
   };
   
   // Create a new entry!
