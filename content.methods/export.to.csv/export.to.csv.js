@@ -44,11 +44,13 @@ class ExportToCsv {
            // Before generate the csv file, delete files in the same name as filepath
            // in the provided filepath to avoid unexpected behavior.
            this._checkAndClearDownloadPath().catch((err) => {
+               this.infoMessage.failure['error'] = err;
                reject(this.infoMessage.failure);
            });
            this.writer.writeRecords(this.options.cellValues).then(() => {
                resolve(this.infoMessage.success);
            }).catch((error) => {
+               this.infoMessage.failure['error'] = error;
                reject(this.infoMessage.failure);
            });
        });
