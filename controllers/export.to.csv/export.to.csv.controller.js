@@ -28,9 +28,18 @@ class ExportToCsvController extends ExportToCsv {
         // So adding the nodes values as part of the params.
         this.params.nodes = this.options.nodes;
         // Get the desired table cell values.
-        this.cellValues = await this.controllerMapping[this.options.widgetValue](this.params);
+        this.result = await this.controllerMapping[this.options.widgetValue](this.params);
         // When the cellValues is retrieved, add it in the options body.
-        this.options['cellValues'] = this.cellValues.result;
+        this.options['cellValues'] = this.result.result || this.result.message;
+        this._addExtendedOptions(); // This method is usefull when this controller is extended by some other controller,
+        // and the other controller wants to add other options in the response data!
+    };
+
+    // Add extended options which might want by the other controllers.
+    _addExtendedOptions(){
+        this.params.extendedOptions && this.params.extendedOptions.map((options) => {
+           this.options[options] = this.result[options];
+        });
     };
 
     // Main function when export csv route has been triggered.

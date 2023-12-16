@@ -29,6 +29,7 @@ const roomStatusController = require("../controllers/room.status/room.status.con
 const preferenceColController = require('../controllers/preference.collection/preference.collection.controller');
 const maintainanceLogController = require('../controllers/room.maintainance.log/room.maintainance.controller');
 const exportCSVController = require('../controllers/export.to.csv/export.to.csv.controller');
+const generateReceiptController = require('../controllers/generate.receipt/generate.receipt.controller');
 const downloadHelper = require('../content.methods/download.manager/download.manager');
 
 // JWT token verification
@@ -430,6 +431,8 @@ router.post('/:id/updatepref', preferenceColController.updatePreferences);
 // Maintainance Log!
 router.get('/:id/:userId/getallentries', maintainanceLogController.getAllEntry.bind(maintainanceLogController));
 
+router.get('/:id/:userId/:selectedNodes/getselectedentries', maintainanceLogController.getSelectedNodeEntries.bind(maintainanceLogController));
+
 router.post('/:id/addnewentry', maintainanceLogController.addNewEntry.bind(maintainanceLogController));
 
 router.get('/:id/getmaintainancelogtype', maintainanceLogController.getMaintainanceLogType.bind(maintainanceLogController));
@@ -438,6 +441,9 @@ router.post('/:id/addmaintainancelogtype', maintainanceLogController.addMaintain
 
 // Export to CSV!
 router.post('/:id/exporttocsv', exportCSVController.exportCsv.bind(exportCSVController));
+
+// Generate Receipt!
+router.post('/:id/generatereceipt', generateReceiptController.generateReceipt.bind(generateReceiptController));
 
 // Download Manager URL!
 router.get('/:id/:filepath/:filename', downloadHelper.downloadContent.bind(downloadHelper));

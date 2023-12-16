@@ -1,5 +1,5 @@
 const MaintainanceLogImpl = require("./room.maintainance.implementation");
-const ResponseHandler = require("../../ResponseHandler/ResponseHandler")
+const ResponseHandler = require("../../ResponseHandler/ResponseHandler");
 
 /* 
     Maintainance Log is user specific, not on room specific.
@@ -27,6 +27,15 @@ class MaintainanceLogController {
   // Get all entry from the log!
   async getAllEntry(req,res,next){
     var result = await this.logImpl.getEntries(req.params.userId);
+    this.responseHandler.parser(res, result);
+  };
+
+  // Get selected node entries!
+  async getSelectedNodeEntries(req, res, next){
+    // Selected nodes id will be in the query params.
+    var selectedNodes = JSON.parse(req.params.selectedNodes),
+      options = {nodes: selectedNodes, userId: req.params.userId},
+      result = await this.logImpl.getSelectedNodeEntries(options);
     this.responseHandler.parser(res, result);
   };
   

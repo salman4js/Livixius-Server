@@ -100,7 +100,7 @@ function getGSTPercent(amount){
   return amount > 7500 ? 0.18 : 0.12;
 }
 
-// Get taxable amount for each payments!
+// Get taxable amount for each payment!
 function getTaxableAmount(amountPaid, pricePerDay){
   var gstPercent = getGSTPercent(pricePerDay);
   var amountWithoutGST = amountPaid / (1 + gstPercent);
