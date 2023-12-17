@@ -50,6 +50,7 @@ class ExportToCsv {
                resolve(this.infoMessage.success);
            }).catch((error) => {
                this.infoMessage.failure['errorInCsv'] = error;
+               this.infoMessage.failure['writerError'] = this.writer;
                reject(this.infoMessage.failure);
            });
        });
