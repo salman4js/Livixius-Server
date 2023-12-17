@@ -18,18 +18,17 @@ class ExportToCsv {
 
     // Get the path and header value ready for the CSV writer.
     _prepareCsvWriter(){
-        this.downloadPath = './' + this.options.path;
+        this.downloadPath = this.options.path + '/' + this.options.fileName;
         this.writer = this.csvWriter.createObjectCsvWriter({
-            path: path.resolve(this.downloadPath, this.options.fileName),
+            path: path.resolve(__dirname, this.downloadPath),
             header: this.options.headerValue
-        })
+        });
     };
 
     // Check and clear the files in the provided filepath with the same filename to avoid unexpected behavior.
     _checkAndClearDownloadPath(){
         return new Promise((resolve) => {
-            var fileToDelete = this.downloadPath + '/' +this.options.fileName;
-            fs.unlink(fileToDelete, (err) => {
+            fs.unlink(path.resolve(__dirname, this.downloadPath), (err) => {
                 resolve(); // Resolving even though we get an error while deleting the file in the provided path.
             });
         });
@@ -44,13 +43,13 @@ class ExportToCsv {
            // Before generate the csv file, delete files in the same name as filepath
            // in the provided filepath to avoid unexpected behavior.
            this._checkAndClearDownloadPath().catch((err) => {
-               this.infoMessage.failure['error'] = err;
+               this.infoMessage.failure['errorInFileModule'] = err;
                reject(this.infoMessage.failure);
            });
            this.writer.writeRecords(this.options.cellValues).then(() => {
                resolve(this.infoMessage.success);
            }).catch((error) => {
-               this.infoMessage.failure['error'] = error;
+               this.infoMessage.failure['errorInCsv'] = error;
                reject(this.infoMessage.failure);
            });
        });
