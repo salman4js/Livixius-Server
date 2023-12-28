@@ -21,7 +21,7 @@ async function checkUpcoming(data, date){
 
 // Get upcoming checkout implementation!
 async function getUpcomingCheckout(data){
-  const result = await User.find({lodge: data.accId});
+  const result = await User.find({lodge: data.accId}).sort({ _id: -1 });
   const upcomingCheckout = await checkUpcoming(result, data.datesBetween);
   return upcomingCheckout;
 };

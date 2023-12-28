@@ -15,7 +15,7 @@ async function checkUpcomingPrebook(data, date){
 
 // Get upcoming prebook handler!
 async function getUpcomingPrebook(data){
-  const result = await Prebook.find({lodge: data.accId});
+  const result = await Prebook.find({lodge: data.accId}).sort({ _id: -1 });
   const upcomingPrebook = await checkUpcomingPrebook(result, data.datesBetween);
   return upcomingPrebook;
 };

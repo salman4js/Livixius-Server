@@ -360,11 +360,14 @@ const deleteUser = async (req, res, next) => {
           isGst: req.body.isGst, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
         
         // If the user transfer to a different room, Just don't update the billing details because those details will get added to the transfered room.
-        req.body.isUserTransfered && await UserDb.updateOne({userid: req.body.userid}, {$set: {isUserTransfered: req.body.isUserTransfered, 
+        req.body.isUserTransfered && await UserDb.updateOne({userid: req.body.userid}, {$set: {isUserTransfered: req.body.isUserTransfered,
           transferedRoomNo: req.body.transferedRoomNo, stayedDays : req.body.stayeddays, 
           dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
           prebooked : req.body.prebook, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
-        
+
+        // Deleted User Model.
+        var deletedUserModel = await UserDb.findOne({userid: req.body.userid});
+
         // Update refund tracker!
         if(req.body.refund > 0){
           var data = {refundFor: 'Refunded via check-in', userId: req.body.userid, lodge: req.params.id, username: req.body.username, refundAmount: req.body.refund,
@@ -376,6 +379,7 @@ const deleteUser = async (req, res, next) => {
             success : true,
             message : "Customer has been checked out properly!",
             updatedModel: updatedModel,
+            deletedUserModel: deletedUserModel,
             refundTrackerUpdated: refundTrackerUpdated
         });
     } catch (err) {
