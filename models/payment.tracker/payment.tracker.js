@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const paymentTracker = new mongoose.Schema({
   roomno: String,
-  amount: String,
-  amountFor: String,
+  amount: {type: String, default: '0'},
+  amountFor: {type: String, default: ''},
   dateTime: String,
   isPrebook: {type: Boolean, default: false},
   isCheckedout: {type: Boolean, default: false},

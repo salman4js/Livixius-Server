@@ -500,10 +500,15 @@ const addUserRooms = async (req, res, next) => {
           receiptId: uniqueId,
           checkinBy: req.body.checkinBy,
           transferBy: req.body.transferBy
-        })
+        });
+
         if(userdatabase){
-          userdatabase.save();
-        }
+          await userdatabase.save();
+        };
+
+        // When the customer is being transfered to different room, Delete the last entry in the userDb model schema.
+        // Customer details will be handled by the new entry checkin userDb model schema.
+        req.body.isRoomTransfered && await UserDb.findByIdAndDelete({_id: req.body.historyId});
         
         // Track payment in paymentTracker schema!
         if(!req.body.prebook){ // If not prebook, add advance to the paymentTracker!
@@ -586,6 +591,7 @@ const addUserRooms = async (req, res, next) => {
           success : true,
           updatedModel: updatedModel,
           updatedUserModel: checkin,
+          updatedUserDbModel: userdatabase,
           message : "Customer has been checked in successfully!"
         })
       } catch(err){

@@ -181,20 +181,35 @@ const totalAmount =  (data, datesBetween) => {
   return totalRate;
 }
 
-const userdbRoom = (req,res,next) => {
-  UserDb.find({lodge : req.params.id, room: req.body.roomid})
-  .then(data => {
-      res.status(200).json({
-          success : true,
-          message : data
-      })
-  })
-  .catch(err => {
-      res.status(200).json({
-          success : false,
-          message : "Some internal error occured!"
-      })
-  })
+const userdbRoom = async (req,res,next) => {
+    try {
+        // Form a query based on the request.
+        const query = {
+            lodge: req.params.id,
+        };
+
+        // If search is based on room id.
+        if (req.params.roomId !== 'undefined') {
+            query['room'] = req.params.roomId;
+        }
+
+        // Selected nodes history data will be returned!
+        if (req.params.selectednodes !== 'undefined') {
+            query['_id'] = req.params.selectednodes;
+        }
+
+        const data = await UserDb.find(query);
+
+        res.status(200).json({
+            success: true,
+            message: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Some internal error occurred!",
+        });
+    }
 }
 
 const checkUser = (req, res, next) => {
@@ -351,7 +366,10 @@ const deleteUser = async (req, res, next) => {
         discountPrice: String, advancePrice: String, advanceDiscountPrice: String, 
         advancePrebookPrice: String, price : updateRate.price }}, {new: true})
         await User.findByIdAndDelete({_id : req.body.userid})
-        await UserDish.deleteMany({room : req.body.roomid})
+        await UserDish.deleteMany({room : req.body.roomid});
+
+        // When it comes to room transfer, we don't need to update the history when checking out the user.
+        // History for that customer will be handled when performing checkin operation and the old room details will be taken care by the user model.
         !req.body.isUserTransfered && await UserDb.updateOne({userid : req.body.userid}, { $set : {stayedDays : req.body.stayeddays, 
           dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
           prebooked : req.body.prebook, bill: req.body.amount, dishbill: req.body.totalDishAmount, refund: req.body.refund,
@@ -360,10 +378,10 @@ const deleteUser = async (req, res, next) => {
           isGst: req.body.isGst, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
         
         // If the user transfer to a different room, Just don't update the billing details because those details will get added to the transfered room.
-        req.body.isUserTransfered && await UserDb.updateOne({userid: req.body.userid}, {$set: {isUserTransfered: req.body.isUserTransfered,
-          transferedRoomNo: req.body.transferedRoomNo, stayedDays : req.body.stayeddays, 
-          dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime, 
-          prebooked : req.body.prebook, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
+        // req.body.isUserTransfered && await UserDb.updateOne({userid: req.body.userid}, {$set: {isUserTransfered: req.body.isUserTransfered,
+        //   transferedRoomNo: req.body.transferedRoomNo, stayedDays : req.body.stayeddays,
+        //   dateofcheckout : req.body.checkoutdate, checkoutTime: req.body.checkoutTime,
+        //   prebooked : req.body.prebook, roomType: req.body.roomtype, checkoutBy: req.body.checkoutBy}});
 
         // Deleted User Model.
         var deletedUserModel = await UserDb.findOne({userid: req.body.userid});

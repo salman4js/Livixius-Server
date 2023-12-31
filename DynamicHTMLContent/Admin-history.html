@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+        }
+
+        h2 {
+            color: #004080;
+            text-align: center;
+        }
+
+        h3 {
+            color: #004080;
+            text-align: center;
+            border-bottom: 2px solid #004080;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            color: black;
+        }
+
+        th {
+            background-color: #004080;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h3>Guest Details</h3>
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Receipt Id</td>
+            <td>{receiptId}</td>
+        </tr>
+        <tr>
+            <td>Customer Name</td>
+            <td>{username}</td>
+        </tr>
+        <tr>
+            <td>Contact Details</td>
+            <td>{phonenumber}</td>
+        </tr>
+        <tr>
+            <td>Address Details</td>
+            <td>{address}</td>
+        </tr>
+        <tr>
+            <td>PreBooked</td>
+            <td>{prebooked}</td>
+        </tr>
+        <tr>
+            <td>Adults</td>
+            <td>{adults}</td>
+        </tr>
+        <tr>
+            <td>Childrens</td>
+            <td>{childrens}</td>
+        </tr>
+        <tr>
+            <td>ID Number</td>
+            <td>{aadharcard}</td>
+        </tr>
+        <tr>
+            <td>Checked In Days</td>
+            <td>{stayedDays}</td>
+        </tr>
+        <tr>
+            <td>Checked In</td>
+            <td>{dateofcheckin}</td>
+        </tr>
+        <tr>
+            <td>Checked Out</td>
+            <td>{dateofcheckout}</td>
+        </tr>
+    </table>
+
+    <h3>Billing Details</h3>
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Discount Applied</td>
+            <td>{discount}</td>
+        </tr>
+        <tr>
+            <td>Advance Applied</td>
+            <td>{advance}</td>
+        </tr>
+        <tr>
+            <td>Stay Amount</td>
+            <td>{bill}</td>
+        </tr>
+        <tr>
+            <td>Channel</td>
+            <td>{channel}</td>
+        </tr>
+        <tr>
+            <td>Stay GST Amount</td>
+            <td>{stayGst}</td>
+        </tr>
+        <tr>
+            <td>Total Paid Amount</td>
+            <td>{totalAmount}</td>
+        </tr>
+    </table>
+
+    <h3>Room Details</h3>
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Room No</td>
+            <td>{roomno}</td>
+        </tr>
+        <tr>
+            <td>Previous Room No</td>
+            <td>{oldRoomNo}</td>
+        </tr>
+        <tr>
+            <td>Previous Room Price</td>
+            <td>{oldRoomPrice}</td>
+        </tr>
+        <tr>
+            <td>Previous Room Stay Days</td>
+            <td>{oldRoomStayDays}</td>
+        </tr>
+    </table>
+
+</body>
+</html>
