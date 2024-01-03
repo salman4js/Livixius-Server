@@ -30,6 +30,7 @@ const preferenceColController = require('../controllers/preference.collection/pr
 const maintainanceLogController = require('../controllers/room.maintainance.log/room.maintainance.controller');
 const exportCSVController = require('../controllers/export.to.csv/export.to.csv.controller');
 const generateReceiptController = require('../controllers/generate.receipt/generate.receipt.controller');
+const CustomTemplateController = require('../controllers/DynamicHTMLContent/custom.template.controller');
 const downloadHelper = require('../content.methods/download.manager/download.manager');
 
 // JWT token verification
@@ -444,6 +445,13 @@ router.post('/:id/exporttocsv', exportCSVController.exportCsv.bind(exportCSVCont
 
 // Generate Receipt!
 router.post('/:id/generatereceipt', generateReceiptController.generateReceipt.bind(generateReceiptController));
+
+// Dynamic Template!
+router.post('/:id/savecustomtemplate', CustomTemplateController.addNewEntry.bind(CustomTemplateController));
+
+router.get('/:accid/:templatename/getcustomtemplate', CustomTemplateController.getAllEntry.bind(CustomTemplateController));
+
+router.delete('/:accid/:templatename/:templateid/deletecustomtemplate', CustomTemplateController.deleteEntry.bind(CustomTemplateController));
 
 // Download Manager URL!
 router.get('/:id/:filepath/:filename', downloadHelper.downloadContent.bind(downloadHelper));

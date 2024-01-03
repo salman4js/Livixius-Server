@@ -77,6 +77,21 @@ function transformNonValidValues(data, transformInto){
   return data;
 }
 
+// This method will verify the mandatory fields provided.
+  /**
+    @params fields Object
+    @params mandatoryFields Array
+  **/
+function verifyMandatoryFields(fields, mandatoryFields){
+  var value = Object.keys(fields);
+  for(var i = 0; i <= mandatoryFields.length - 1; i++){
+    if(!value.includes(mandatoryFields[i])){
+      return false;
+    }
+  }
+  return true;
+};
+
 // Check if the data is valid or not
 // Not undefined, Not null, Not empty and any other additional checks!
 function checkIfValid(data, additionalCheck){
@@ -115,5 +130,6 @@ function convertDateIntoCustomFormat(dateString, format){
 
 module.exports = {
   getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
-  checkIfValid, getRoomStatusConstants, getTaxableAmount, convertDateIntoCustomFormat
+  checkIfValid, getRoomStatusConstants, getTaxableAmount, convertDateIntoCustomFormat,
+  verifyMandatoryFields
 }

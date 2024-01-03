@@ -76,6 +76,10 @@ const lodgeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MaintainanceLogType'
     }],
+    customTemplate: [{
+       type: mongoose.Schema.Types.ObjectId,
+       ref: 'DynamicTemplate'
+    }],
     afterCheckedout: {type: String},
     inCleaning: {type: String},
     afterCleaned: {type: String},
