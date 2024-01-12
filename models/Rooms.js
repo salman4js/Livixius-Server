@@ -48,6 +48,7 @@ const roomSchema = new mongoose.Schema({
       ref : "Prebooks"
     }],
     prebookDateofCheckin: {type: Array, default: []}, // This is to handle roomTransfer scenario to avoid conflict bookings!
+    prebookDateofCheckout: {type: Array, default: []},
     paymentTracker: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "PaymentTracker"
