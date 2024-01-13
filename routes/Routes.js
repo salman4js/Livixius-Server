@@ -364,7 +364,7 @@ router.post("/:id/cheatcodefilter", voucherController.cheatCodeFiltering);
 
 router.post("/:id/getallvouchermodelsum", voucherController.getAllVouchersModelSum);
 
-router.post("/:id/getnetprofitpreview", voucherController.getNetProfitPreview);
+router.get("/:id/:date/getnetprofitpreview", voucherController.getNetProfitPreview);
 
 router.post("/:id/getttotalamountofallvouchermodel", voucherController.getTotalAmountOfAllVoucherModel);
 

@@ -1,3 +1,4 @@
+const Mongoose = require('mongoose');
 const Voucher = require("../../models/Vouchers/voucher.model.js");
 const VoucherModel = require("../../models/Vouchers/voucher.model.details");
 const Lodge = require("../../models/Lodges");
@@ -230,7 +231,9 @@ async function getAllVouchersModelSum(req,res,next){
 
 // Get all net profit preview!
 async function getNetProfitPreview(req,res,next){
-  const result = await vouchersImpl.netProfitPreview(req.body);
+  var options = {accId: Mongoose.Types.ObjectId(req.params.id),
+    dateTime: commonUtils.formatCustomDateIntoDateFormat(req.params.date)}
+  const result = await vouchersImpl.netProfitPreview(options);
   if(result !== undefined){
     var infoMessage = 'Voucher tracker calculation completed!';
     ResponseHandler.success(res, infoMessage, result);

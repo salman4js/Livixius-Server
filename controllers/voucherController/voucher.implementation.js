@@ -2,6 +2,7 @@ const paymentTrackerImpl = require("../payment.tracker/payment.tracker.controlle
 const VouchersModel = require("../../models/Vouchers/voucher.model.details");
 const Vouchers = require("../../models/Vouchers/voucher.model");
 const commonUtils = require("../../common.functions/common.functions");
+const _ = require('lodash');
 
 // Get all payment tracker amount sum!
 async function getAllVouchersSum(reqBody){ // Could be either payment or receipt based on the params!
@@ -14,7 +15,6 @@ async function getAllVouchersSum(reqBody){ // Could be either payment or receipt
   return totalAmount
 };
 
-// Get total amount of voucher model details based on the voucher model!
 // Get total amount of voucher model details based on the voucher model!
 async function getTotalAmountOfVoucherModel(voucherDetails, action, reqBody) {
   var voucherDateModel = commonUtils.convertDateIntoCustomFormat(reqBody.date, 'yyyy/mm/dd');
@@ -46,27 +46,59 @@ async function getIndividualVoucherModel(reqBody, action){
   return voucherModelObj;
 }
 
+// Get voucher tracker sum based on the date and payment model (Payment/Receipt) and voucherId.
+async function getVoucherTrackerSum(options) {
+  try {
+    const matchQuery = Object.keys(options).reduce((acc, key) => {
+      acc[key] = options[key];
+      return acc;
+    }, {}); // Form the matching query based on the options object.
+    var aggregateGroupId = options.voucherId !== undefined ?
+        {voucherId: options.voucherId, voucherDetails: await Vouchers.findById(options.voucherId).select('voucherName')}
+        : {accId: options.accId};
+    return await VouchersModel.aggregate([
+      { $match: matchQuery },
+      {
+        $group: {
+          _id: aggregateGroupId,
+          totalPayment: { $sum: { $toInt: '$payment' } },
+          totalReceipt: { $sum: { $toInt: '$receipt' } },
+        },
+      },
+    ]).exec();
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+// Get vouchers table reports value!
+async function getVoucherTableReports(options) {
+  var voucherModelDetails = await VouchersModel.find(options).select('voucherId'),
+      voucherIds = voucherModelDetails.map(item => item.voucherId),
+      voucherTableData = [],
+      cellValues = [];
+
+  await Promise.all(_.uniqWith(voucherIds, _.isEqual).map(async (voucherId) => {
+    options['voucherId'] = voucherId;
+    var tableData = await getVoucherTrackerSum(options);
+    voucherTableData.push(tableData[0]);
+  }));
+  voucherTableData.map((options) => {
+    options._id.voucherDetails['totalPayment'] = options.totalPayment;
+    options._id.voucherDetails['totalReceipt'] = options.totalReceipt;
+    cellValues.push(options._id.voucherDetails);
+  });
+  return cellValues;
+};
+
 // Net profit calculation implementation1
 async function netProfitPreview(reqBody){
-  var voucherPayment = await getAllVouchersSum({accId: reqBody.accId, action: 'payment', date: reqBody.date});
-  var vouchersReceipt = await getAllVouchersSum({accId: reqBody.accId, action: 'receipt', date: reqBody.date});
-  var individualVoucherReportForPayment = await getIndividualVoucherModel(reqBody, 'payment');
-  var individualVoucherReportForReceipt = await getIndividualVoucherModel(reqBody, 'receipt');
-  var individualVoucherReportTableHeader = ['Voucher Name', 'Amount'];
-  var paymentTrackerSum =  await paymentTrackerImpl.getAllPaymentTrackerSum(reqBody);
-  var netProfitForVouchers = voucherPayment - vouchersReceipt;
-  var netProfit = (paymentTrackerSum.totalAmount + vouchersReceipt) - (voucherPayment + paymentTrackerSum.totalTaxableAmount);
-  return {vouchersPayment: voucherPayment + " Rs", 
-    vouchersReceipt: vouchersReceipt + " Rs", 
-    paymentTrackerSum: paymentTrackerSum.totalAmount + " Rs",
-    paymentTrackerTotalTaxable: paymentTrackerSum.totalTaxableAmount.toFixed(2) + " Rs",
-    netProfit: Math.round(netProfit) + " Rs",
-    netProfitForVouchers: Math.round(netProfitForVouchers) + " Rs",
-    individualVoucherReportForPayment: individualVoucherReportForPayment,
-    individualVoucherReportForReceipt: individualVoucherReportForReceipt,
-    individualVoucherReportTableHeader: individualVoucherReportTableHeader,
-    netProfitStatus: netProfit > 0 ? "PROFIT" : "LOSS"
-  };
+  var inflowDetails = await paymentTrackerImpl.getAllPaymentTrackerSum(reqBody),
+      outflowDetails = await getVoucherTrackerSum(reqBody),
+      netProfitStatus = ((inflowDetails?.totalAmount + outflowDetails[0]?.totalReceipt) - (inflowDetails?.totalTaxableAmount + outflowDetails[0]?.totalPayment)),
+      tableReport = await getVoucherTableReports(reqBody);
+  return {inflowDetails, outflowDetails: outflowDetails[0], netProfitStatus, tableReport};
 };
 
 // Get last entry voucher model voucher number!

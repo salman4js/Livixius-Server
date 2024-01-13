@@ -249,6 +249,7 @@ async function checkPayments(userId){
 
 // Get all payment tracker amount sum controller!
 async function getAllPaymentTrackerAmountSum(req,res,next){
+  req.body['dateTime'] = req.body.date; // To blend in with `getAllPaymentTrackerSum` method implementation.
   const result = await getAllPaymentTrackerSum(req.body);
   if(result){
     ResponseHandler.success(res, result);
@@ -272,7 +273,7 @@ async function deletePrebookPaymentTracker(userId){
 // Get all payment tracker sum as lodge wise!
 async function getAllPaymentTrackerSum(reqBody){
   // Convert the request body date into payment tracker model date!
-  var paymentTrackerModelDate = commonUtils.convertDateIntoCustomFormat(reqBody.date, 'dd mmm');
+  var paymentTrackerModelDate = commonUtils.convertDateIntoCustomFormat(reqBody.dateTime, 'dd mmm');
   // Extract day and month portions from the formatted date using regex
    const regexPattern = /^(\d{2}) ([A-Za-z]{3})/;
    const match = paymentTrackerModelDate.match(regexPattern);

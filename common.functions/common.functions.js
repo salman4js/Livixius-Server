@@ -123,6 +123,21 @@ function getTaxableAmount(amountPaid, pricePerDay){
   return taxableAmount;
 };
 
+// Convert date into server readable format, In which the date has been stored in the database format.
+function convertServerFormat(date){
+  try{
+    const result = date.split("/");
+    return `${result[2]}/${result[1]}/${result[0]}`
+  } catch(err){
+    return date;
+  }
+}
+
+// Convert date object into readable date format!
+function formatCustomDateIntoDateFormat(dateString){
+  return convertServerFormat(brewDate.formatCustomDateToDateFormat(dateString));
+}
+
 // Convert date into custom format!
 function convertDateIntoCustomFormat(dateString, format){
   return brewDate.convertDateInto(dateString, format)
@@ -131,5 +146,5 @@ function convertDateIntoCustomFormat(dateString, format){
 module.exports = {
   getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
   checkIfValid, getRoomStatusConstants, getTaxableAmount, convertDateIntoCustomFormat,
-  verifyMandatoryFields
+  verifyMandatoryFields, formatCustomDateIntoDateFormat
 }
