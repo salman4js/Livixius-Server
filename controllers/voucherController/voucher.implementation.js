@@ -97,8 +97,12 @@ async function netProfitPreview(reqBody){
   var inflowDetails = await paymentTrackerImpl.getAllPaymentTrackerSum(reqBody),
       outflowDetails = await getVoucherTrackerSum(reqBody),
       netProfitStatus = ((inflowDetails?.totalAmount + outflowDetails[0]?.totalReceipt) - (inflowDetails?.totalTaxableAmount + outflowDetails[0]?.totalPayment)),
-      tableReport = await getVoucherTableReports(reqBody);
-  return {inflowDetails, outflowDetails: outflowDetails[0], netProfitStatus, tableReport};
+      tableReport = await getVoucherTableReports(reqBody),
+      tableHeader = {
+          outflow: ['Voucher Name', 'Payment', 'Receipt'],
+          inflow: []
+      };
+  return {inflowDetails, outflowDetails: outflowDetails[0], netProfitStatus, tableReport, tableHeader};
 };
 
 // Get last entry voucher model voucher number!
