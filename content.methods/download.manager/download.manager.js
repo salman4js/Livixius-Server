@@ -13,10 +13,8 @@ class DownloadManager {
 
     // Get the downloadable content from the file system.
     _getDownloadContent(){
-        // Use the basePath if there is no filepath in the options.
-        var filePathToSearch = this.options.filepath !== undefined ? this.options.filepath : this.basePath;
         // Get the content from the filepath in the params.
-        var filepath = path.resolve(filePathToSearch, this.options.filename);
+        var filepath = path.resolve(this.basePath, this.options.filename);
         this.response.sendFile(filepath);
     };
 

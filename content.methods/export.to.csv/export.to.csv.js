@@ -14,7 +14,7 @@ class ExportToCsv {
               status: false, creation: false, message: 'Some internal error occurred'
           }
       };
-        this.basePath = 'content.methods/export.to.csv/downloads';
+      this.basePath = 'content.methods/export.to.csv/downloads';
     };
 
     // Get the path and header value ready for the CSV writer.
