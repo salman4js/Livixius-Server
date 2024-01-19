@@ -5,14 +5,14 @@ class ExportToCsvController extends ExportToCsv {
     constructor() {
         super();
         this.controllerMapping = controllerMapping.controllerMapping;
-        this.defaultDownloadPath = 'downloads';
+        this.defaultDownloadPath = 'content.methods/export.to.csv/downloads';
         this.responseHandler = new ResponseHandler();
     };
 
     // Prepare the initial values.
     _prepareInitialValues(req, res){
         this.options = req.body;
-        this.options.path = this.options.path !== undefined ? this.options.path : this.defaultDownloadPath;
+        this.options.path = this.options.path !== undefined ? this.options.path : this.defaultDownloadPath.replace(new RegExp("/", "g"), "%2F");
         this.params = req.params;
         this.response = res;
     };

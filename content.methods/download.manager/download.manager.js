@@ -2,7 +2,8 @@ const path = require('path');
 
 class DownloadManager {
     constructor() {
-        this.basePath = 'content.methods/export.to.csv/downloads'
+        // download manager is a common code, It should have basePath for export.to.csv
+        // this.basePath = 'content.methods/export.to.csv/downloads'
     };
 
     // Prepare the initial request and response values.
@@ -14,7 +15,7 @@ class DownloadManager {
     // Get the downloadable content from the file system.
     _getDownloadContent(){
         // Get the content from the filepath in the params.
-        var filepath = path.resolve(this.basePath, this.options.filename);
+        var filepath = path.resolve(this.options.filepath, this.options.filename);
         this.response.sendFile(filepath);
     };
 
