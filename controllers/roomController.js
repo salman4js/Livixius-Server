@@ -215,12 +215,12 @@ const roomsUpdater = async (req, res, next) => {
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.bedcount === ""){
+  } else if(req.body.bedCount === ""){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.suitename === ""){
+  } else if(req.body.suiteName === ""){
     res.status(200).json({
       success : false,
       message : "Check your input!"
@@ -230,12 +230,12 @@ const roomsUpdater = async (req, res, next) => {
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.bedcount === undefined){
+  } else if(req.body.bedCount === undefined){
     res.status(200).json({
       success : false,
       message : "Check your input!"
     })
-  } else if(req.body.suitename === undefined){
+  } else if(req.body.suiteName === undefined){
     res.status(200).json({
       success : false,
       message : "Check your input!"
@@ -261,12 +261,12 @@ const roomsUpdater = async (req, res, next) => {
         Room.findByIdAndUpdate(req.body.roomId, {
           floorNo: req.body.floorNo,
           roomno: req.body.roomno,
-          suiteName: req.body.suitename,
+          suiteName: req.body.suiteName,
           roomStatusConstant: req.body.roomStatus !== undefined && req.body.roomStatus !== 'Release' ? req.body.roomStatusConstant : currentRoomStatusConstant, 
           roomStatus: req.body.roomStatus !== undefined && req.body.roomStatus !== 'Release' ? req.body.roomStatus : currentRoomStatus,
           prevRoomStatus: req.body.roomStatus !== undefined ? currentRoomStatus : undefined,
           prevRoomStatusConstant: req.body.roomStatus !== undefined ? currentRoomStatusConstant : undefined,
-          bedCount: req.body.bedcount,
+          bedCount: req.body.bedCount,
           price : roomPrice.price
         }, {new: true}) // This will return the updated data so that UI collections can be updated.
           .then(data => {
