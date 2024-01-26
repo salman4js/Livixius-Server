@@ -257,7 +257,7 @@ const roomsUpdater = async (req, res, next) => {
         var currentRoomStatus = roomInstance.prevRoomStatus;
       
         // Update room price everytime the suite type gets updated!
-        const roomPrice = await RoomType.findOne({lodge : req.params.id, suiteType: req.body.suitename});
+        const roomPrice = await RoomType.findOne({lodge : req.params.id, suiteType: req.body.suiteName});
         Room.findByIdAndUpdate(req.body.roomId, {
           floorNo: req.body.floorNo,
           roomno: req.body.roomno,
@@ -294,7 +294,7 @@ const roomsUpdater = async (req, res, next) => {
 
 const checkOccupiedData = async (roomId) => {
   const value = await Room.findOne({ _id : roomId});
-  return value.isOccupied;
+  return value.isOccupied === 'true';
 };
 
 const deleteRoom = async (req, res, next) => {
