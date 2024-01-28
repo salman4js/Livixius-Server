@@ -1,5 +1,6 @@
 // User controller implementation!
 const UserDb = require('../../models/UserDb');
+const _ = require('lodash');
 
 // Check frequent to find the favorites customers!
 async function checkFrequent(users){
@@ -29,6 +30,13 @@ async function getFavCustomer(data){
 };
 
 // Get booking history based on the limit and skip params for pagination purpose.
+/**
+  params @{skipCount} --> Indicates the skipCount.
+  params @{limitCount} --> Indicated the limitCount.
+  params @{nodes} --> Indicates specific history document id Ex: Export to excel operation.
+  params @{filerBy} --> Indicates that the documents has to be filtered by based on the provided key
+                        (Comes as a query params)
+ **/
 async function getBookingHistory(data) {
   var skipCount = data.skipcount || 0,
       limitCount = data.limitcount || 15; // 15 is the limit per page allowed by UI.
@@ -36,6 +44,12 @@ async function getBookingHistory(data) {
   var query = {
     lodge: data.accId || data.id,
   };
+  if(!_.isEmpty(data.query)){
+    Object.keys(data.query).forEach((filterKey) => {
+      query[filterKey] = data.query[filterKey];
+    });
+  }
+  // nodes will be having specific history document id in-case export to excel operation initiated.
   if (data.nodes !== undefined && data.nodes !== null && data.nodes !== '' && data.nodes.length > 0) {
     query._id = { $in: data.nodes };
   }

@@ -63,6 +63,8 @@ const userdb = async (req,res,next) => {
         success: 'Booking history data retrieved',
         error: 'Some internal error occurred.'
     }
+    // Add query params with the params object to implementation method.
+    req.params.query = req.query;
     var result = await userControllerImpl.getBookingHistory(req.params);
     if(result){
         return ResponseHandler.success(res, infoMessage.success, result, 'historyField');
@@ -712,8 +714,9 @@ const updateOccupiedData = async (req, res, next) => {
     }
   } catch(err){
     res.status(200).json({
-      success: false,
-      message: "Some internal error occured..."
+        success: false,
+        err: err,
+        message: "Some internal error occured..."
     })
   }
 };
