@@ -196,8 +196,8 @@ const userdbRoom = async (req,res,next) => {
         }
 
         // Selected nodes history data will be returned!
-        if (req.params.selectednodes !== 'undefined') {
-            query['_id'] = req.params.selectednodes;
+        if (req.params.selectedNodes !== 'undefined') {
+            query['_id'] = {$in: JSON.parse(req.params.selectedNodes)};
         }
 
         const data = await UserDb.find(query);

@@ -255,7 +255,7 @@ router.post("/:id/deleteroomdish", userDishController.deleteRoomDish);
 
 router.get("/:id/:skipcount/:limitcount/userdb", verifyJWT, userController.userdb);
 
-router.get("/:id/:roomId/:selectednodes/historynode", userController.userdbRoom);
+router.get("/:id/:roomId/:selectedNodes/historynode", userController.userdbRoom);
 
 router.get("/:id/:skipcount/:limitcount/userdb1", userController.userdb);
 
