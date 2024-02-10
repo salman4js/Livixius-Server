@@ -38,8 +38,8 @@ async function getFavCustomer(data){
                         (Comes as a query params)
  **/
 async function getBookingHistory(data) {
-  var skipCount = data.skipcount || 0,
-      limitCount = data.limitcount || 15; // 15 is the limit per page allowed by UI.
+  var skipCount = parseInt(data.skipcount) || 0,
+      limitCount = parseInt(data.limitcount) || 15; // 15 is the limit per page allowed by UI.
   // These values will change when UI requests for other page data.
   var query = {
     lodge: data.accId || data.id,
