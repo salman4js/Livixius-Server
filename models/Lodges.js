@@ -114,7 +114,10 @@ const lodgeSchema = new mongoose.Schema({
     customHtmlContent: {
         type: Object,
         default: {
-
+            templateName: {
+                label: undefined,
+                isEnabled: false
+            }
         }
     }
 })
