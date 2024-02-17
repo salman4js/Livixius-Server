@@ -92,7 +92,7 @@ function verifyMandatoryFields(fields, mandatoryFields){
   return true;
 };
 
-// Check if the data is valid or not
+// Check if the data is valid or not,
 // Not undefined, Not null, Not empty and any other additional checks!
 function checkIfValid(data, additionalCheck){
   if(data !== undefined && data !== null && data !== '' && 

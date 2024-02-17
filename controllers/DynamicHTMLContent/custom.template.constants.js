@@ -7,7 +7,7 @@ var CustomTemplateConstants = Object.freeze({
         },
         creationError: {
             status: false,
-            message: 'Internal error occured',
+            message: 'Internal error occurred',
             statusCode: 500
         },
         badRequest: {

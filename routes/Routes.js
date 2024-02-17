@@ -32,6 +32,7 @@ const exportCSVController = require('../controllers/export.to.csv/export.to.csv.
 const generateReceiptController = require('../controllers/generate.receipt/generate.receipt.controller');
 const CustomTemplateController = require('../controllers/DynamicHTMLContent/custom.template.controller');
 const downloadHelper = require('../content.methods/download.manager/download.manager');
+const LivixiusMessageController = require('../controllers/livixius.message/livixius.message.controller');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -455,5 +456,10 @@ router.delete('/:accid/:templatename/:templateid/deletecustomtemplate', CustomTe
 
 // Download Manager URL!
 router.get('/:id/:filepath/:filename', downloadHelper.downloadContent.bind(downloadHelper));
+
+// Livixius Site Messages.
+router.post('/send-messages', LivixiusMessageController.addNewMessage.bind(LivixiusMessageController));
+
+router.get('/get-messages', LivixiusMessageController.getAllMessages.bind(LivixiusMessageController));
 
 module.exports = router;
