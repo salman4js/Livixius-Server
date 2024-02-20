@@ -357,7 +357,7 @@ router.post("/:id/deletevouchermodel", voucherController.deleteVoucherModel);
 
 router.get("/:id/getvouchers", voucherController.getVouchers);
 
-router.post('/:id/getvouchermodel', voucherController.getVoucherModel);
+router.get('/:id/:voucherId/getvouchermodel', voucherController.getVoucherModel);
 
 router.post("/:id/addvouchermodel", voucherController.addVoucherModel);
 
