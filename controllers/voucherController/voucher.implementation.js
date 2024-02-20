@@ -113,6 +113,14 @@ async function getLastEntryVoucherModelNumber(reqBody){
   return lastEntryVoucherModel?.vNo !== undefined ? lastEntryVoucherModel.vNo : 0;
 }
 
+async function getVouchersModel(reqBody){
+  return Vouchers.find({lodge: reqBody.accId}).then((result => {
+    return result;
+  })).catch((err) => {
+    return err;
+  })
+}
+
 module.exports = {
-  getAllVouchersSum, netProfitPreview, getIndividualVoucherModel, getLastEntryVoucherModelNumber
+  getAllVouchersSum, netProfitPreview, getIndividualVoucherModel, getLastEntryVoucherModelNumber, getVouchersModel
 }
