@@ -1,6 +1,5 @@
 const Preferences = require('../../models/preferences.collections/preferences.collections');
 const RoomControllerImpl = require("../room.controller.implementation/room.controller.implementation");
-const VoucherControllerImpl = require('../voucherController/voucher.implementation')
 const PrebookControllerImpl = require('../prebook.controller.implementation/prebook.controller.implementation');
 const UserControllerImpl = require('../user.controller.implementation/user.controller.implementation');
 const brewDate = require('brew-date');
@@ -15,7 +14,6 @@ async function getWidgetCollectionPref(data){
       favorites: pref[0].favorites,
       history: pref[0].history,
       datesBetween: pref[0].datesBetween,
-      voucherTracker: pref[0].voucherTracker,
       dashboardVersion: pref[0].dashboardVersion
     }
   } else {
@@ -29,10 +27,11 @@ async function getWidgetCollectionPref(data){
 // Update preference collections!
 async function updatePrefCollections(data){
   var pref = await Preferences.findOneAndUpdate({accId: data.accId}, {$set: {upcomingCheckout: data.upcomingCheckout,
-  upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, history: data.history, voucherTracker: data.voucherTracker,
+  upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, history: data.history,
   datesBetween: data.datesBetweenCount, dashboardVersion: data.dashboardVersion}}, {new: true});
   // After the preference has been updated, get the widget tile collections!
-  return await getWidgetTileCollection(data);
+  var collection = await getWidgetTileCollection(data);
+  return collection;
 };
 
 // Get widget tile collection based on the preferences!
@@ -43,14 +42,15 @@ async function getWidgetTileCollection(data){
   var collectionPref = await getWidgetCollectionPref(data);
   // Add dashboard version in the response!
   response.dashboardVersion = collectionPref?.dashboardVersion;
-  // Dates between number is configurable but its existence is not!
+  // Datesbetween number is configurable but its existence is not!
   response.datesBetweenCount = collectionPref?.datesBetween;
   // Widget tile model count.
   response.widgetTileModelCount = {};
-  // When we log in for the first time, datesBetween array data will not be populated yet in the UI.
+  // When we login for the first time, datesBetween array data will not be populated yet in the UI.
   // So rest gets the datesBetween array only when the UI is not passing it as the params!
   if(!data.datesBetween || data.datesBetween.length === 0){ // This means that UI has not send any data for datesBetween array
-    data.datesBetween = brewDate.getBetween(brewDate.getFullDate('yyyy/mm/dd'), brewDate.addDates(brewDate.getFullDate('yyyy/mm/dd'), collectionPref?.datesBetween));
+    var datesBetweenArr = brewDate.getBetween(brewDate.getFullDate('yyyy/mm/dd'), brewDate.addDates(brewDate.getFullDate('yyyy/mm/dd'), collectionPref?.datesBetween));
+    data.datesBetween = datesBetweenArr;
   }
   // Check the preference and get data based on the preferences!
   if(collectionPref?.upcomingCheckout){
@@ -69,11 +69,6 @@ async function getWidgetTileCollection(data){
     var historyData = await UserControllerImpl.getBookingHistory(data);
     response.history = historyData.result;
     response.widgetTileModelCount.history = historyData.totalCount;
-  }
-  if(collectionPref?.voucherTracker){
-    response.voucherTracker = [];
-    response.voucherModelList = await VoucherControllerImpl.getVouchersModel(data);
-    response.widgetTileModelCount.voucherTracker = 0;
   }
   return collectionPref && response;
   

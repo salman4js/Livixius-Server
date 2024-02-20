@@ -96,12 +96,19 @@ async function deleteVoucherModel(req,res,next){
 
 // Send all vouchers!
 function getVouchers(req,res,next){
-  var infoMessage = "List of voucher models"
-  vouchersImpl.getVouchersModel(req.body).then((result) => {
-    ResponseHandler.success(res, infoMessage, result);
-  }).catch((err) => {
-    ResponseHandler.error(res);
-  })
+  Voucher.find({lodge: req.params.id})
+    .then(data => {
+      res.status(200).json({
+        success: true,
+        message: data
+      })
+    })
+    .catch(err => {
+      res.status(200).json({
+        success: false,
+        message: "Internal error occured!"
+      })
+    })
 };
 
 // Add voucher model to the respective vouchers1
@@ -146,7 +153,7 @@ function getVoucherModel(req,res,next){
     'receipt': 'receipt',
     'payment': 'payment'
   }
-  VoucherModel.find({voucherId: req.params.voucherId})
+  VoucherModel.find({voucherId: req.body.voucherId})
     .then(data => {
       var trimmedData = commonUtils.trimData(data, modelData); // Send only what the UI wants
       res.status(200).json({

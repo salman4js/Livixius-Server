@@ -7,8 +7,7 @@ const preferenceCollections = new mongoose.Schema({
   favorites: {type: Boolean, default: false},
   history: {type: Boolean, default: false},
   datesBetween: {type: Number, default: 3},
-  dashboardVersion: {type: Boolean, default: false}, // true indicates new dashboard.,
-  voucherTracker: {type: Boolean, default: false},
+  dashboardVersion: {type: Boolean, default: false}, // true indicates new dashboard.
   accId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lodges"
