@@ -32,7 +32,7 @@ class CustomTemplateImplementation {
     async addNewEntry(model) {
         // Check for the mandatory data.
         this.isValidData(model);
-        // Check if there is already a entry for history widget, If yes, reject the second entry!
+        // Check if there is already an entry for history widget, If yes, reject the second entry!
         await this.isWidgetEntryAdded(model);
         return new Promise((resolve, reject) => {
             if (this.isDataValid) {
@@ -61,10 +61,11 @@ class CustomTemplateImplementation {
     };
 
     _updateAddedEntry(model){
-        return this.model.findOneAndUpdate(model).then((result) => {
+        return this.model.findOneAndUpdate({templateName: model.templateName}, {templateName: model.templateName, customTemplate: model.customTemplate})
+            .then((result) => {
             return result;
         }).catch(() => {
-            console.warn("Error occured while updating the added entry!");
+            console.warn("Error occurred while updating the added entry!");
         })
     };
 
