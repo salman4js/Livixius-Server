@@ -19,7 +19,8 @@ async function addVouchers(req,res,next){
     await vouchers.save();
     res.status(200).json({
       success: true,
-      message: `New voucher created ${vouchers.voucherName}`
+      message: `New voucher created ${vouchers.voucherName}`,
+      voucher: vouchers
     })
   } catch(err){
     res.status(200).json({
@@ -123,7 +124,8 @@ async function addVoucherModel(req,res,next){
     await voucherModel.save();
     res.status(200).json({
       success: true,
-      message: "New voucher model added"
+      message: "New voucher model added",
+      data: voucherModel
     })
     
   } catch(err){

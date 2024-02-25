@@ -74,7 +74,7 @@ async function getWidgetTileCollection(data){
   if(collectionPref?.voucherTracker){
     response.voucherTracker = [];
     response.voucherModelList = await VoucherControllerImpl.getVouchersModel(data);
-    response.widgetTileModelCount.voucherTracker = 0;
+    response.widgetTileModelCount.voucherTracker = response.voucherModelList.length;
   }
   return collectionPref && response;
   
