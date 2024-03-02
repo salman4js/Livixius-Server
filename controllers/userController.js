@@ -660,23 +660,22 @@ const updateOccupiedData = async (req, res, next) => {
         message: "Missing User Id"
       })
     } else {
-      const updatedUserModel = await User.findByIdAndUpdate(userId, {
-        username: req.body.username,
-        phonenumber: req.body.phonenumber,
-        secondphonenumber: req.body.secondphonenumber,
-        adults: req.body.adults,
-        childrens: req.body.childrens,
-        extraBeds: req.body.extraBeds,
-        aadharcard: req.body.aadharcard,
-        dateofcheckin: req.body.dateofcheckin, // This will be only active if edit details of checkin date is enabled in UI!
-        dateofcheckout: req.body.dateofcheckout,
-        advance: req.body.updatedAdvance, // Added prev advance with the updated advance in the UI itself!
-        discount: req.body.discount,
-        checkoutTime: req.body.checkOutTime,
-      }, {new: true})
-      
+       const updatedUserModel = await User.findByIdAndUpdate(userId, {
+            username: req.body.username,
+            phonenumber: req.body.phonenumber,
+            secondphonenumber: req.body.secondphonenumber,
+            adults: req.body.adults,
+            childrens: req.body.childrens,
+            extraBeds: req.body.extraBeds,
+            aadharcard: req.body.aadharcard,
+            dateofcheckin: req.body.dateofcheckin, // This will be only active if edit details of checkin date is enabled in UI!
+            dateofcheckout: req.body.dateofcheckout,
+            advance: req.body.updatedAdvance, // Added prev advance with the updated advance in the UI itself!
+            discount: req.body.discount,
+            checkoutTime: req.body.checkOutTime,
+       }, {new: true})
       // Track payment only if there are any amount paid by the customer!
-      if(req.body.updatedAdvance > 0){
+      if(req.body.updatedAdvance !== req.body.advance){
         // Track advance payment entry
         const paymentParams = {
           roomno: req.body.roomno,
