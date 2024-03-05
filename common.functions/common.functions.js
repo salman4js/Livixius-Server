@@ -139,8 +139,8 @@ function formatCustomDateIntoDateFormat(dateString){
 }
 
 // Convert date into custom format!
-function convertDateIntoCustomFormat(dateString, format){
-  return brewDate.convertDateInto(dateString, format)
+function convertDateIntoCustomFormat(dateString, format, options){
+  return brewDate.convertDateInto(dateString, format, options)
 }
 
 module.exports = {

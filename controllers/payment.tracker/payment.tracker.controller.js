@@ -273,13 +273,13 @@ async function deletePrebookPaymentTracker(userId){
 // Get all payment tracker sum as lodge wise!
 async function getAllPaymentTrackerSum(reqBody){
   // Convert the request body date into payment tracker model date!
-  var paymentTrackerModelDate = commonUtils.convertDateIntoCustomFormat(reqBody.dateTime, 'dd mmm');
+  var paymentTrackerModelDate = commonUtils.convertDateIntoCustomFormat(reqBody.dateTime, 'dd mmm',
+      {dd: {toLocaleDateString: 'en-GB', dateTimeFormatOptions: 'numeric'}});
   // Extract day and month portions from the formatted date using regex
-   const regexPattern = /^(\d{2}) ([A-Za-z]{3})/;
+   const regexPattern = /^(\d) ([A-Za-z]{3})/;
    const match = paymentTrackerModelDate.match(regexPattern);
-   const day = match[1];   // Extracted day
+   var day = match[1];   // Extracted day
    const month = match[2]; // Extracted month
-   
    // Filter PaymentTracker based on the month, day, and lodge
    const paymentTracker = await PaymentTracker.find({
      lodge: reqBody.accId,

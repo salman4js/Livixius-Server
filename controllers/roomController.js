@@ -506,7 +506,7 @@ const addUserRooms = async (req, res, next) => {
           await userdatabase.save();
         };
 
-        // When the customer is being transfered to different room, Delete the last entry in the userDb model schema.
+        // When the customer is being transferred to different room, Delete the last entry in the userDb model schema.
         // Customer details will be handled by the new entry checkin userDb model schema.
         req.body.isRoomTransfered && await UserDb.findByIdAndDelete({_id: req.body.historyId});
         

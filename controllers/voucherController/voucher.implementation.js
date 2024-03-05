@@ -67,7 +67,6 @@ async function getVoucherTrackerSum(options) {
       },
     ]).exec();
   } catch (err) {
-    console.log(err);
     return err;
   }
 };
@@ -121,6 +120,36 @@ async function getVouchersModel(reqBody){
   })
 };
 
+async function editVoucherModel(options){
+  return new Promise((resolve, reject) => {
+    VouchersModel.findByIdAndUpdate(options.voucherId, {
+      dateTime: options.dateTime,
+      particulars: options.particulars,
+      cashMode: options.cashMode,
+      receipt: options.receipt,
+      payment: options.payment
+    }, {new:true}).then((result) => {
+      resolve(result);
+    }).catch((err) => {
+      reject(err);
+    })
+  });
+};
+
+async function deleteVoucherModel(options){
+  var voucherModelIds = JSON.parse(options.selectedNodes);
+  try{
+    for(const id of voucherModelIds){
+      await Vouchers.updateMany({voucherDetails: id}, {$pull: {voucherDetails: id}});
+      await VouchersModel.findByIdAndDelete(id);
+    }
+    return true;
+  } catch(err){
+    return err;
+  }
+};
+
 module.exports = {
-  getAllVouchersSum, netProfitPreview, getIndividualVoucherModel, getLastEntryVoucherModelNumber, getVouchersModel
+  getAllVouchersSum, netProfitPreview, getIndividualVoucherModel, getLastEntryVoucherModelNumber, getVouchersModel,
+  deleteVoucherModel, editVoucherModel
 }

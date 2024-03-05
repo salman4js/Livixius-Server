@@ -6,13 +6,14 @@ const cors = require("cors");
 // Custom Middlewares!
 const {CustomMiddleWares} = require('./middlewares/custom.middleware');
 // Defining routes!
-const server = require("./routes/Routes");
+const serverRoutes = require("./routes/Routes");
 
 //mongodb+srv://salman:<password>@cluster0.vsziv.mongodb.net/?retryWrites=true&w=majority
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+
 // Using custom middleware!~
 app.use('/:id', CustomMiddleWares.addParamsInBody);
 
@@ -32,7 +33,12 @@ mongoose.connection.on("error",(err) => {
     console.log("Some stupid error", err);
 })
 
-app.use("/", server);
+app.use("/", serverRoutes);
+
+// Error handling express middlewares!
+app.use((err, req, res, next) => {
+    res.status(500).send('Internal Server Error!');
+});
 
 app.listen(3002,() => {
     console.log("Server is running at port 3002");
