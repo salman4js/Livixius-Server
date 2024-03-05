@@ -1,4 +1,5 @@
 const Preferences = require('../../models/preferences.collections/preferences.collections');
+const Lodges = require('../../models/Lodges');
 const RoomControllerImpl = require("../room.controller.implementation/room.controller.implementation");
 const VoucherControllerImpl = require('../voucherController/voucher.implementation');
 const PrebookControllerImpl = require('../prebook.controller.implementation/prebook.controller.implementation');
@@ -32,14 +33,20 @@ async function updatePrefCollections(data){
   upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, history: data.history, voucherTracker: data.voucherTracker,
   datesBetween: data.datesBetweenCount, dashboardVersion: data.dashboardVersion}}, {new: true});
   // After the preference has been updated, get the widget tile collections!
-  var collection = await getWidgetTileCollection(data);
-  return collection;
+  return await getWidgetTileCollection(data);
 };
 
 // Get widget tile collection based on the preferences!
 async function getWidgetTileCollection(data){
   // Response object!
   var response = {};
+  // check if the voucher is linked with livixius!
+  var isVouchersLinkedWithLivixius = Lodges.findById(data.accId).select('linkVouchersWithLivixius').exec()
+  .then((result) => {
+     return result.linkVouchersWithLivixius;
+  }).catch(() => {
+     return false;
+  });
   // Do a check here to get the widget collection preference of the user!
   var collectionPref = await getWidgetCollectionPref(data);
   // Add dashboard version in the response!
@@ -71,7 +78,7 @@ async function getWidgetTileCollection(data){
     response.history = historyData.result;
     response.widgetTileModelCount.history = historyData.totalCount;
   }
-  if(collectionPref?.voucherTracker){
+  if(collectionPref?.voucherTracker && isVouchersLinkedWithLivixius){
     response.voucherTracker = [];
     response.voucherModelList = await VoucherControllerImpl.getVouchersModel(data);
     response.widgetTileModelCount.voucherTracker = response.voucherModelList.length;

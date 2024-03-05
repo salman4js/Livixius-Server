@@ -33,6 +33,8 @@ const generateReceiptController = require('../controllers/generate.receipt/gener
 const CustomTemplateController = require('../controllers/DynamicHTMLContent/custom.template.controller');
 const downloadHelper = require('../content.methods/download.manager/download.manager');
 const LivixiusMessageController = require('../controllers/livixius.message/livixius.message.controller');
+const DeleteController = require('../controllers/common.crud.controller/delete.controller/delete.controller');
+const EditController = require('../controllers/common.crud.controller/edit.controller/edit.controller');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -353,7 +355,7 @@ router.post("/:id/editvouchermodel", voucherController.editVoucherModel);
 
 router.post("/:id/getprevvouchermodel", voucherController.getPrevVoucherModel);
 
-router.post("/:id/deletevouchermodel", voucherController.deleteVoucherModel);
+router.delete("/:id/:selectedNodes/deletevouchermodel", voucherController.deleteVoucherModel);
 
 router.get("/:id/getvouchers", voucherController.getVouchers);
 
@@ -461,5 +463,16 @@ router.get('/:id/:filepath/:filename', downloadHelper.downloadContent.bind(downl
 router.post('/send-messages', LivixiusMessageController.addNewMessage.bind(LivixiusMessageController));
 
 router.get('/get-messages', LivixiusMessageController.getAllMessages.bind(LivixiusMessageController));
+
+// Common controllers declarations!
+router.delete('/:id/:selectedNodes/:widgetName/delete', async (req, res, next) => {
+    const deleteController = new DeleteController(req, res, next);
+    await deleteController.doAction().catch(next);
+});
+
+router.put('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
+    const editController = new EditController(req, res, next);
+    await editController.doAction().catch(next);
+});
 
 module.exports = router;

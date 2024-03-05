@@ -49,51 +49,21 @@ async function getPrevVoucherModel(req,res,next){
 
 // Edit vouchers models!
 async function editVoucherModel(req,res,next){
-  VoucherModel.findByIdAndUpdate(req.body.voucherId, {
-    dateTime: req.body.dateTime,
-    particulars: req.body.particulars,
-    cashMode: req.body.cashMode,
-    receipt: req.body.receipt,
-    payment: req.body.payment
-  }).then(data => {
-    res.status(200).json({
-      success: true,
-      message: "Voucher model has been updated!",
-      voucherId: data.voucherId
-    })
-  }).catch(err => {
-    res.status(200).json({
-      success: false,
-      message: "Some internal error occured"
-    })
-  })
+  vouchersImpl.editVoucherModel(req.body).then((result) => {
+    ResponseHandler.success(res, 'Voucher Model Edited Successfully!', result);
+  }).catch((err) => {
+    ResponseHandler.error(res);
+  });
 }
 
 // Delete voucher models!
 async function deleteVoucherModel(req,res,next){
-  var voucherModelId = req.body.voucherId;
-  // Get voucher id for the selections!
-  var voucherDetails = await VoucherModel.find({_id: req.body.voucherId[0]}); // Since we are dealing
-  // with same vouhcer, we can take one voucher model id and get the voucher ID!
-  try{
-    for(const id of voucherModelId){
-      await Voucher.updateMany({voucherDetails: id}, {$pull: {voucherDetails: id}});
-      await VoucherModel.findByIdAndDelete(id);
-    }
-    
-    res.status(200).json({
-      success: true,
-      message: "Voucher models deleted successfully!",
-      voucherId: voucherDetails[0].voucherId // We are dealing with same voucher, 
-      // one value is enough to get the voucherId from the voucher model
-    })
-  } catch(err){
-    res.status(200).json({
-      success: false,
-      message: "Some internal error occured!"
-    })
-  }
-}
+  vouchersImpl.deleteVoucherModel(req.params).then((result) => {
+    ResponseHandler.success(res, 'Vouchers Model deleted successfully!', result);
+  }).catch((err) => {
+    ResponseHandler.error(res);
+  })
+};
 
 // Send all vouchers!
 function getVouchers(req,res,next){
