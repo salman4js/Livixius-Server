@@ -1,5 +1,7 @@
 // User controller implementation!
+const User = require('../../models/User');
 const UserDb = require('../../models/UserDb');
+const PrebookUser = require('../../models/PreBookUser');
 const _ = require('lodash');
 
 // Check frequent to find the favorites customers!
@@ -57,9 +59,22 @@ async function getBookingHistory(data) {
 
   var totalCount = await UserDb.find({ lodge: data.accId || data.id }).countDocuments({});
   return { result, totalCount };
-}
+};
+
+// Get insights data for requested dates.
+async function getInsightsData(data){
+  var todayArrival = await UserDb.find({lodge: data.accId, dateofcheckin: data.datesBetween[0]})
+      .countDocuments({});
+  var todayUpcomingArrival = await PrebookUser.find({lodge: data.accId, prebookDateofCheckin: data.datesBetween[0]})
+      .countDocuments({});
+  var todayCheckout = await UserDb.find({lodge: data.accId, dateofcheckout: data.datesBetween[0]})
+      .countDocuments({});
+  var currentCheckedIn = await User.find({lodge: data.accId, dateofcheckin: data.datesBetween[0]})
+      .countDocuments({});
+  return {todayArrival, todayUpcomingArrival, todayCheckout, currentCheckedIn}
+};
 
 
 module.exports = {
-  getFavCustomer, getBookingHistory
+  getFavCustomer, getBookingHistory, getInsightsData
 }
