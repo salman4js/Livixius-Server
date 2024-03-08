@@ -4,6 +4,7 @@ const RoomControllerImpl = require("../room.controller.implementation/room.contr
 const VoucherControllerImpl = require('../voucherController/voucher.implementation');
 const PrebookControllerImpl = require('../prebook.controller.implementation/prebook.controller.implementation');
 const UserControllerImpl = require('../user.controller.implementation/user.controller.implementation');
+const preferenceCollectionLang = require('./preference.collection.lang');
 const brewDate = require('brew-date');
 
 // Get widget tile preferences!
@@ -17,6 +18,7 @@ async function getWidgetCollectionPref(data){
       history: pref[0].history,
       datesBetween: pref[0].datesBetween,
       voucherTracker: pref[0].voucherTracker,
+      insights: pref[0].insights,
       dashboardVersion: pref[0].dashboardVersion
     }
   } else {
@@ -31,7 +33,7 @@ async function getWidgetCollectionPref(data){
 async function updatePrefCollections(data){
   var pref = await Preferences.findOneAndUpdate({accId: data.accId}, {$set: {upcomingCheckout: data.upcomingCheckout,
   upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, history: data.history, voucherTracker: data.voucherTracker,
-  datesBetween: data.datesBetweenCount, dashboardVersion: data.dashboardVersion}}, {new: true});
+  insights: data.insights, datesBetween: data.datesBetweenCount, dashboardVersion: data.dashboardVersion}}, {new: true});
   // After the preference has been updated, get the widget tile collections!
   return await getWidgetTileCollection(data);
 };
@@ -57,7 +59,7 @@ async function getWidgetTileCollection(data){
   response.widgetTileModelCount = {};
   // When we log in for the first time, datesBetween array data will not be populated yet in the UI.
   // So rest gets the datesBetween array only when the UI is not passing it as the params!
-  if(!data.datesBetween || data.datesBetween.length === 0){ // This means that UI has not send any data for datesBetween array
+  if(!data.datesBetween || data.datesBetween.length === 0){ // This means that UI has not sent any data for datesBetween array
     data.datesBetween = brewDate.getBetween(brewDate.getFullDate('yyyy/mm/dd'), brewDate.addDates(brewDate.getFullDate('yyyy/mm/dd'), collectionPref?.datesBetween));
   }
   // Check the preference and get data based on the preferences!
@@ -82,6 +84,32 @@ async function getWidgetTileCollection(data){
     response.voucherTracker = [];
     response.voucherModelList = await VoucherControllerImpl.getVouchersModel(data);
     response.widgetTileModelCount.voucherTracker = response.voucherModelList.length;
+  }
+  if(collectionPref?.insights){
+    // Insights data will be fetched for requested date.
+    var insightsData = await UserControllerImpl.getInsightsData(data);
+    response.insights = [];
+    response.widgetTileModelCount.insights = {
+      noCountWidget: true,
+      value: {
+        todayArrival: {
+          label: preferenceCollectionLang.insights.todayArrival,
+          count: insightsData.todayArrival
+        },
+        todayUpcomingArrival: {
+          label: preferenceCollectionLang.insights.todayUpcomingArrival,
+          count: insightsData.todayUpcomingArrival
+        },
+        todayCheckout: {
+          label: preferenceCollectionLang.insights.todayCheckout,
+          count: insightsData.todayCheckout
+        },
+        currentCheckedIn: {
+          label: preferenceCollectionLang.insights.currentCheckedIn,
+          count: insightsData.currentCheckedIn
+        }
+      }
+    };
   }
   return collectionPref && response;
   
