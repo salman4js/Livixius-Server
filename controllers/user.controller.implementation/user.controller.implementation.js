@@ -69,7 +69,7 @@ async function getInsightsData(data){
       .countDocuments({});
   var todayCheckout = await UserDb.find({lodge: data.accId, dateofcheckout: data.datesBetween[0]})
       .countDocuments({});
-  var currentCheckedIn = await User.find({lodge: data.accId, dateofcheckin: data.datesBetween[0]})
+  var currentCheckedIn = await User.find({lodge: data.accId})
       .countDocuments({});
   return {todayArrival, todayUpcomingArrival, todayCheckout, currentCheckedIn}
 };
