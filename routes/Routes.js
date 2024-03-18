@@ -35,6 +35,7 @@ const downloadHelper = require('../content.methods/download.manager/download.man
 const LivixiusMessageController = require('../controllers/livixius.message/livixius.message.controller');
 const DeleteController = require('../controllers/common.crud.controller/delete.controller/delete.controller');
 const EditController = require('../controllers/common.crud.controller/edit.controller/edit.controller');
+const InsightsFilterController = require('../controllers/insights.filter.controller/insights.filter.controller');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -473,6 +474,11 @@ router.delete('/:id/:selectedNodes/:widgetName/delete', async (req, res, next) =
 router.put('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
     const editController = new EditController(req, res, next);
     await editController.doAction().catch(next);
+});
+
+router.get('/:id/:filters/:selectedDates/insights-filter', async(req, res, next) => {
+    const insightsController = new InsightsFilterController({req, res, next});
+    await insightsController._getFilterContent().catch(next);
 });
 
 module.exports = router;
