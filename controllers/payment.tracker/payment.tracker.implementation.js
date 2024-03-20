@@ -36,7 +36,7 @@ async function getPaymentDetails(options) {
             return paymentTracker;
         });
         const paymentTracker = await PaymentTracker.findById({_id: options.nodes[0]}); //  Since we are dealing with the same room
-        // By payment id, we can able to get room id!
+        // By payment id, we can get room id!
         // Get customer details for receipt generation!
         var filterQuery = {
             room: paymentTracker.room,
