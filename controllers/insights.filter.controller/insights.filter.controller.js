@@ -1,5 +1,6 @@
 const InsightsFilterImplementation = require('./insights.filter.implementation');
 const ResponseHandler = require("../../ResponseHandler/ResponseHandler");
+const InsightsFilterConstants = require('./insights.filter.constants');
 class InsightsFilterController extends InsightsFilterImplementation {
     constructor(options) {
         super();
@@ -23,9 +24,8 @@ class InsightsFilterController extends InsightsFilterImplementation {
 
     async _getFilterContent(){
         this._getInsightsFilterContent().then((result) => {
-            this.responseHandler.parser(this.options.res, {statusCode: 200, result: result, success: true});
+            this.responseHandler.parser(this.options.res, {statusCode: 200, result: result, success: true, title: InsightsFilterConstants.read.title});
         }).catch((err) => {
-            console.log(this.options)
             this.options.next(err);
         });
     };
