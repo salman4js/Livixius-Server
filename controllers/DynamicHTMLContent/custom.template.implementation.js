@@ -61,7 +61,7 @@ class CustomTemplateImplementation {
     };
 
     _updateAddedEntry(model){
-        return this.model.findOneAndUpdate({templateName: model.templateName}, {templateName: model.templateName, customTemplate: model.customTemplate})
+        return this.model.findOneAndUpdate({accId: model.accId, templateName: model.templateName}, {templateName: model.templateName, customTemplate: model.customTemplate})
             .then((result) => {
             return result;
         }).catch(() => {
