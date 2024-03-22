@@ -10,6 +10,7 @@ const preferenceCollections = new mongoose.Schema({
   dashboardVersion: {type: Boolean, default: false}, // true indicates new dashboard.
   voucherTracker: {type: Boolean, default: false},
   insights: {type: Boolean, default: false},
+  multipleLogin: {type: Boolean, default: false},
   accId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Lodges"

@@ -1,6 +1,9 @@
 const MultipleLogins = require("../../models/MultipleLogins");
 const Lodge = require("../../models/Lodges");
 const PreferenceImpl = require("../preference.collection/preference.collection.impl");
+const MultipleLoginImpl = require('./multiple.login.implementation');
+const ResponseHandler = require('../../ResponseHandler/ResponseHandler');
+const {response} = require("express");
 
 // Keys to differentiate between manager and receptionist - "receptionistLevel" && "managerLevel"
 
@@ -94,20 +97,13 @@ async function loginAs(req,res,next){
 
 //  Get all the multiple login ID's!
 function getLogins(req,res,next){
-  MultipleLogins.find({lodge: req.params.id})
-  .then(data => {
-    res.status(200).json({
-      success: true,
-      message: data,
-      tableHeaders: ['Username', 'Password', 'Permission Level']
-    })
-  }).catch(err => {
-    res.status(200).json({
-      success: false,
-      message: "Internal server error occured!"
-    })
-  })
-}
+  MultipleLoginImpl.getLogins({accId: req.params.id}).then((result) => {
+    const responseHandler = new ResponseHandler();
+    responseHandler.parser(res, {statusCode: 200, result: result});
+  }).catch((err) => {
+    next(err);
+  });
+};
 
 // Multiple delete login ID!
 async function multipleDeleteLogin(req, res, next) {
