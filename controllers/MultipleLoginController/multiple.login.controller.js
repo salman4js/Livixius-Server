@@ -3,96 +3,72 @@ const Lodge = require("../../models/Lodges");
 const PreferenceImpl = require("../preference.collection/preference.collection.impl");
 const MultipleLoginImpl = require('./multiple.login.implementation');
 const ResponseHandler = require('../../ResponseHandler/ResponseHandler');
-const {response} = require("express");
 
 // Keys to differentiate between manager and receptionist - "receptionistLevel" && "managerLevel"
 
 // Add multiple logins!
 async function addLogins(req,res,next){
-  try{
-    const multipleLogins = new MultipleLogins(req.body);
-    
-    if(multipleLogins){
-      await Lodge.findByIdAndUpdate({_id: req.body.lodge}, {$push: {multipleLogin: multipleLogins._id}})
-    }
-    
-    await multipleLogins.save();
-    res.status(200).json({
-      success: true,
-      message: `${multipleLogins.username} ID created successfully!`
-    })
-  } catch(err){
-    res.status(200).json({
-      error: err,
-      success: false,
-      message: "Couldn't create a login ID at the moment!"
-    })
-  }
-}
+  MultipleLoginImpl.addLogins(req.body).then((result) => {
+    ResponseHandler.staticParser(res, {statusCode: 201, result: result, success: true});
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500, error: err});
+  })
+};
 
 // Edit single login details!
 function editLogins(req,res,next){
-  MultipleLogins.findByIdAndUpdate(req.body.loginId, {
-    username: req.body.username,
-    password: req.body.password,
-    loginAs: req.body.loginAs
-  })
-  .then(data => {
-    res.status(200).json({
-      success: true,
-      message: "Login Id updated successfully!"
-    })
-  })
-  .catch(err => {
-    res.status(200).json({
-      success: false,
-      message: "Some internal error occured!"
-    })
-  })
-}
+  req.body['selectedNodes'] = req.params.selectedNodes;
+  MultipleLoginImpl.editLogins(req.body).then((result) => {
+    ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: true});
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500});
+  });
+};
 
 // Login Route for multiple login - receptionist!
 async function loginAs(req,res,next){
-  try{
+  let username;
+  let password;
+  try {
     username = req.body.username,
     password = req.body.password
     MultipleLogins.findOne({username: username})
-      .then(async data => {
-        if(data){
-          if(data.password !== password){
+        .then(async data => {
+          if (data) {
+            if (data.password !== password) {
+              res.status(200).json({
+                success: false,
+                message: "Please check your credentials!"
+              })
+            } else {
+              // Rest has to send the Preference Collection when there is multiple login enabled
+              var prefData = {accId: req.body.accId},
+                  userPreferences;
+              if (req.body.getPreference) {
+                userPreferences = PreferenceImpl.getWidgetTileCollection(prefData);
+              }
+              res.status(200).json({
+                success: true,
+                message: `Receptionist logged in as ${username}`,
+                permissionLevel: data.loginAs,
+                loggedInUser: data.username,
+                loggedInAsRecep: data.loginAs === "receptionistLevel",
+                userPref: userPreferences
+              })
+            }
+          } else {
             res.status(200).json({
               success: false,
-              message: "Please check your credentials!"
-            })
-          } else {
-            // Rest has to send the Preference Collection when there is multiple login enabled
-            var prefData = {accId: req.body.accId},
-              userPreferences;
-            if(req.body.getPreference){
-              userPreferences = PreferenceImpl.getWidgetTileCollection(prefData);
-            };
-            res.status(200).json({
-              success: true,
-              message: `Receptionist logged in as ${username}`,
-              permissionLevel: data.loginAs,
-              loggedInUser: data.username,
-              loggedInAsRecep: data.loginAs === "receptionistLevel" ? true : false,
-              userPref: userPreferences
+              message: "No user has been found"
             })
           }
-        } else {
-          res.status(200).json({
-            success: false,
-            message: "No user has been found"
-          })
-        }
-      })
-    } catch(err){
-      res.status(200).json({
-        success : false,
-        message : "Some internal error occured"
-      })
-    }
+        })
+  } catch (err) {
+    res.status(200).json({
+      success: false,
+      message: "Some internal error occured"
+    })
+  }
 }
 
 //  Get all the multiple login ID's!
@@ -107,54 +83,14 @@ function getLogins(req,res,next){
 
 // Multiple delete login ID!
 async function multipleDeleteLogin(req, res, next) {
-  var loginIds = req.body.loginId;
-
-  try {
-    for (const id of loginIds) {
-      await Lodge.findByIdAndUpdate(
-        { _id: req.body.lodgeid },
-        { $pull: { multipleLogin: id } }
-      );
-      await MultipleLogins.findByIdAndDelete({ _id: id });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Login IDs deleted successfully!"
-    });
-  } catch (err) {
-    res.status(200).json({
-      success: false,
-      message: "Some internal error occurred!"
-    });
-  }
-}
-
-
-// Delete single login ID!
-async function deleteLogin(req,res,next){
-
-  // Delete multiple login reference from the lodge reference1
-  await Lodge.findByIdAndUpdate({_id: req.body.lodgeid}, {$pull: {multipleLogin: req.body.loginId}});
-  
-  // Delete multiple login original reference!
-  MultipleLogins.findByIdAndDelete({_id: req.body.loginId})
-    .then(data => {
-      res.status(200).json({
-        success: true,
-        message: "Login ID deleted successfully!"
-      })
-    })
-    .catch(err => {
-      res.status(200).json({
-        error: err,
-        success: false,
-        message: "Some internal error occured!"
-      })
-    })
-}
-
+  req.body['selectedNodes'] = req.params.selectedNodes;
+  MultipleLoginImpl.deleteLogins(req.body).then(() => {
+    ResponseHandler.staticParser(res, {statusCode: 204});
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500});
+  })
+};
 
 module.exports = {
-  addLogins, getLogins, deleteLogin, loginAs, multipleDeleteLogin, editLogins
+  addLogins, getLogins, loginAs, multipleDeleteLogin, editLogins
 }

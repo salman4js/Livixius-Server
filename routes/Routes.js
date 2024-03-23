@@ -36,6 +36,7 @@ const LivixiusMessageController = require('../controllers/livixius.message/livix
 const DeleteController = require('../controllers/common.crud.controller/delete.controller/delete.controller');
 const EditController = require('../controllers/common.crud.controller/edit.controller/edit.controller');
 const InsightsFilterController = require('../controllers/insights.filter.controller/insights.filter.controller');
+const CreateController = require('../controllers/common.crud.controller/create.controller/create.controller');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
@@ -377,8 +378,6 @@ router.post("/:id/addmultiplelogin", multipleLoginController.addLogins);
 
 router.get("/:id/getlogins", multipleLoginController.getLogins);
 
-router.post("/:id/deletelogin", multipleLoginController.deleteLogin);
-
 router.post("/:id/loginas", multipleLoginController.loginAs);
 
 router.post("/:id/multiplelogindelete", multipleLoginController.multipleDeleteLogin);
@@ -476,6 +475,13 @@ router.put('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
     await editController.doAction().catch(next);
 });
 
+router.post('/:id/:widgetName/create', async (req, res, next) => {
+    const createController = new CreateController(req, res, next);
+    await createController.doAction().catch(next);
+});
+
+
+// Insights filter endpoint.
 router.get('/:id/:filters/:selectedDates/insights-filter', async(req, res, next) => {
     const insightsController = new InsightsFilterController({req, res, next});
     await insightsController._getFilterContent().catch(next);

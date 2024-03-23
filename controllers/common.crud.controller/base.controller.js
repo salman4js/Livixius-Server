@@ -17,6 +17,12 @@ class BaseController {
         }
     };
 
+    _addParamsInImplOptions(){
+      Object.keys(this.options.request.params).forEach((param) => {
+         this.options.implOptions[param] = this.options[param];
+      });
+    };
+
     _initiateAction(){
         return new Promise((resolve, reject) => {
             this.controllerMapping[this.options.request.method][this.options.widgetName](this.options.implOptions).then((result) => {
