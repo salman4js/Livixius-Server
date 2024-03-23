@@ -23,6 +23,12 @@ class ResponseHandler {
       message: 'Input message is not readable!'
     });
   };
+
+  // Parser method!
+  static staticParser(res, options){
+    const responseHandler = new ResponseHandler();
+    responseHandler.parser(res, options);
+  };
   
   // Get status code!
   prepareStatusCode(options){

@@ -39,7 +39,6 @@ async function getPrevVoucherModel(req,res,next){
         message: data
       })
     }).catch(err => {
-      console.log(err)
       res.status(200).json({
         success: false,
         message: "Error while fetching the previous data!"
@@ -50,11 +49,20 @@ async function getPrevVoucherModel(req,res,next){
 // Edit vouchers models!
 async function editVoucherModel(req,res,next){
   vouchersImpl.editVoucherModel(req.body).then((result) => {
-    ResponseHandler.success(res, 'Voucher Model Edited Successfully!', result);
+    ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: true});
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500});
+  });
+};
+
+// Add voucher model to the respective vouchers1
+async function addVoucherModel(req,res,next){
+  vouchersImpl.addVoucherModel(req.body).then((result) => {
+    ResponseHandler.staticParser(res, {statusCode: 201, result: result, title: 'New voucher added!'});
   }).catch((err) => {
     ResponseHandler.error(res);
   });
-}
+};
 
 // Delete voucher models!
 async function deleteVoucherModel(req,res,next){
@@ -74,37 +82,6 @@ function getVouchers(req,res,next){
     ResponseHandler.error(res);
   })
 };
-
-// Add voucher model to the respective vouchers1
-async function addVoucherModel(req,res,next){
-  try{
-    // When we add a voucher model, we want the voucher number to gets updated everytime automatically!
-    // And for that, we need to get the last entry voucher model number and has to icrement it by 1.
-    // Get the last entry of a voucher model!
-    var lastEntrVoucherNumber = await vouchersImpl.getLastEntryVoucherModelNumber(req.body);
-    // Add the voucher model number to the request body!
-    req.body.vNo = Number(lastEntrVoucherNumber) + 1;
-    // then proceed with the creation.
-    const voucherModel = new VoucherModel(req.body);
-    
-    if(voucherModel){
-      await Voucher.findByIdAndUpdate({_id: req.body.voucherId}, {$push: {voucherDetails: voucherModel._id}});
-    }
-    
-    await voucherModel.save();
-    res.status(200).json({
-      success: true,
-      message: "New voucher model added",
-      data: voucherModel
-    })
-    
-  } catch(err){
-    res.status(200).json({
-      success: false,
-      message: "Couldn't create a new voucher model!"
-    })
-  }
-}
 
 // Send voucher model to the client!
 function getVoucherModel(req,res,next){

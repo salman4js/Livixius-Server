@@ -6,7 +6,8 @@ class DeleteController extends BaseController {
     };
 
     async doAction(){
-        this.options.implOptions = {selectedNodes: this.options.selectedNodes};
+        this.options.implOptions = this.options.request.body;
+        this._addParamsInImplOptions();
         this._initiateAction().then(() => {
             this.responseHandler.parser(this.options.response, {statusCode: 204})
         });

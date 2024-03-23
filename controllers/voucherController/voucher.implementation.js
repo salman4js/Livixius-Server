@@ -149,7 +149,22 @@ async function deleteVoucherModel(options){
   }
 };
 
+async function addVoucherModel(options){
+  // When we add a voucher model, we want the voucher number to gets updated everytime automatically!
+  // And for that, we need to get the last entry voucher model number and has to icrement it by 1.
+  // Get the last entry of a voucher model!
+  var lastEntryVoucherNumber = await getLastEntryVoucherModelNumber(options);
+  options['vNo'] = Number(lastEntryVoucherNumber) + 1;
+  var voucherModel = new VouchersModel(options);
+  if(voucherModel){
+    await Vouchers.findByIdAndUpdate({_id: options.voucherId}, {$push: {voucherDetails: voucherModel._id}});
+    await voucherModel.save();
+    return voucherModel;
+  }
+  return null;
+};
+
 module.exports = {
   getAllVouchersSum, netProfitPreview, getIndividualVoucherModel, getLastEntryVoucherModelNumber, getVouchersModel,
-  deleteVoucherModel, editVoucherModel
+  deleteVoucherModel, editVoucherModel, addVoucherModel
 }
