@@ -154,7 +154,7 @@ router.post("/:id/deleteuser", userController.deleteUser)
 
 router.post("/addlodge", lodgeController.addLodge)
 
-router.post("/loginlodge", lodgeController.loginLodge)
+router.post("/login-lodge", lodgeController.loginLodge)
 
 router.post("/alllodges", lodgeController.allLodges);
 

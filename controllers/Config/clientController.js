@@ -19,23 +19,24 @@ const checkConfig = async (req,res,next) => {
     })
 }
 
-const checkMatrix = async (req,res,next) => {
-  
-  // Check all the required config!
-  const config = await Lodge.findById(req.params.id);
-
-  try{
+const checkMatrix = async (req, res, next) => {
+  try {
+    // Fetching config
+    const config = await Lodge.findById(req.params.id),
+          actionItems = await Config.find({lodge: req.params.id});
     res.status(200).json({
       success: true,
-      object: config
-    })
-  } catch(err){
-    res.status(200).json({
+      object: config,
+      actionItems: actionItems
+    });
+  } catch (err) {
+    // If an error occurs, send an error response
+    res.status(500).json({
       success: false,
-      message: "Config not allowing client side to enter!"
-    })
+      message: "Internal server error occurred!"
+    });
   }
-}
+};
 
 const showConfig = (req,res,next) => {
   res.status(200).json({
