@@ -42,58 +42,44 @@ const findLodge = (req,res,next) => {
 }
 
 const loginLodge = (req,res,next) => {
-    try{
-      username = req.body.username,
-      password = req.body.password
-      Lodge.findOne({username : username})
-      .then(async lodge => {
-          if (lodge){
-              if(lodge.password !== password){
-                  res.status(200).json({
-                      success : false,
-                      message : "Please check your credentials"
-                  })
-              } else {
-                  var prefData = {accId: lodge._id}
-                  let token = jwt.sign({name : lodge.username}, "secretValue", {expiresIn : '1h'});
-                  var userPreferences = await PreferenceImpl.getWidgetTileCollection(prefData);
-                  res.json({
-                    success : true,
-                    message : "User Logged In",
-                    hostId : lodge._id,
-                    lodgename : lodge.username,
-                    isLocked: lodge.isLocked,
-                    isLockedMessage: "Your account has been locked, Please contact the Help Desk!",
-                    gstin: lodge.gstin,
-                    pan: lodge.pan,
-                    name: lodge.name,
-                    number: lodge.number,
-                    redirect: lodge.redirectTo,
-                    multipleLogins: lodge.multipleLogins,
-                    loginId: lodge._id + "-" + lodge.username,
-                    hasMultipleLogins: lodge.multipleLogin.length > 0,
-                    preferences: userPreferences,
-                    token
-                  })
-                  updateAuth(username, token);
-              }
-          } else {
-              res.status(200).json({
-                  success : false,
-                  message : "No user has been found"
-              })
-          }
-      })
-    } catch(err){
-      res.status(200).json({
-        success : false,
-        message : "Some internal error occured"
-      })
+    let username;
+    let password;
+    try {
+        username = req.body.username;
+        password = req.body.password;
+        Lodge.findOne({username: username})
+            .then(async lodge => {
+                if (lodge) {
+                    if (lodge.password !== password) {
+                        res.status(200).json({
+                            success: false,
+                            message: "Please check your credentials"
+                        })
+                    } else {
+                        let token = jwt.sign({name: lodge.username}, "secretValue", {expiresIn: '1h'});
+                        res.json({
+                            success: true,
+                            message: "User Logged In",
+                            hostId: lodge._id,
+                            lodgeName: lodge.username,
+                            isLocked: lodge.isLocked,
+                            lockedMessage: 'Your account is locked, Please contact the administrator!',
+                            token
+                        })
+                    }
+                } else {
+                    res.status(200).json({
+                        success: false,
+                        message: "No user has been found"
+                    })
+                }
+            })
+    } catch (err) {
+        res.status(200).json({
+            success: false,
+            message: "Some internal error occured"
+        })
     }
-}
-
-const updateAuth = async(username, token) => {
-  await Lodge.updateOne({username : username}, {$set : {token : token}})
 }
 
 const allLodges = (req,res,next) => {
