@@ -98,7 +98,7 @@ async function getWidgetTileCollection(data){
       noCountWidget: true
     }
   }
-  if(collectionPref?.insights){
+  if(collectionPref?.insights && lodgeConfigPreference.isInsights){
     // Insights data will be fetched for requested date.
     var insightsData = await UserControllerImpl.getInsightsData(data);
     response.insights = [];
