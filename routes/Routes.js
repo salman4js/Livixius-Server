@@ -378,7 +378,7 @@ router.post("/:id/addmultiplelogin", multipleLoginController.addLogins);
 
 router.get("/:id/getlogins", multipleLoginController.getLogins);
 
-router.post("/:id/loginas", multipleLoginController.loginAs);
+router.post("/:id/login-as", multipleLoginController.loginAs);
 
 router.post("/:id/multiplelogindelete", multipleLoginController.multipleDeleteLogin);
 

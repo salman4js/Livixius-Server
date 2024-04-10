@@ -21,8 +21,7 @@ async function getWidgetCollectionPref(data){
       datesBetween: pref[0].datesBetween,
       voucherTracker: pref[0].voucherTracker,
       insights: pref[0].insights,
-      multipleLogin: pref[0].multipleLogin,
-      dashboardVersion: pref[0].dashboardVersion
+      administrativePageEnabled: pref[0].administrativePageEnabled
     }
   } else {
     var newPref = new Preferences({
@@ -36,8 +35,8 @@ async function getWidgetCollectionPref(data){
 async function updatePrefCollections(data){
   var pref = await Preferences.findOneAndUpdate({accId: data.accId}, {$set: {upcomingCheckout: data.upcomingCheckout,
   upcomingPrebook: data.upcomingPrebook, favorites: data.favorites, history: data.history, voucherTracker: data.voucherTracker,
-  insights: data.insights, multipleLogin: data.multipleLogin, datesBetween: data.datesBetweenCount,
-  dashboardVersion: data.dashboardVersion}}, {new: true});
+  insights: data.insights, datesBetween: data.datesBetweenCount,
+  administrativePageEnabled: data.administrativePageEnabled}}, {new: true});
   // After the preference has been updated, get the widget tile collections!
   return await getWidgetTileCollection(data);
 };
@@ -58,47 +57,48 @@ async function getWidgetTileCollection(data){
   var lodgeConfigPreference = await _getLodgeConfigPreferences(data);
   // Do a check here to get the widget collection preference of the user!
   var collectionPref = await getWidgetCollectionPref(data);
-  // Add dashboard version in the response!
-  response.dashboardVersion = collectionPref?.dashboardVersion;
+  // Administrative page enabled!
+  response.administrativePageEnabled = (lodgeConfigPreference.loggedInAs === preferenceCollectionLang.ManagerEntry)
+      &&  collectionPref?.administrativePageEnabled;
   // Dates between number is configurable but its existence is not!
   response.datesBetweenCount = collectionPref?.datesBetween;
   // Widget tile model count.
   response.widgetTileModelCount = {};
   // When we log in for the first time, datesBetween array data will not be populated yet in the UI.
   // So rest gets the datesBetween array only when the UI is not passing it as the params!
-  if(!data.datesBetween || data.datesBetween.length === 0){ // This means that UI has not sent any data for datesBetween array
+  if(!response?.administrativePageEnabled && !data.datesBetween || data.datesBetween.length === 0){ // This means that UI has not sent any data for datesBetween array
     data.datesBetween = brewDate.getBetween(brewDate.getFullDate('yyyy/mm/dd'), brewDate.addDates(brewDate.getFullDate('yyyy/mm/dd'), collectionPref?.datesBetween));
   }
   // Check the preference and get data based on the preferences!
-  if(collectionPref?.upcomingCheckout){
+  if(!response?.administrativePageEnabled && collectionPref?.upcomingCheckout){
     response.upcomingCheckout = await RoomControllerImpl.getUpcomingCheckout(data);
     response.widgetTileModelCount.upcomingCheckout = response.upcomingCheckout.length;
   }
-  if(collectionPref?.upcomingPrebook){
+  if(!response?.administrativePageEnabled && collectionPref?.upcomingPrebook){
     response.upcomingPrebook = await PrebookControllerImpl.getUpcomingPrebook(data);
     response.widgetTileModelCount.upcomingPrebook = response.upcomingPrebook.length;
   }
-  if(collectionPref?.favorites){
+  if(!response?.administrativePageEnabled && collectionPref?.favorites){
     response.favorites = await UserControllerImpl.getFavCustomer(data);
     response.widgetTileModelCount.favorites = response.favorites.length;
   }
-  if(collectionPref?.history){
+  if(!response?.administrativePageEnabled && collectionPref?.history){
     var historyData = await UserControllerImpl.getBookingHistory(data);
     response.history = historyData.result;
     response.widgetTileModelCount.history = historyData.totalCount;
   }
-  if(collectionPref?.voucherTracker && lodgeConfigPreference.linkVouchersWithLivixius){
+  if(!response?.administrativePageEnabled && collectionPref?.voucherTracker && lodgeConfigPreference.linkVouchersWithLivixius){
     response.voucherTracker = [];
     response.voucherModelList = await VoucherControllerImpl.getVouchersModel(data);
     response.widgetTileModelCount.voucherTracker = response.voucherModelList.length;
   }
-  if(collectionPref?.multipleLogin && lodgeConfigPreference.multipleLogins){
+  if(response?.administrativePageEnabled && lodgeConfigPreference.multipleLogins){
     response.multipleLogin = await MultipleLoginImpl.getLogins(data);
     response.widgetTileModelCount.multipleLogin = {
       noCountWidget: true
     }
   }
-  if(collectionPref?.insights && lodgeConfigPreference.isInsights){
+  if(!response?.administrativePageEnabled && collectionPref?.insights && lodgeConfigPreference.isInsights){
     // Insights data will be fetched for requested date.
     var insightsData = await UserControllerImpl.getInsightsData(data);
     response.insights = [];

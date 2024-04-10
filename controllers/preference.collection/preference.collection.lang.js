@@ -4,7 +4,8 @@ var preferenceCollectionLang = Object.freeze({
         todayUpcomingArrival: "Today's Upcoming Arrival",
         todayCheckout: "Today's Checkout",
         currentCheckedIn: "Current Checked-In"
-    }
+    },
+    ManagerEntry: 'Manager'
 });
 
 module.exports = preferenceCollectionLang;
