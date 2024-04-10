@@ -80,6 +80,7 @@ const lodgeSchema = new mongoose.Schema({
        type: mongoose.Schema.Types.ObjectId,
        ref: 'DynamicTemplate'
     }],
+    loggedInAs: {type: String, default: ''}, // 1 being as logged in as Manager, 0 being as logged in as Receptionist.
     afterCheckedout: {type: String},
     inCleaning: {type: String},
     afterCleaned: {type: String},

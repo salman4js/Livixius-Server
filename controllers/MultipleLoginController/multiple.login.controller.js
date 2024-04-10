@@ -29,9 +29,11 @@ function editLogins(req,res,next){
 async function loginAs(req,res,next){
   let username;
   let password;
+  let accId;
   try {
-    username = req.body.username,
+    username = req.body.username
     password = req.body.password
+    accId = req.body.lodge
     MultipleLogins.findOne({username: username})
         .then(async data => {
           if (data) {
@@ -41,19 +43,16 @@ async function loginAs(req,res,next){
                 message: "Please check your credentials!"
               })
             } else {
-              // Rest has to send the Preference Collection when there is multiple login enabled
-              var prefData = {accId: req.body.accId},
-                  userPreferences;
-              if (req.body.getPreference) {
-                userPreferences = PreferenceImpl.getWidgetTileCollection(prefData);
-              }
+              // Update lodge entry!
+              await Lodge.findByIdAndUpdate(accId, {
+                loggedInAs: data.loginAs === "receptionistLevel" ? 'Receptionist' : 'Manager'
+              });
               res.status(200).json({
                 success: true,
                 message: `Receptionist logged in as ${username}`,
                 permissionLevel: data.loginAs,
                 loggedInUser: data.username,
-                loggedInAsRecep: data.loginAs === "receptionistLevel",
-                userPref: userPreferences
+                loggedInAsRecep: data.loginAs === "receptionistLevel"
               })
             }
           } else {
