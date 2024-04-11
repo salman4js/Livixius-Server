@@ -376,7 +376,7 @@ router.post("/:id/getttotalamountofallvouchermodel", voucherController.getTotalA
 // Multiple Login Routes!
 router.post("/:id/addmultiplelogin", multipleLoginController.addLogins);
 
-router.get("/:id/getlogins", multipleLoginController.getLogins);
+router.get("/:id/get-logins", multipleLoginController.getLogins);
 
 router.post("/:id/login-as", multipleLoginController.loginAs);
 

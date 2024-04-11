@@ -1,6 +1,5 @@
 const MultipleLogins = require("../../models/MultipleLogins");
 const Lodge = require("../../models/Lodges");
-const PreferenceImpl = require("../preference.collection/preference.collection.impl");
 const MultipleLoginImpl = require('./multiple.login.implementation');
 const ResponseHandler = require('../../ResponseHandler/ResponseHandler');
 
