@@ -8,7 +8,13 @@ class EditController extends BaseController {
       this.options.implOptions = this.options.request.body;
       this._addParamsInImplOptions();
       this._initiateAction().then((result) => {
-          this.responseHandler.parser(this.options.response, {statusCode: 200, result: result, success: true});
+          if(!result.notUpdated){
+              this.responseHandler.parser(this.options.response, {statusCode: 200, result: result, success: true});
+          } else {
+              this.responseHandler.parser(this.options.response, {statusCode: 200, message: result.message, success: false});
+          }
+      }).catch((err) => {
+         this.responseHandler.parser(this.options.response, {statusCode: 500, error: err});
       });
     };
 }

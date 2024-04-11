@@ -31,6 +31,9 @@ const userController = require("../controllers/userController");
 // Importing Channel Manager!
 const channel = require("./startup.data/startup.data.js");
 
+// Response Handler!
+const ResponseHandler = require('../ResponseHandler/ResponseHandler');
+
 // Importing Brew-Date package
 const bd = require('brew-date');
 
@@ -209,112 +212,23 @@ const dishByRoom = (req, res, next) => {
 
 
 const roomsUpdater = async (req, res, next) => {
-
-  if(req.body.roomno === ""){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.bedCount === ""){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.suiteName === ""){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.roomno === undefined){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.bedCount === undefined){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.suiteName === undefined){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else {
-    try{
-      if(await checkOccupiedData(req.body.roomId)){
-        res.status(200).json({
-          success : false,
-          message : "Room already occupied, You can't modify occupied room's data!"
-        })
-      } else {
-        
-        // When we manually set the room status, we have to keep track of old status
-        // So that when releasing it from the custom state, it will go back to what state it is already in..
-        // get the current room status constant and room status and store it in the prev states of those!
-        var roomInstance = await Room.findById({_id: req.body.roomId});
-        var currentRoomStatusConstant = roomInstance.prevRoomStatusConstant;
-        var currentRoomStatus = roomInstance.prevRoomStatus;
-      
-        // Update room price everytime the suite type gets updated!
-        const roomPrice = await RoomType.findOne({lodge : req.params.id, suiteType: req.body.suiteName});
-        Room.findByIdAndUpdate(req.body.roomId, {
-          floorNo: req.body.floorNo,
-          roomno: req.body.roomno,
-          suiteName: req.body.suiteName,
-          roomStatusConstant: req.body.roomStatus !== undefined && req.body.roomStatus !== 'Release' ? req.body.roomStatusConstant : currentRoomStatusConstant, 
-          roomStatus: req.body.roomStatus !== undefined && req.body.roomStatus !== 'Release' ? req.body.roomStatus : currentRoomStatus,
-          prevRoomStatus: req.body.roomStatus !== undefined ? currentRoomStatus : undefined,
-          prevRoomStatusConstant: req.body.roomStatus !== undefined ? currentRoomStatusConstant : undefined,
-          bedCount: req.body.bedCount,
-          price : roomPrice.price
-        }, {new: true}) // This will return the updated data so that UI collections can be updated.
-          .then(data => {
-            res.status(200).json({
-              success : true,
-              message : "Room Data Updated",
-              updatedData: data
-            })
-          })
-          .catch(err => {
-            res.status(200).json({
-              success : false,
-              message : "Some internal error occured"
-            })
-          })
-      }
-    } catch(err) {
-      res.status(200).json({
-        success : false,
-        message : "Some internal error occured!"
-      })
-    }
-  }
+  RoomControllerImpl._editRoomData(req.body).then((result) => {
+    ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: true});
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500, error: err});
+  });
 }
 
-const checkOccupiedData = async (roomId) => {
-  const value = await Room.findOne({ _id : roomId});
-  return value.isOccupied === 'true';
-};
-
 const deleteRoom = async (req, res, next) => {
-  Room.findByIdAndDelete(req.body.roomId)
-    .then(data => {
-      res.status(200).json({
-        success : true,
-        message : "Room data deleted successfully!"
-      })
-    })
-    .catch(err => {
-      res.status(200).json({
-        success : false,
-        message : "Some internal error occured!"
-      })
-    })
+  RoomControllerImpl._deleteRoomModel(req.body).then(() => {
+    ResponseHandler.staticParser(res, {statusCode: 204});
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500, error: err});
+  });
 }
 
 const getRoomId = (req,res,next) => {
-  if(req.body.roomno == undefined){
+  if(req.body.roomno === undefined){
     res.status(200).json({
       success : false,
       message : "Check your input!"
