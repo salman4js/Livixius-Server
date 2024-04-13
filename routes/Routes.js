@@ -56,7 +56,6 @@ const verifyJWT = async (req, res, next) => {
                   message : "Token has expired!"
                 })
             } else {
-              console.log(req.params.id);
                 // JWT Payload contains username from the database!
                 const authVerification = await checkUsername(req.params.id);
                 req.userId = decoded.id;
@@ -78,8 +77,7 @@ const verifyJWT = async (req, res, next) => {
   };
   
   const verifyJWTClassic = async (req, res, next) => {
-      console.log("accessing token verification");
-      const token = req.body.headers    
+      const token = req.body.headers
       if (!token) {
           res.status(200).json({
             success : false,
@@ -88,7 +86,6 @@ const verifyJWT = async (req, res, next) => {
       } else {
           jwt.verify(token, "secretValue", async (err, decoded) => {
               if (err) {
-                  console.log(err);
                   res.status(200).json({
                     success : false,
                     message : "Token has expired!"
@@ -97,13 +94,9 @@ const verifyJWT = async (req, res, next) => {
                   // JWT Payload contains username from the database!
                   const authVerification = await checkUserName(req.params.id);
                   req.userId = decoded.id;
-                  console.log("decoded_Name" ,decoded.name);
-                  console.log("Name" ,authVerification);
                   if(decoded.name === authVerification){
-                    console.log("Token verification done!");
                     next();
                   } else {
-                    console.log("Invalid auth access!");
                     res.status(200).json({
                       success : false,
                       message : "You are not authorized to access this data!"
@@ -470,7 +463,7 @@ router.delete('/:id/:selectedNodes/:widgetName/delete', async (req, res, next) =
     await deleteController.doAction().catch(next);
 });
 
-router.put('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
+router.patch('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
     const editController = new EditController(req, res, next);
     await editController.doAction().catch(next);
 });

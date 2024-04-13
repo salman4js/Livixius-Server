@@ -122,7 +122,7 @@ async function getVouchersModel(reqBody){
 
 async function editVoucherModel(options){
   return new Promise((resolve, reject) => {
-    VouchersModel.findByIdAndUpdate(options.voucherId, {
+    VouchersModel.findByIdAndUpdate(options.selectedNodes, {
       dateTime: options.dateTime,
       particulars: options.particulars,
       cashMode: options.cashMode,

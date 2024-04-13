@@ -33,7 +33,7 @@ async function loginAs(req,res,next){
     username = req.body.username
     password = req.body.password
     accId = req.body.lodge
-    MultipleLogins.findOne({username: username})
+    MultipleLogins.findOne({lodge: accId, username: username})
         .then(async data => {
           if (data) {
             if (data.password !== password) {
@@ -64,7 +64,7 @@ async function loginAs(req,res,next){
   } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Some internal error occured"
+      message: "Some internal error occurred"
     })
   }
 }

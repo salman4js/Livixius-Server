@@ -8,14 +8,17 @@ var controllerMapping = {
         multipleLogin: (options) => multipleLoginImpl.deleteLogins(options),
         roomAction: (options) => roomImpl._deleteRoomModel(options)
     },
-    PUT: {
+    PATCH: {
         voucherTracker: (options) => vouchersImpl.editVoucherModel(options),
         multipleLogin: (options) => multipleLoginImpl.editLogins(options),
-        roomAction: (options) => roomImpl._editRoomData(options)
+        roomAction: (options) => roomImpl._editRoomData(options),
+        roomTypeAction: (options) => roomImpl._editRoomTypeModel(options)
     },
     POST: {
         voucherTracker: (options) => vouchersImpl.addVoucherModel(options),
-        multipleLogin: (options) => multipleLoginImpl.addLogins(options)
+        multipleLogin: (options) => multipleLoginImpl.addLogins(options),
+        roomAction: (options) => roomImpl._createRoomModel(options),
+        roomTypeAction: (options) => roomImpl._createRoomTypeModel(options)
     }
 };
 
