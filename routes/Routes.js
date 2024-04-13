@@ -80,6 +80,7 @@ const verifyJWT = async (req, res, next) => {
       const token = req.body.headers
       if (!token) {
           res.status(200).json({
+            notAuthorized: true,
             success : false,
             message : "Please provide token!"
           })
@@ -87,6 +88,7 @@ const verifyJWT = async (req, res, next) => {
           jwt.verify(token, "secretValue", async (err, decoded) => {
               if (err) {
                   res.status(200).json({
+                    notAuthorized: true,
                     success : false,
                     message : "Token has expired!"
                   })
@@ -98,6 +100,7 @@ const verifyJWT = async (req, res, next) => {
                     next();
                   } else {
                     res.status(200).json({
+                      notAuthorized: true,
                       success : false,
                       message : "You are not authorized to access this data!"
                     })
