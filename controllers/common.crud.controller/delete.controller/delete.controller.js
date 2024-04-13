@@ -14,9 +14,7 @@ class DeleteController extends BaseController {
             } else {
                 this.responseHandler.parser(this.options.response, {statusCode: 200, message: result.message, success: false});
             }
-        }).catch((err) => {
-           this.responseHandler.parser(this.options.response, {statusCode: 500, error: err});
-        });
+        })
     };
 }
 

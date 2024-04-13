@@ -8,8 +8,12 @@ class CreateController extends BaseController {
     async doAction(){
       this.options.implOptions = this.options.request.body;
       this._initiateAction().then((result) => {
-         this.responseHandler.parser(this.options.response, {statusCode: 201, result: result, success: true});
-      });
+          if(!result?.notCreated){
+              this.responseHandler.parser(this.options.response, {statusCode: 201, result: result, success: true});
+          } else {
+              this.responseHandler.parser(this.options.response, {statusCode: 200, message: result.message, success: false});
+          }
+      })
     };
 }
 

@@ -1,79 +1,18 @@
-const Lodge = require("../models/Lodges.js");
+const RoomControllerImpl = require('./room.controller.implementation/room.controller.implementation')
+const ResponseHandler = require('../ResponseHandler/ResponseHandler');
 const RoomType = require("../models/RoomType.js");
 const Room = require("../models/Rooms.js");
 
 const createSuite = async (req,res,next) => {
-  if(req.body.suitetype == ""){
-    res.status(200).json({
-      success : false,
-      message : "That's the bad input!"
-    })
-  } else if(req.body.suitetype == undefined){
-    res.status(200).json({
-      success :  false,
-      message : "Check your input!"
-    })
-  } else if(req.body.suitetype == null){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.price == ""){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  }  else if(req.body.price == undefined){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.price == null) {
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(!(/^[0-9]+$/.test(req.body.price))){
-    res.status(200).json({
-      success : false,
-      message : "Price should be in number format!"
-    })
-  } else {
-    try{
-      if(await checkSuite(req.params.id, req.body.suitetype) === null){
-        const roomType = new RoomType({
-          suiteType : req.body.suitetype.toUpperCase(),
-          price : req.body.price,
-          extraBedPrice: req.body.extraPrice,
-          lodge : req.params.id
-        })
-        if(roomType){
-          await Lodge.findByIdAndUpdate({_id : roomType.lodge}, {$push : {types : roomType._id}})
-        }
-        await roomType.save()
-        res.status(200).json({
-          success : true,
-          message : "Room Type Added Successfully!"
-        })
-      } else {
-        res.status(200).json({
-          success : false,
-          message : "Room Type already exists."
-        })
-      }
-    } catch(err){
-      console.log(err);
-      res.status(200).json({
-        success : false,
-        message : "Some Internal Error Occured!"
-      })
+  RoomControllerImpl._createRoomTypeModel(req.body).then((result) => {
+    if(!result.notCreated){
+      ResponseHandler.staticParser(res, {statusCode: 201, result: result, success: true});
+    } else {
+      ResponseHandler.staticParser(res, {statusCode: 200, message: result.message, success: false});
     }
-  }
-}
-
-const checkSuite = async (lodgeId, suitetype) => {
-  const value = await RoomType.findOne({lodge : lodgeId, suiteType : suitetype})
-  return value;
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500, error: err});
+  });
 }
 
 const editTypeData = async (req,res,next) => {

@@ -1,10 +1,6 @@
 const Room = require("../models/Rooms.js");
 
-const Lodge = require("../models/Lodges.js");
-
 const UserDishes = require("../models/UserDishes.js");
-
-const DishRate = require("../models/DishRate.js");
 
 const UserServices = require("../models/UserServices.js");
 
@@ -13,8 +9,6 @@ const CallAWaiter = require("../models/CallAWaiter.js");
 const User = require("../models/User.js");
 
 const UserDb = require("../models/UserDb.js");
-
-const RoomType = require("../models/RoomType.js");
 
 // Payment tracker controller instance!
 const paymentTrackerController = require("../controllers/payment.tracker/payment.tracker.controller");
@@ -34,84 +28,17 @@ const channel = require("./startup.data/startup.data.js");
 // Response Handler!
 const ResponseHandler = require('../ResponseHandler/ResponseHandler');
 
-// Importing Brew-Date package
-const bd = require('brew-date');
-
 // Create room!
 const createRoom = async (req, res, next) => {
-  if (req.body.roomno == "") {
-    res.status(200).json({
-      success: false,
-      message: "Check the input"
-    })
-  } else if(req.body.bedcount == ""){
-    res.status(200).json({
-      success : false,
-      message : "Check the input"
-    })
-  } else if(req.body.suitename == ""){
-    res.status(200).json({
-      success : false,
-      message : "Check the input"
-    })
-  } else if(req.body.suitename == "Choose..."){
-    res.status(200).json({
-      success : false,
-      message : "Check your input!"
-    })
-  } else if(req.body.price == ""){
-    res.status(200).json({
-      success : false,
-      message : "Check your input"
-    })
-  } else {
-    try {
-      if(await checkDuplicate(req.params.id, req.body.roomno) === null){
-        const room = new Room({
-         floorNo: req.body.floorNo,
-         roomno: req.body.roomno,
-         bedCount: req.body.bedcount,
-         suiteName: req.body.suitename,
-         price : req.body.price,
-         extraBedPrice: req.body.extraBedPrice,
-         lodge: req.params.id
-       })
-       if (room) {
-         await Lodge.findByIdAndUpdate({ _id: room.lodge }, { $push: { rooms: room._id } })
-       }
-       await room.save();
-       
-       // After the room has been saved, set the initial room status to ['afterCleaned'] state!
-       const roomStatuses = await RoomStatusImplementation.getTheNextRoomState(req.body, 'afterCleaned');
-       req.body['roomStatus'] = roomStatuses.currentRoomStatus
-       req.body['nextRoomStatus'] = roomStatuses.nextRoomStatus
-       req.body['nextOfNextRoomStatus'] = roomStatuses.nextOfNextRoomStatus
-       req.body['roomStatusConstant'] = "afterCleaned";
-       req.body['roomId'] = room._id;
-       await RoomStatusImplementation.roomStatusSetter(req.body);
-       res.status(200).json({
-         success : true,
-         message : "Room created",
-         updatedData: room // Sending the created room data so that the roomData can be added in the global collections in the UI.
-       })
-      } else {
-        res.status(200).json({
-          success : false,
-          message : "Room No already exists!",
-        })
-      }
-    } catch (err) {
-      res.status(200).json({
-        success: false,
-        message: "Some internal Error"
-      })
+  RoomControllerImpl._createRoomModel(req.body).then((result) => {
+    if(result){
+      ResponseHandler.staticParser(res, {statusCode: 200, success: false, result: result});
+    } else {
+      ResponseHandler.staticParser(res, {statusCode: 201, success: true});
     }
-  }
-}
-
-const checkDuplicate = async (lodgeid, roomno) => {
-  const value = await Room.findOne({lodge : lodgeid, roomno : roomno});
-  return value;
+  }).catch((err) => {
+    ResponseHandler.staticParser(res, {statusCode: 500, error: err});
+  });
 }
 
 // Room lodge route handler!
@@ -213,15 +140,23 @@ const dishByRoom = (req, res, next) => {
 
 const roomsUpdater = async (req, res, next) => {
   RoomControllerImpl._editRoomData(req.body).then((result) => {
-    ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: true});
+    if(!result.notUpdated){
+      ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: false});
+    } else {
+      ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: true});
+    }
   }).catch((err) => {
     ResponseHandler.staticParser(res, {statusCode: 500, error: err});
   });
 }
 
 const deleteRoom = async (req, res, next) => {
-  RoomControllerImpl._deleteRoomModel(req.body).then(() => {
-    ResponseHandler.staticParser(res, {statusCode: 204});
+  RoomControllerImpl._deleteRoomModel(req.body).then((result) => {
+    if(result){
+      ResponseHandler.staticParser(res, {statusCode: 200, result: result, success: false});
+    } else {
+      ResponseHandler.staticParser(res, {statusCode: 204});
+    }
   }).catch((err) => {
     ResponseHandler.staticParser(res, {statusCode: 500, error: err});
   });
