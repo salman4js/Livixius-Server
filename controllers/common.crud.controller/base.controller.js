@@ -19,6 +19,9 @@ class BaseController {
 
     _addParamsInImplOptions(){
       Object.keys(this.options.request.params).forEach((param) => {
+         if(!this.options.implOptions){
+            this.options.implOptions = {}
+         }
          this.options.implOptions[param] = this.options[param];
       });
     };

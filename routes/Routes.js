@@ -37,79 +37,42 @@ const DeleteController = require('../controllers/common.crud.controller/delete.c
 const EditController = require('../controllers/common.crud.controller/edit.controller/edit.controller');
 const InsightsFilterController = require('../controllers/insights.filter.controller/insights.filter.controller');
 const CreateController = require('../controllers/common.crud.controller/create.controller/create.controller');
+const ReadController = require('../controllers/common.crud.controller/read.controller/read.controller');
 
 // JWT token verification
 const verifyJWT = async (req, res, next) => {
-    console.log("accessing token verification");
     const token = req.body?.headers?.["x-access-token"] || req.headers['x-access-token'];
     if (!token) {
         res.status(200).json({
-          success : false,
-          message : "Please provide token!"
+            notAuthorized: true,
+            success : false,
+            message : "Please provide token!"
         })
     } else {
         jwt.verify(token, "secretValue", async (err, decoded) => {
             if (err) {
-                console.log(err);
                 res.status(200).json({
-                  success : false,
-                  message : "Token has expired!"
+                    notAuthorized: true,
+                    success : false,
+                    message : "Token has expired!"
                 })
             } else {
                 // JWT Payload contains username from the database!
                 const authVerification = await checkUsername(req.params.id);
                 req.userId = decoded.id;
-                console.log(decoded.name);
-                console.log(authVerification);
                 if(decoded.name === authVerification){
-                  console.log("Token verification done!");
                   next();
                 } else {
-                  console.log("Invalid auth access!");
                   res.status(200).json({
-                    success : false,
-                    message : "You are not authorized to access this data!"
+                      notAuthorized: true,
+                      success : false,
+                      message : "You are not authorized to access this data!"
                   })
                 }
             }
         });
     }
-  };
-  
-  const verifyJWTClassic = async (req, res, next) => {
-      const token = req.body.headers
-      if (!token) {
-          res.status(200).json({
-            notAuthorized: true,
-            success : false,
-            message : "Please provide token!"
-          })
-      } else {
-          jwt.verify(token, "secretValue", async (err, decoded) => {
-              if (err) {
-                  res.status(200).json({
-                    notAuthorized: true,
-                    success : false,
-                    message : "Token has expired!"
-                  })
-              } else {
-                  // JWT Payload contains username from the database!
-                  const authVerification = await checkUserName(req.params.id);
-                  req.userId = decoded.id;
-                  if(decoded.name === authVerification){
-                    next();
-                  } else {
-                    res.status(200).json({
-                      notAuthorized: true,
-                      success : false,
-                      message : "You are not authorized to access this data!"
-                    })
-                  }
-              }
-          });
-      }
-    };
-  
+};
 
 // Check the username with JWT payload value
 const checkUsername = async (req_userId) => {
@@ -117,21 +80,13 @@ const checkUsername = async (req_userId) => {
   return username.username;
 }
 
-// Check username for classic!
-const checkUserName = async (req_userId) => {
-  const username = await User.findOne({room : req_userId}).exec();
-  return username.phonenumber;
-}
-
 // All GET Methods
-
 router.get("/:id/allusers", userController.allUser);
 
 router.get("/alllodge", lodgeController.allLodges)
 
 
 // All POST Methods
-
 router.post("/addusers", userController.addUser)
 
 router.post("/login", userController.loginUser);
@@ -158,7 +113,7 @@ router.post("/:id/deletelodge", lodgeController.deleteLodge)
 
 router.post("/:id/adddish", dishController.addDishLodge)
 
-router.post("/:id/dishlodge", verifyJWT, dishController.allDishLodge)
+router.post("/:id/dishlodge", dishController.allDishLodge)
 
 router.post("/:id/dishLodge-1", dishController.allDishLodge);
 
@@ -178,7 +133,7 @@ router.post("/deleteservice", serviceController.deleteService);
 
 router.post("/:id/createroom", roomController.createRoom);
 
-router.post("/:id/:state/roomlodge", verifyJWT, roomController.allRooms);
+router.post("/:id/:state/roomlodge", roomController.allRooms);
 
 router.post("/:id/:state/roomlodge-duplicate", roomController.allRooms);
 
@@ -192,7 +147,7 @@ router.post("/:id/roomone", roomController.roomOne);
 
 router.post("/:id/dishbyroom", roomController.dishByRoom);
 
-router.post("/:id/roombyid", verifyJWTClassic, roomController.roomById);
+router.post("/:id/roombyid", roomController.roomById);
 
 router.post("/:id/roomupdater", roomController.roomsUpdater);
 
@@ -254,7 +209,7 @@ router.post("/:id/checkdeliveredroom", userDishController.checkDeliveredRoom);
 
 router.post("/:id/deleteroomdish", userDishController.deleteRoomDish);
 
-router.get("/:id/:skipcount/:limitcount/userdb", verifyJWT, userController.userdb);
+router.get("/:id/:skipcount/:limitcount/userdb", userController.userdb);
 
 router.get("/:id/:roomId/:selectedNodes/historynode", userController.userdbRoom);
 
@@ -469,6 +424,11 @@ router.delete('/:id/:selectedNodes/:widgetName/delete', async (req, res, next) =
 router.patch('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
     const editController = new EditController(req, res, next);
     await editController.doAction().catch(next);
+});
+
+router.get('/:id/:selectedNodes/:widgetName/read', async(req, res, next) => {
+   const readController = new ReadController(req, res, next);
+   await readController.doAction().catch(next);
 });
 
 router.post('/:id/:widgetName/create', async (req, res, next) => {

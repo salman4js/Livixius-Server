@@ -11,7 +11,7 @@ class CustomTemplateImplementation {
 
     isValidData(model){
       var mandatoryFields = ['templateName', 'customTemplate', 'accId'];
-      this.isDataValid = commonUtils.verifyMandatoryFields(model, mandatoryFields);
+      this.isDataValid = commonUtils.verifyMandatoryFields(Object.keys(model), mandatoryFields);
     };
 
     async _updateParentSchema(entry, action){

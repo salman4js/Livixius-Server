@@ -10,7 +10,7 @@ class LivixiusMessageImplementation {
 
     isValidData(model){
         const mandatoryFields = ['name', 'mobile', 'email', 'message'];
-        this.isDataValid = commonUtils.verifyMandatoryFields(model, mandatoryFields);
+        this.isDataValid = commonUtils.verifyMandatoryFields(Object.keys(model), mandatoryFields);
     };
 
     async addNewMessage(model){
