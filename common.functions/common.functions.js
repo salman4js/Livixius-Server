@@ -28,10 +28,8 @@ function getTimeBetweenWithDate(date, dateTime){
     
   const checkin = result.indexOf(dateTime[0]);
   const checkout = result.indexOf(dateTime[1]);
-      
-  const value = result.slice(checkin, checkout + 1);
 
-  return value;  
+  return result.slice(checkin, checkout + 1);
 }
 
 // trim data as per the need!
@@ -53,7 +51,7 @@ function trimData(data, modelData, inArray){
 
 // Add model data attribute!
 function addModelDataAttribute(modelData, attribute){ // here attribute means the attribute to get added!
-  var result = 0;
+  let result = 0;
   modelData.map((options) => {
     result += Number(options[attribute]);
   })
@@ -83,9 +81,8 @@ function transformNonValidValues(data, transformInto){
     @params mandatoryFields Array
   **/
 function verifyMandatoryFields(fields, mandatoryFields){
-  var value = Object.keys(fields);
-  for(var i = 0; i <= mandatoryFields.length - 1; i++){
-    if(!value.includes(mandatoryFields[i])){
+  for(let i = 0; i <= mandatoryFields.length - 1; i++){
+    if(!fields.includes(mandatoryFields[i])){
       return false;
     }
   }
@@ -103,13 +100,6 @@ function checkIfValid(data, additionalCheck){
   }
 };
 
-// Get room status constant line up!
-function getRoomStatusConstants(){
-  // Default room status order!
-  var roomStatusOrder = ['afterCheckedout', 'inCleaning', 'afterCleaned', 'afterCheckin'];
-  return roomStatusOrder;
-};
-
 // Get gst percent!
 function getGSTPercent(amount){
   return amount > 7500 ? 0.18 : 0.12;
@@ -119,8 +109,7 @@ function getGSTPercent(amount){
 function getTaxableAmount(amountPaid, pricePerDay){
   var gstPercent = getGSTPercent(pricePerDay);
   var amountWithoutGST = amountPaid / (1 + gstPercent);
-  var taxableAmount = amountPaid - amountWithoutGST;
-  return taxableAmount;
+  return amountPaid - amountWithoutGST;
 };
 
 // Convert date into server readable format, In which the date has been stored in the database format.
@@ -145,6 +134,6 @@ function convertDateIntoCustomFormat(dateString, format, options){
 
 module.exports = {
   getTimeBetweenWithDate, trimData, addModelDataAttribute, transformNonValidValues,
-  checkIfValid, getRoomStatusConstants, getTaxableAmount, convertDateIntoCustomFormat,
+  checkIfValid, getTaxableAmount, convertDateIntoCustomFormat,
   verifyMandatoryFields, formatCustomDateIntoDateFormat
 }

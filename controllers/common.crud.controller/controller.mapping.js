@@ -1,24 +1,31 @@
-const vouchersImpl = require('../voucherController/voucher.implementation');
-const roomImpl = require('../room.controller.implementation/room.controller.implementation');
-const multipleLoginImpl = require('../MultipleLoginController/multiple.login.implementation');
+const VouchersImpl = require('../voucherController/voucher.implementation');
+const RoomImpl = require('../room.controller.implementation/room.controller.implementation');
+const MultipleLoginImpl = require('../MultipleLoginController/multiple.login.implementation');
+const CustomConfigCalcImpl = require('../custom.configurations.implementations/custom.config.calc.implementations');
 
 var controllerMapping = {
     DELETE: {
-        voucherTracker: (options) => vouchersImpl.deleteVoucherModel(options),
-        multipleLogin: (options) => multipleLoginImpl.deleteLogins(options),
-        roomAction: (options) => roomImpl._deleteRoomModel(options)
+        voucherTracker: (options) => VouchersImpl.deleteVoucherModel(options),
+        multipleLogin: (options) => MultipleLoginImpl.deleteLogins(options),
+        roomAction: (options) => RoomImpl._deleteRoomModel(options),
+        customConfigCalc: (options) => new CustomConfigCalcImpl(options).deleteCustomConfig()
     },
     PATCH: {
-        voucherTracker: (options) => vouchersImpl.editVoucherModel(options),
-        multipleLogin: (options) => multipleLoginImpl.editLogins(options),
-        roomAction: (options) => roomImpl._editRoomData(options),
-        roomTypeAction: (options) => roomImpl._editRoomTypeModel(options)
+        voucherTracker: (options) => VouchersImpl.editVoucherModel(options),
+        multipleLogin: (options) => MultipleLoginImpl.editLogins(options),
+        roomAction: (options) => RoomImpl._editRoomData(options),
+        roomTypeAction: (options) => RoomImpl._editRoomTypeModel(options),
+        customConfigCalc: (options) => new CustomConfigCalcImpl(options).editCustomConfig()
     },
     POST: {
-        voucherTracker: (options) => vouchersImpl.addVoucherModel(options),
-        multipleLogin: (options) => multipleLoginImpl.addLogins(options),
-        roomAction: (options) => roomImpl._createRoomModel(options),
-        roomTypeAction: (options) => roomImpl._createRoomTypeModel(options)
+        voucherTracker: (options) => VouchersImpl.addVoucherModel(options),
+        multipleLogin: (options) => MultipleLoginImpl.addLogins(options),
+        roomAction: (options) => RoomImpl._createRoomModel(options),
+        roomTypeAction: (options) => RoomImpl._createRoomTypeModel(options),
+        customConfigCalc: (options) => new CustomConfigCalcImpl(options).addNewCustomFormula()
+    },
+    GET: {
+        customConfigCalc: (options) => new CustomConfigCalcImpl(options).getCustomConfig()
     }
 };
 
