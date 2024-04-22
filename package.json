@@ -18,7 +18,7 @@
     "brew-date": "^1.4.5",
     "cors": "^2.8.5",
     "csv-writer": "^1.6.0",
-    "express": "^4.18.1",
+    "express": "^4.19.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.5.5",

@@ -18,12 +18,13 @@ class BaseController {
     };
 
     _addParamsInImplOptions(){
-      Object.keys(this.options.request.params).forEach((param) => {
-         if(!this.options.implOptions){
-            this.options.implOptions = {}
-         }
-         this.options.implOptions[param] = this.options[param];
-      });
+        if(!this.options.implOptions) this.options.implOptions = {};
+        Object.keys(this.options.request.query).forEach((query) => {
+            this.options.implOptions[query] = this.options.request.query[query];
+        });
+        Object.keys(this.options.request.params).forEach((param) => {
+            this.options.implOptions[param] = this.options.request.params[param];
+        });
     };
 
     _initiateAction(){

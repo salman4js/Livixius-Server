@@ -39,18 +39,39 @@ class CustomConfigCalcImplementations {
 
     getCustomConfig(){
         return new Promise((resolve, reject) => {
-            const selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
-            CustomConfigCalcModel.find({_id:{$in: selectedNodes}}).then((result) => {
+            let filterQuery = () => {
+                const filter = {accId: Mongoose.Types.ObjectId(this.options.accId)};
+                if(this.options.selectedNodes){
+                    let selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
+                    filter['_id'] = {$in: selectedNodes}
+                }
+                return filter;
+            };
+            let QuerySearch = CustomConfigCalcModel.find(filterQuery());
+            if (this.options.fields) {
+                QuerySearch = QuerySearch.select(this.options.fields);
+            }
+            QuerySearch.then((result) => {
                 resolve(result);
             }).catch((err) => {
                 reject(err);
             });
-      });
+        });
     };
 
     editCustomConfig(){
       return new Promise((resolve, reject) => {
          const selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
+         if(this.options.fields){
+             CustomConfigCalcModel.findById({_id: selectedNodes}).select('fields').exec().then((fields) => {
+                 const intersection = _.intersectionBy(fields, this.options.fields);
+                 _.forEach(intersection, (model) => {
+                     const indexToBeUpdated = _.findIndex(fields, {'fieldName': model.fieldName});
+                     fields[indexToBeUpdated] = _.find(this.options.fields, {'fieldName': model.fieldName});
+                 });
+                 this.options.fields = fields;
+             });
+         }
          CustomConfigCalcModel.findByIdAndUpdate({_id: selectedNodes}, this.options, {new: true}).then((result) => {
              resolve(result);
          }).catch((err) => {
@@ -99,7 +120,6 @@ class CustomConfigCalcImplementations {
                                     if(customConfigModel.isSelectedConfig){
                                         updateQuery['$set'] = {selectedCustomCalcConfig: customConfigModel._id};
                                     }
-                                    console.log(updateQuery);
                                     Lodge.findByIdAndUpdate({_id: customConfigModel.accId}, updateQuery).then(() => {
                                         resolve();
                                     }).catch((err) => {
