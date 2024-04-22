@@ -416,26 +416,25 @@ router.post('/send-messages', LivixiusMessageController.addNewMessage.bind(Livix
 router.get('/get-messages', LivixiusMessageController.getAllMessages.bind(LivixiusMessageController));
 
 // Common controllers declarations!
-router.delete('/:id/:selectedNodes/:widgetName/delete', async (req, res, next) => {
+router.delete('/:accId/:accName/:selectedNodes/:widgetName/delete', async (req, res, next) => {
     const deleteController = new DeleteController(req, res, next);
     await deleteController.doAction().catch(next);
 });
 
-router.patch('/:id/:selectedNodes/:widgetName/edit', async(req, res, next) => {
+router.patch('/:accId/:accName/:selectedNodes/:widgetName/edit', async(req, res, next) => {
     const editController = new EditController(req, res, next);
     await editController.doAction().catch(next);
 });
 
-router.get('/:id/:selectedNodes/:widgetName/read', async(req, res, next) => {
-   const readController = new ReadController(req, res, next);
-   await readController.doAction().catch(next);
+router.get('/:accId/:accName/:widgetName/read', async (req, res, next) => {
+    const readController = new ReadController(req, res, next);
+    await readController.doAction().catch(next);
 });
 
-router.post('/:id/:widgetName/create', async (req, res, next) => {
+router.post('/:accId/:accName/:widgetName/create', async (req, res, next) => {
     const createController = new CreateController(req, res, next);
     await createController.doAction().catch(next);
 });
-
 
 // Insights filter endpoint.
 router.get('/:id/:filters/:selectedDates/insights-filter', async(req, res, next) => {
