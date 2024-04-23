@@ -59,25 +59,42 @@ class CustomConfigCalcImplementations {
         });
     };
 
-    editCustomConfig(){
-      return new Promise((resolve, reject) => {
-         const selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
-         if(this.options.fields){
-             CustomConfigCalcModel.findById({_id: selectedNodes}).select('fields').exec().then((fields) => {
-                 const intersection = _.intersectionBy(fields, this.options.fields);
-                 _.forEach(intersection, (model) => {
-                     const indexToBeUpdated = _.findIndex(fields, {'fieldName': model.fieldName});
-                     fields[indexToBeUpdated] = _.find(this.options.fields, {'fieldName': model.fieldName});
-                 });
-                 this.options.fields = fields;
-             });
-         }
-         CustomConfigCalcModel.findByIdAndUpdate({_id: selectedNodes}, this.options, {new: true}).then((result) => {
-             resolve(result);
-         }).catch((err) => {
-            reject(err);
-         });
-      });
+    editCustomConfig() {
+        return new Promise((resolve, reject) => {
+            const selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
+            const updateOptions = () => {
+                CustomConfigCalcModel.findByIdAndUpdate({_id: selectedNodes}, this.options, {new: true})
+                    .then((result) => {
+                        resolve(result);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            };
+            if (this.options.fields) {
+                CustomConfigCalcModel.findById(selectedNodes, 'fields')
+                    .then((fieldCollection) => {
+                        const fCollection = _.clone(fieldCollection.fields);
+                        this.options.fields.forEach((field) => {
+                            const indexToBeUpdated = _.findIndex(fCollection, (fieldModel) => {
+                                return fieldModel.fieldName === field.fieldName;
+                            });
+                            if (indexToBeUpdated !== -1) {
+                                fCollection[indexToBeUpdated] = field;
+                            } else {
+                                fCollection.push(field);
+                            }
+                        });
+                        this.options.fields = fCollection;
+                        updateOptions();
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            } else {
+                updateOptions();
+            }
+        });
     };
 
     deleteCustomConfig(){
