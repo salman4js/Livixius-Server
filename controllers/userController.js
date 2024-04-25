@@ -330,7 +330,7 @@ async function updateRefundTracker(data){
 };
 
 const deleteUser = async (req, res, next) => {
-    // Check for the date, if its the first date of the month, reset the invoice
+    // Check for the date, if it's the first date of the month, reset the invoice
     // Count to zero.
     const date = new Date();
     var refundTrackerUpdated;

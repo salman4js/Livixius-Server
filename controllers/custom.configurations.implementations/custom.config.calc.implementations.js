@@ -44,6 +44,8 @@ class CustomConfigCalcImplementations {
                 if(this.options.selectedNodes){
                     let selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
                     filter['_id'] = {$in: selectedNodes}
+                } else if(this.options['selectedConfigOnly']){
+                    filter['isSelectedConfig'] = true;
                 }
                 return filter;
             };
