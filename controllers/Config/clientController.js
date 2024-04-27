@@ -120,7 +120,8 @@ const updateMatrix = (req,res,next) => {
     restrictAdvance: req.body.restrictAdvance,
     checkinDateEditable: req.body.checkinDateEditable,
     showFullDetails: req.body.showFullDetails,
-    customHtmlContent: req.body.customHtmlContent
+    customHtmlContent: req.body.customHtmlContent,
+    customAdminConfig: req.body.customAdminConfig
   })
   .then(data => {
     res.status(200).json({

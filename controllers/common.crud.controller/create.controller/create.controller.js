@@ -11,7 +11,7 @@ class CreateController extends BaseController {
           if(!result?.notCreated){
               this.responseHandler.parser(this.options.response, {statusCode: 201, result: result, success: true});
           } else {
-              this.responseHandler.parser(this.options.response, {statusCode: 200, message: result.message, success: false});
+              this.responseHandler.parser(this.options.response, {statusCode: 400, message: result.message, success: false});
           }
       })
     };
