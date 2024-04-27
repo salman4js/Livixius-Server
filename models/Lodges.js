@@ -84,6 +84,7 @@ const lodgeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CustomConfigurationCalc'
     }],
+    customAdminConfig: {type: Object, default: {label: undefined, isEnabled: false}},
     selectedCustomCalcConfig: {type: mongoose.Schema.Types.ObjectId},
     loggedInAs: {type: String, default: ''}, // 1 being as logged in as Manager, 0 being as logged in as Receptionist.
     afterCheckedout: {type: String},

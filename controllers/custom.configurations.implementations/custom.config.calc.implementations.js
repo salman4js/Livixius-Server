@@ -8,7 +8,7 @@ const CustomConfigControllerConstants = require('./custom.config.controller.cons
 class CustomConfigCalcImplementations {
     constructor(options) {
         this.options = options;
-        this.mandatoryValues = ['configName', 'fields', 'formName', 'accId'];
+        this.mandatoryValues = ['configName', 'accId'];
         this.allowedFields = ['totalAmount', 'extraBedPrice', 'discount', 'advance'];
     };
 
@@ -64,15 +64,32 @@ class CustomConfigCalcImplementations {
     editCustomConfig() {
         return new Promise((resolve, reject) => {
             const selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
-            const updateOptions = () => {
-                CustomConfigCalcModel.findByIdAndUpdate({_id: selectedNodes}, this.options, {new: true})
-                    .then((result) => {
-                        resolve(result);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
+
+            const checkForSelectedConfig = () => {
+                return new Promise((resolve, reject) => {
+                    if(this.options.isSelectedConfig){
+                        CustomConfigCalcModel.updateMany({accId: this.options.accId, isSelectedConfig: true}, {isSelectedConfig: false})
+                            .then(() => resolve())
+                            .catch((err) => reject(err));
+                    } else {
+                        resolve();
+                    }
+                });
             };
+
+            const updateOptions = () => {
+                checkForSelectedConfig()
+                    .then(() => {
+                        CustomConfigCalcModel.findByIdAndUpdate({_id: selectedNodes}, this.options, {new: true}).then((result) => {
+                            resolve(result);
+                        }).catch((err) => {
+                            reject(err);
+                        })
+                    }).catch((err) => {
+                        reject(err);
+                });
+            };
+
             if (this.options.fields) {
                 CustomConfigCalcModel.findById(selectedNodes, 'fields')
                     .then((fieldCollection) => {
@@ -130,7 +147,7 @@ class CustomConfigCalcImplementations {
            if(isValid){
                 this.isConfigNameAlreadyTaken().then((isAlreadyTaken) => {
                     if(!isAlreadyTaken){
-                        const areAllowedFields = this._checkForNotAllowedFields(this.options.fields);
+                        const areAllowedFields = this.options.fields ? this._checkForNotAllowedFields(this.options.fields) : true;
                         if(areAllowedFields){
                             const customConfigModel = new CustomConfigCalcModel(this.options);
                             if(customConfigModel){
@@ -140,7 +157,7 @@ class CustomConfigCalcImplementations {
                                         updateQuery['$set'] = {selectedCustomCalcConfig: customConfigModel._id};
                                     }
                                     Lodge.findByIdAndUpdate({_id: customConfigModel.accId}, updateQuery).then(() => {
-                                        resolve();
+                                        resolve(customConfigModel);
                                     }).catch((err) => {
                                         reject(err);
                                     });
