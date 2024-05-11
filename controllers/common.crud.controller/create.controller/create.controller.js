@@ -7,6 +7,7 @@ class CreateController extends BaseController {
 
     async doAction(){
       this.options.implOptions = this.options.request.body;
+      this._addParamsInImplOptions();
       this._initiateAction().then((result) => {
           if(!result?.notCreated){
               this.responseHandler.parser(this.options.response, {statusCode: 201, result: result, success: true});
