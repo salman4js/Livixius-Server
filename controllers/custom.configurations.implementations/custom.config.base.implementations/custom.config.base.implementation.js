@@ -68,7 +68,8 @@ class CustomConfigBaseImplementation {
                         const fCollection = _.clone(fieldCollection.fields);
                         this.options.fields.forEach((field) => {
                             const indexToBeUpdated = _.findIndex(fCollection, (fieldModel) => {
-                                return (options.comparisonObj === '_id' ? fieldModel[options.comparisonObj].toString()
+                                return (options.comparisonObj === '_id' ? (fieldModel[options.comparisonObj] !== undefined ?
+                                        fieldModel[options.comparisonObj].toString() : false)
                                     : fieldModel[options.comparisonObj]) === field[options.comparisonObj];
                             });
                             if (indexToBeUpdated !== -1) {
