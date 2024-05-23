@@ -20,7 +20,7 @@ class CustomConfigBaseImplementation {
         this.options.fields.forEach((obj) => {
             fieldsToCompare.push(obj.fieldName);
         });
-        return CommonUtils.verifyMandatoryFields(this.customBaseImplConstants[this.options.widgetName][this.action].allowedFields, fieldsToCompare);
+        return CommonUtils.verifyMandatoryFields(this.customBaseImplConstants[this.options.widgetName][this.action].allowedValues, fieldsToCompare);
     };
 
     async isConfigNameAlreadyTaken(CustomConfigModel){
@@ -48,16 +48,30 @@ class CustomConfigBaseImplementation {
                        if(areAllowedFields){
                            resolve({isValidRequestData: true});
                        } else {
-                           resolve({notCreated: true, message: CustomConfigControllerConstants.customCalc.notAllowedFields});
+                           resolve({notCreated: true, message: CustomConfigControllerConstants[this.options.widgetName].notAllowedFields});
                        }
                    } else {
-                       resolve({notCreated: true, message: CustomConfigControllerConstants.customCalc.configNameAlreadyTaken});
+                       resolve({notCreated: true, message: CustomConfigControllerConstants[this.options.widgetName].configNameAlreadyTaken});
                    }
                })
            } else {
                resolve({notCreated: true, message: CustomConfigControllerConstants[this.options.widgetName].inValidArguments});
            }
        })
+    };
+
+    prepareFilterQuery(additionalQuery){
+        const filter = {accId: Mongoose.Types.ObjectId(this.options.accId)};
+        if(this.options.selectedNodes){
+            let selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
+            filter['_id'] = {$in: selectedNodes}
+        }
+        if(additionalQuery && _.isEmpty(additionalQuery)){
+            Object.keys(additionalQuery).forEach((query) => {
+                filter[query] = additionalQuery[query];
+            });
+        }
+        return filter;
     };
 
     updateFields(options){
@@ -90,9 +104,14 @@ class CustomConfigBaseImplementation {
         });
     };
 
-    getCustomConfig(CustomConfigModel, filterQuery){
+    getCustomConfig(options){
         return new Promise((resolve, reject) => {
-            let QuerySearch = CustomConfigModel.find(filterQuery());
+            let QuerySearch;
+            if(options.aggregateQuery){
+                QuerySearch = options.model.aggregate(options.aggregateQuery(options.additionalQuery));
+            } else {
+                QuerySearch = options.model.find(options.filterQuery(options.additionalQuery));
+            }
             if (this.options.fields) {
                 QuerySearch = QuerySearch.select(this.options.fields);
             }

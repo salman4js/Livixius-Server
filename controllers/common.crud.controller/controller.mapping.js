@@ -3,6 +3,7 @@ const RoomImpl = require('../room.controller.implementation/room.controller.impl
 const MultipleLoginImpl = require('../MultipleLoginController/multiple.login.implementation');
 const CustomConfigCalcImpl = require('../custom.configurations.implementations/custom.config.calc.implementations');
 const CustomConfigReportImpl = require('../custom.configurations.implementations/custom.config.report.implementation');
+const CustomReportGeneration = require('../custom.configurations.implementations/custom.report.generation');
 
 const controllerMapping = {
     DELETE: {
@@ -30,7 +31,8 @@ const controllerMapping = {
     },
     GET: {
         customConfigCalc: (options) => new CustomConfigCalcImpl(options).getCustomConfig(),
-        customConfigReport: (options) => new CustomConfigReportImpl(options).getCustomConfig()
+        customConfigReport: (options) => new CustomConfigReportImpl(options).getCustomConfig(),
+        customReport: (options) => new CustomReportGeneration(options).execute()
     }
 };
 

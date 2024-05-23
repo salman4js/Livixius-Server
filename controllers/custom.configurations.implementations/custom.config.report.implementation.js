@@ -1,6 +1,4 @@
 const Mongoose = require('mongoose');
-const _ = require('lodash');
-const Lodge = require('../../models/Lodges');
 const CustomConfigReportModel = require('../../models/custom.configurations/custom.configuration.report');
 const CustomConfigBaseImplementation = require("./custom.config.base.implementations/custom.config.base.implementation");
 
@@ -11,16 +9,9 @@ class CustomConfigReportImplementation extends CustomConfigBaseImplementation{
     };
 
     getCustomConfig(){
-        let filterQuery = () => {
-            const filter = {accId: Mongoose.Types.ObjectId(this.options.accId)};
-            if(this.options.selectedNodes){
-                let selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
-                filter['_id'] = {$in: selectedNodes}
-            }
-            return filter;
-        };
         return new Promise((resolve, reject) => {
-           super.getCustomConfig(CustomConfigReportModel, () => filterQuery()).then((result) => {
+            const configOptions = {model: CustomConfigReportModel, filterQuery: () => this.prepareFilterQuery()}
+            super.getCustomConfig(configOptions).then((result) => {
                resolve(result);
             }).catch((err) => {
                reject(err);
