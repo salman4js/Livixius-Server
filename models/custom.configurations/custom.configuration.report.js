@@ -6,6 +6,7 @@ const CustomConfigurationReport = new Mongoose.Schema({
         fieldName: {type: String},
         isSelected: {type: Boolean},
         isCustomField: {type: Boolean},
+        objectName: {type: String},
         fieldCustomFormula: {type: String},
         createdBy: {type: String, default: 'Manager'}, // By setting these fields default value as Manager,
         // We can handle when any client doesn't pass these two parameter, and when multiple login is not enabled

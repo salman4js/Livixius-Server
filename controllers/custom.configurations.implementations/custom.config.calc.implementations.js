@@ -1,6 +1,4 @@
 const Mongoose = require("mongoose");
-const _ = require('lodash');
-const Lodge = require('../../models/Lodges');
 const CustomConfigCalcModel = require('../../models/custom.configurations/custom.configurations.calc');
 const CustomConfigControllerConstants = require('./custom.config.base.implementations/custom.config.controller.constants');
 const CustomConfigBaseImplementation = require("./custom.config.base.implementations/custom.config.base.implementation");
@@ -12,22 +10,17 @@ class CustomConfigCalcImplementations extends CustomConfigBaseImplementation {
     };
 
     getCustomConfig(){
-        let filterQuery = () => {
-            const filter = {accId: Mongoose.Types.ObjectId(this.options.accId)};
-            if(this.options.selectedNodes){
-                let selectedNodes = JSON.parse(this.options.selectedNodes).map(id => Mongoose.Types.ObjectId(id));
-                filter['_id'] = {$in: selectedNodes}
-            } else if(this.options['selectedConfigOnly']){
-                filter['isSelectedConfig'] = true;
-            }
-            return filter;
-        };
+        const additionalQuery = {};
+        if(this.options['selectedConfigOnly']){
+            additionalQuery['isSelectedConfig'] = true;
+        }
         return new Promise((resolve, reject) => {
-           super.getCustomConfig(CustomConfigCalcModel, () => filterQuery()).then((result) => {
-               resolve(result);
-           }).catch((err) => {
-              reject(err);
-           });
+            const configOptions = {model: CustomConfigCalcModel, filterQuery: (query) => this.prepareFilterQuery(query), additionalQuery: additionalQuery}
+            super.getCustomConfig(configOptions).then((result) => {
+                resolve(result);
+            }).catch((err) => {
+                reject(err);
+            });
         });
     };
 

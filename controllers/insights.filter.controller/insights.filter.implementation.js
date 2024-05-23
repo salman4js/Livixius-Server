@@ -16,8 +16,8 @@ class InsightsFilterImplementation {
                 $match: {
                     lodge: mongoose.Types.ObjectId(this.implOptions.id),
                     dateofcheckout: {
-                        $gte: this.implOptions.selectedDates.fromDate,
-                        $lte: this.implOptions.selectedDates.toDate
+                        $gte: this.implOptions.selectedDates["fromDate"],
+                        $lte: this.implOptions.selectedDates["toDate"]
                     },
                     roomType: { $in: this.implOptions.filters.roomType }
                 }
