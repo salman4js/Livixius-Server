@@ -112,13 +112,27 @@ class CustomReportGeneration extends CustomConfigBaseImplementation {
         return formulaResult;
     };
 
+    prepareFieldsNameHeader(customFields){
+        const reportFieldsHeader = {};
+        customFields.map((field) => {
+            if(field.objectName){
+                reportFieldsHeader[field.objectName] = field.fieldName;
+            } else {
+                reportFieldsHeader[field.fieldName] = field.fieldName;
+            }
+        });
+        return reportFieldsHeader;
+    };
+
     execute(){
         return new Promise((resolve, reject) => {
             let isValid = this.checkForValidRequestData({action: 'generation'});
             if(isValid){
                 this.getCustomizedFields().then((customReportConfig) => {
                     this.getHistoryValue(customReportConfig[0].fields).then((fieldValues) => {
-                        resolve(this.cleanUpCustomFormulaResult(this.formValuesForCustomField(fieldValues)));
+                        const customReportFields = this.cleanUpCustomFormulaResult(this.formValuesForCustomField(fieldValues));
+                        const customReportHeader = this.prepareFieldsNameHeader(customReportConfig[0].fields);
+                        resolve({customReportFields, customReportHeader});
                     }).catch((err) => {
                         reject(err);
                     });
