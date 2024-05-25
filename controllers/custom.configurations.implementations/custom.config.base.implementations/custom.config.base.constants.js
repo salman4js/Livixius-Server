@@ -12,7 +12,7 @@ const CustomConfigBaseConstants = Object.freeze({
     },
     customReport: {
         generation: {
-            mandatoryValues: ['selectedNodes', 'accId']
+            mandatoryValues: ['selectedNodes', 'accId', 'fromDate', 'toDate']
         }
     }
 });

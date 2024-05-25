@@ -3,7 +3,6 @@ const User = require('../../models/User');
 const UserDb = require('../../models/UserDb');
 const PrebookUser = require('../../models/PreBookUser');
 const _ = require('lodash');
-const Mongoose = require("mongoose");
 
 // Check frequent to find the favorites customers!
 async function checkFrequent(users){
@@ -45,7 +44,7 @@ async function getBookingHistory(data) {
         limitCount = parseInt(data.limitcount) || 15; // 15 is the limit per page allowed by UI.
     // These values will change when UI requests for other page data.
     var query = {
-      lodge: Mongoose.Types.ObjectId(data.accId) || Mongoose.Types.ObjectId(data.id)
+        lodge: data.accId || data.id,
     };
     if(!_.isEmpty(data.query)){
       Object.keys(data.query).forEach((filterKey) => {
