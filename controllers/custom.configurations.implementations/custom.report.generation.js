@@ -57,9 +57,10 @@ class CustomReportGeneration extends CustomConfigBaseImplementation {
                         this.formulaVariables.push(formulaVar);
                     }
                 });
-            };
+            }
         });
         return UserControllerImpl.getBookingHistory({accId: this.options.accId,
+            skipcount: this.options['skipCount'], limitcount: this.options['limitCount'],
             query: {
                 dateofcheckout: {
                     $gte: this.options["fromDate"],
@@ -67,7 +68,7 @@ class CustomReportGeneration extends CustomConfigBaseImplementation {
                 }
             }, projection: fieldsToRetrieve
         }).then((historyValue) => {
-            return historyValue.result;
+            return historyValue;
         }).catch((err) => {
             return err;
         });
@@ -129,10 +130,10 @@ class CustomReportGeneration extends CustomConfigBaseImplementation {
             let isValid = this.checkForValidRequestData({action: 'generation'});
             if(isValid){
                 this.getCustomizedFields().then((customReportConfig) => {
-                    this.getHistoryValue(customReportConfig[0].fields).then((fieldValues) => {
-                        const customReportFields = this.cleanUpCustomFormulaResult(this.formValuesForCustomField(fieldValues));
+                    this.getHistoryValue(customReportConfig[0].fields).then((historyValue) => {
+                        const customReportFields = this.cleanUpCustomFormulaResult(this.formValuesForCustomField(historyValue.result));
                         const customReportHeader = this.prepareFieldsNameHeader(customReportConfig[0].fields);
-                        resolve({customReportFields, customReportHeader});
+                        resolve({customReportFields, customReportHeader, totalCount: historyValue.totalCount});
                     }).catch((err) => {
                         reject(err);
                     });
