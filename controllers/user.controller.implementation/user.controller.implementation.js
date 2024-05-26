@@ -56,9 +56,9 @@ async function getBookingHistory(data) {
       query._id = { $in: data.nodes };
     }
     // Projection is an array of fields values which we need to extract, Leaving it empty will fetch everything.
-    var result = await UserDb.find(query, data.projection).sort({ _id: -1 }).skip(skipCount).limit(limitCount);
+    const result = await UserDb.find(query, data.projection).sort({_id: -1}).skip(skipCount).limit(limitCount);
 
-    var totalCount = await UserDb.find({ lodge: data.accId || data.id }).countDocuments({});
+    const totalCount = await UserDb.find(query).countDocuments({});
     return { result, totalCount };
 };
 
