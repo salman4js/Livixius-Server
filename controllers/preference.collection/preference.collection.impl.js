@@ -98,6 +98,12 @@ async function getWidgetTileCollection(data){
       noCountWidget: true
     }
   }
+  if(response?.administrativePageEnabled && lodgeConfigPreference.customAdminConfig?.customReport?.isEnabled){
+    response.customReport = [];
+    response.widgetTileModelCount.customReport = {
+      noCountWidget: true
+    }
+  }
   if(!response?.administrativePageEnabled && collectionPref?.insights && lodgeConfigPreference.isInsights){
     // Insights data will be fetched for requested date.
     var insightsData = await UserControllerImpl.getInsightsData(data);
